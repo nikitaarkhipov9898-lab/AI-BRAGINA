@@ -5,14 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ИИ-Шеф на кухне</title>
   <style>
-    :root {
-      --bg: #f4f6f9;
-      --card: #ffffff;
-      --primary: #ff6b35;
-      --text: #1e293b;
-      --muted: #64748b;
-      --border: #e2e8f0;
-    }
+    :root { --bg: #f4f6f9; --card: #ffffff; --primary: #ff6b35; --text: #1e293b; --muted: #64748b; --border: #e2e8f0; }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { margin: 0; padding: 16px; background: var(--bg); color: var(--text); }
     .container { max-width: 480px; margin: 0 auto; }
@@ -23,115 +16,92 @@
     label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
     .item-row { display: flex; gap: 8px; margin-bottom: 8px; }
     input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 15px; outline: none; }
-    input:focus, select:focus { border-color: var(--primary); }
     .del-btn { background: #fee2e2; color: #dc2626; border: none; border-radius: 10px; width: 44px; font-size: 18px; cursor: pointer; flex-shrink: 0; }
     .add-btn { width: 100%; padding: 10px; background: #f1f5f9; color: var(--text); border: 1px dashed #cbd5e1; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 4px; }
     .gen-btn { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 12px; }
-    .gen-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .gen-btn:disabled { opacity: 0.6; }
     .result { white-space: pre-wrap; line-height: 1.5; font-size: 15px; }
     .hidden { display: none; }
   </style>
 </head>
 <body>
-
 <div class="container">
   <div class="header">
     <h1>🍳 ИИ-Шеф</h1>
     <span class="badge">Онлайн • Без VPN</span>
   </div>
-
   <div class="card">
     <label>Какие продукты есть дома?</label>
     <div id="productsList">
-      <div class="item-row">
-        <input type="text" class="prod-input" placeholder="Например: апельсин">
-      </div>
-      <div class="item-row">
-        <input type="text" class="prod-input" placeholder="Например: слоеное тесто">
-        <button class="del-btn" onclick="this.parentElement.remove()">×</button>
-      </div>
+      <div class="item-row"><input type="text" class="prod-input" placeholder="Например: колбаса"></div>
+      <div class="item-row"><input type="text" class="prod-input" placeholder="Например: хлеб"><button class="del-btn" onclick="this.parentElement.remove()">×</button></div>
     </div>
     <button class="add-btn" onclick="addProduct()">+ Добавить ещё продукт</button>
-
     <label style="margin-top: 16px;">Что хочется приготовить?</label>
     <select id="mealType">
       <option value="Любое вкусное блюдо">На усмотрение ИИ-Шефа</option>
       <option value="Быстрый завтрак">Быстрый завтрак</option>
       <option value="Сытный ужин">Сытный ужин</option>
       <option value="Выпечка или десерт">Выпечка или десерт</option>
-      <option value="Перекус за 10 минут">Перекус за 10 минут</option>
     </select>
-
     <button id="generateBtn" class="gen-btn" onclick="generateRecipe()">✨ Придумать рецепт</button>
   </div>
-
   <div id="resultCard" class="card hidden">
     <label>Рецепт от вашего ИИ:</label>
     <div id="resultText" class="result"></div>
   </div>
 </div>
-
 <script>
   const WORKER_URL = 'https://workers.dev';
 
   function addProduct() {
-    const list = document.getElementById('productsList');
     const row = document.createElement('div');
     row.className = 'item-row';
-    row.innerHTML = `
-      <input type="text" class="prod-input" placeholder="Введите продукт...">
-      <button class="del-btn" onclick="this.parentElement.remove()">×</button>
-    `;
-    list.appendChild(row);
+    row.innerHTML = `<input type="text" class="prod-input" placeholder="Введите продукт..."><button class="del-btn" onclick="this.parentElement.remove()">×</button>`;
+    document.getElementById('productsList').appendChild(row);
   }
 
   async function generateRecipe() {
-    const inputs = document.querySelectorAll('.prod-input');
-    const products = Array.from(inputs).map(i => i.value.trim()).filter(Boolean);
+    const products = Array.from(document.querySelectorAll('.prod-input')).map(i => i.value.trim()).filter(Boolean);
+    if (!products.length) return alert('Напишите хотя бы один продукт!');
 
-    if (products.length === 0) return alert('Напишите хотя бы один продукт!');
-
-    const mealType = document.getElementById('mealType').value;
     const btn = document.getElementById('generateBtn');
     const resultCard = document.getElementById('resultCard');
     const resultText = document.getElementById('resultText');
 
     btn.disabled = true;
-    btn.innerText = '⏳ Шеф думает над рецептом...';
+    btn.innerText = '⏳ Шеф думает...';
     resultCard.classList.remove('hidden');
-    resultText.innerText = 'Подбираю пропорции и шаги приготовления...';
-
-    const prompt = `У меня есть продукты: ${products.join(', ')}. Категория: ${mealType}. Придумай один простой и вкусный рецепт (название, граммовки, шаги приготовления).`;
+    resultText.innerText = 'Соединяюсь с сервером...';
 
     try {
       const response = await fetch(WORKER_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
           messages: [
-            { role: 'system', content: 'Ты опытный домашний шеф-повар. Пиши на русском языке, четко и по делу.' },
-            { role: 'user', content: prompt }
+            { role: 'system', content: 'Ты домашний шеф-повар. Отвечай на русском языке кратко и по делу.' },
+            { role: 'user', content: `Продукты: ${products.join(', ')}. Блюдо: ${document.getElementById('mealType').value}. Напиши один простой рецепт.` }
           ]
         })
       });
 
       const data = await response.json();
       if (data.error) {
-        resultText.innerText = 'Ошибка ИИ: ' + (data.error.message || JSON.stringify(data.error));
-      } else if (data.choices && data.choices[0]) {
-        resultText.innerText = data.choices[0].message.content;
+        resultText.innerText = 'Ответ сервера: ' + (data.error.message || JSON.stringify(data.error));
+      } else if (data.choices && data.choices) {
+        resultText.innerText = data.choices.message.content;
       } else {
-        resultText.innerText = 'Неожиданный ответ: ' + JSON.stringify(data);
+        resultText.innerText = 'Сырой ответ: ' + JSON.stringify(data);
       }
     } catch (err) {
-      resultText.innerText = 'Ошибка сети: ' + err.message;
+      resultText.innerText = 'Ошибка соединения: ' + err.message;
     } finally {
       btn.disabled = false;
       btn.innerText = '✨ Придумать рецепт';
     }
   }
 </script>
-
 </body>
 </html>
