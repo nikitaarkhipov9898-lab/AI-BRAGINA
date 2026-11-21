@@ -190,7 +190,7 @@ input,select {
 table {
   border-collapse:collapse;
   width:100%;
-  min-width:540px;
+  min-width:620px;
   font-size:13px;
 }
 th,td {
@@ -321,6 +321,7 @@ th {background:#f1f5f9;font-weight:700;}
             <tr>
               <th>№</th>
               <th>Наименование товара</th>
+              <th>Артикул</th>
               <th>Количество</th>
               <th>Ед.</th>
               <th>Цена за ед.</th>
@@ -629,21 +630,35 @@ async function recognizeInvoice() {
     try {
       parsed = JSON.parse(answer);
     } catch(e) {
-      throw new Error('Не удалось разобрать JSON: ' + answer.slice(0,500));
+      throw new Error(
+        'Ответ модели пришёл, но JSON не удалось разобрать. ' +
+        'Возможно, ответ обрезан лимитом токенов. Попробуй ещё раз.'
+      );
     }
 
     if (!Array.isArray(parsed.items)) {
       throw new Error('В ответе отсутствует список товарных строк.');
     }
 
-    showInvoiceResult(parsed);
+    // Отображение результата обрабатывается отдельно от запроса к Groq.
+    try {
+      showInvoiceResult(parsed);
+    } catch(displayError) {
+      console.error('Ошибка отображения:', displayError);
+      throw new Error(
+        'ИИ вернул ответ, но сайт не смог показать таблицу: ' +
+        displayError.message
+      );
+    }
+
     status.innerText =
       'Распознавание завершено. Найдено строк: ' +
       parsed.items.length + '.';
 
   } catch(error) {
+    console.error('Ошибка распознавания:', error);
     status.innerText =
-      'Не удалось распознать накладную.\n\n' + error.message;
+      'Не удалось завершить распознавание.\n\n' + error.message;
   } finally {
     button.disabled = false;
     button.innerText = '🔍 Распознать накладную';
@@ -654,21 +669,31 @@ function showInvoiceResult(data) {
   const resultCard = document.getElementById('invoiceResultCard');
   const tableBody = document.getElementById('invoiceTableBody');
   const summary = document.getElementById('invoiceSummary');
-  const warnings = document.getElementById('invoiceWarnings');
+
+  // Используем одно название переменной во всей функции.
+  const warningsBox = document.getElementById('invoiceWarnings');
+
+  if (!resultCard || !tableBody || !summary || !warningsBox) {
+    throw new Error('Не найдены элементы таблицы на странице.');
+  }
 
   tableBody.innerHTML = '';
-  warnings.innerHTML = '';
+  warningsBox.innerHTML = '';
+
+  const items = Array.isArray(data.items) ? data.items : [];
 
   summary.textContent =
     'Тип документа: ' + (data.document_type || 'Не определён') +
-    '. Строк распознано: ' + data.items.length +
+    '. Строк распознано: ' + items.length +
     (data.general_comment ? '. ' + data.general_comment : '');
 
-  data.items.forEach((item,index) => {
+  items.forEach((item,index) => {
     const tr = document.createElement('tr');
+
     const values = [
       item.row_number ?? index + 1,
       item.name ?? 'Не распознано',
+      item.article ?? '—',
       item.quantity ?? '—',
       item.unit ?? '—',
       item.unit_price ?? '—',
@@ -681,7 +706,10 @@ function showInvoiceResult(data) {
       tr.appendChild(td);
     });
 
-    if (item.uncertain) tr.style.background = '#fffbeb';
+    if (item.uncertain) {
+      tr.style.background = '#fffbeb';
+    }
+
     tableBody.appendChild(tr);
 
     if (item.uncertain || item.note) {
@@ -690,18 +718,18 @@ function showInvoiceResult(data) {
       note.textContent =
         'Строка ' + (item.row_number ?? index + 1) +
         ': ' + (item.note || 'Есть неуверенно распознанные данные.');
-      warnings.appendChild(note);
+      warningsBox.appendChild(note);
     }
   });
 
-  if (Array.isArray(data.warnings)) {
-    data.warnings.forEach(message => {
-      const warning = document.createElement('div');
-      warning.className = 'warning';
-      warning.textContent = String(message);
-      warnings.appendChild(warning);
-    });
-  }
+  const warnings = Array.isArray(data.warnings) ? data.warnings : [];
+
+  warnings.forEach(message => {
+    const warning = document.createElement('div');
+    warning.className = 'warning';
+    warning.textContent = String(message);
+    warningsBox.appendChild(warning);
+  });
 
   invoiceResultText = JSON.stringify(data,null,2);
   resultCard.classList.remove('hidden');
