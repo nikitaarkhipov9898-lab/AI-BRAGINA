@@ -94,6 +94,9 @@ input,select {
   outline:none;
   background:#fff;
 }
+input:focus,select:focus {
+  border-color:var(--primary);
+}
 .item-row {
   display:flex;
   gap:8px;
@@ -157,9 +160,52 @@ input,select {
 }
 .hidden {display:none!important;}
 .result {
-  white-space:pre-wrap;
   line-height:1.5;
-  font-size:15px;
+  font-size:14px;
+  overflow-wrap:anywhere;
+}
+.recipe-card {
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:14px;
+  margin-top:12px;
+  background:#fff;
+}
+.recipe-card h3 {
+  font-size:17px;
+  line-height:1.35;
+  margin-bottom:12px;
+}
+.recipe-section {
+  margin-top:11px;
+}
+.recipe-section strong {
+  display:block;
+  font-size:13px;
+  margin-bottom:5px;
+}
+.recipe-section ul,
+.recipe-section ol {
+  margin:5px 0 0;
+  padding-left:21px;
+}
+.recipe-section li {
+  margin-bottom:5px;
+  line-height:1.45;
+}
+.recipe-meta {
+  color:var(--muted);
+  font-size:12px;
+  margin-top:10px;
+}
+.status {
+  background:#f1f5f9;
+  border-radius:10px;
+  padding:12px;
+  font-size:14px;
+  line-height:1.5;
+  margin-top:12px;
+  white-space:pre-wrap;
   overflow-wrap:anywhere;
 }
 .photo-preview {
@@ -171,16 +217,6 @@ input,select {
   border:1px solid var(--border);
   border-radius:12px;
   margin:12px 0;
-}
-.status {
-  background:#f1f5f9;
-  border-radius:10px;
-  padding:12px;
-  font-size:14px;
-  line-height:1.5;
-  margin-top:12px;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
 }
 .table-wrap {
   overflow-x:auto;
@@ -225,6 +261,12 @@ th {background:#f1f5f9;font-weight:700;}
   cursor:pointer;
 }
 .file-label input {display:none;}
+.section-hint {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.4;
+  margin:-3px 0 10px;
+}
 @media(max-width:380px) {
   .module-grid {grid-template-columns:1fr;}
 }
@@ -259,32 +301,66 @@ th {background:#f1f5f9;font-weight:700;}
 
   <section id="chef" class="hidden">
     <button class="back-btn" onclick="goHome()">← На главную</button>
+
     <div class="card">
       <h2>🍳 ИИ-Шеф на кухне</h2>
-      <label>Какие продукты есть дома?</label>
+
+      <label>Основные продукты</label>
+      <p class="section-hint">
+        Продукты, из которых нужно придумать блюдо.
+      </p>
+
       <div id="productsList">
         <div class="item-row">
-          <input type="text" class="prod-input" placeholder="Например: колбаса">
+          <input type="text" class="main-prod-input"
+            placeholder="Например: молоко">
         </div>
         <div class="item-row">
-          <input type="text" class="prod-input" placeholder="Например: хлеб">
-          <button class="del-btn" onclick="this.parentElement.remove()">×</button>
+          <input type="text" class="main-prod-input"
+            placeholder="Например: мука">
+          <button class="del-btn"
+            onclick="this.parentElement.remove()">×</button>
         </div>
       </div>
-      <button class="add-btn" onclick="addProduct()">+ Добавить ещё продукт</button>
-      <label style="margin-top:16px">Что хочется приготовить?</label>
+
+      <button class="add-btn"
+        onclick="addProduct('productsList','main-prod-input','Введите основной продукт...')">
+        + Добавить основной продукт
+      </button>
+
+      <label style="margin-top:18px">Дополнительные ингредиенты</label>
+      <p class="section-hint">
+        Например: соль, сахар, вода. ИИ сможет использовать только то, что ты здесь укажешь.
+      </p>
+
+      <div id="extrasList">
+        <div class="item-row">
+          <input type="text" class="extra-prod-input"
+            placeholder="Например: соль или сахар">
+        </div>
+      </div>
+
+      <button class="add-btn"
+        onclick="addProduct('extrasList','extra-prod-input','Введите дополнительный ингредиент...')">
+        + Добавить дополнительный ингредиент
+      </button>
+
+      <label style="margin-top:18px">Что хочется приготовить?</label>
       <select id="mealType">
         <option value="Любое вкусное блюдо">На усмотрение ИИ-Шефа</option>
         <option value="Быстрый завтрак">Быстрый завтрак</option>
         <option value="Сытный ужин">Сытный ужин</option>
         <option value="Выпечка или десерт">Выпечка или десерт</option>
       </select>
-      <button id="generateBtn" class="gen-btn" onclick="generateRecipe()">
-        ✨ Придумать рецепт
+
+      <button id="generateBtn" class="gen-btn"
+        onclick="generateRecipe()">
+        ✨ Придумать 2 рецепта
       </button>
     </div>
+
     <div id="resultCard" class="card hidden">
-      <label>Рецепт от вашего ИИ:</label>
+      <label>Два варианта от ИИ-Шефа</label>
       <div id="resultText" class="result"></div>
     </div>
   </section>
@@ -332,7 +408,8 @@ th {background:#f1f5f9;font-weight:700;}
         </table>
       </div>
       <div id="invoiceWarnings"></div>
-      <button class="secondary-btn" onclick="copyInvoiceResult()" style="margin-top:14px">
+      <button class="secondary-btn"
+        onclick="copyInvoiceResult()" style="margin-top:14px">
         📋 Скопировать результат
       </button>
     </div>
@@ -355,67 +432,259 @@ function goHome() {
   document.getElementById('invoice').classList.add('hidden');
 }
 
-function addProduct() {
+function addProduct(listId,className,placeholder) {
   const row = document.createElement('div');
   row.className = 'item-row';
+
   const input = document.createElement('input');
   input.type = 'text';
-  input.className = 'prod-input';
-  input.placeholder = 'Введите продукт...';
+  input.className = className;
+  input.placeholder = placeholder;
+
   const button = document.createElement('button');
   button.className = 'del-btn';
   button.textContent = '×';
+  button.type = 'button';
   button.onclick = () => row.remove();
-  row.append(input, button);
-  document.getElementById('productsList').appendChild(row);
+
+  row.append(input,button);
+  document.getElementById(listId).appendChild(row);
 }
 
 // ИИ-ШЕФ
-async function generateRecipe() {
-  const products = Array.from(
-    document.querySelectorAll('.prod-input')
-  ).map(input => input.value.trim()).filter(Boolean);
 
-  if (!products.length) {
-    alert('Напишите хотя бы один продукт!');
+function getInputValues(className) {
+  return Array.from(document.querySelectorAll('.' + className))
+    .map(input => input.value.trim())
+    .filter(Boolean);
+}
+
+// Приводим названия ингредиентов к более сопоставимому виду.
+// Это простая проверка списка состава, а не полноценный языковой анализ.
+function normalizeIngredient(value) {
+  let text = String(value || '').toLowerCase().trim();
+
+  text = text.replace(/\([^)]*\)/g,' ');
+  text = text.replace(/\d+(?:[.,]\d+)?\s*(грамм(?:а|ов)?|г|кг|мл|л|литр(?:а|ов)?|шт\.?|штук(?:а|и)?|ст\.?\s*л\.?|ч\.?\s*л\.?)/gi,' ');
+  text = text.replace(/\b(по вкусу|для подачи|для украшения|примерно|немного|щепотка|щепотки)\b/gi,' ');
+  text = text.replace(/[^\p{L}\s-]/gu,' ');
+  text = text.replace(/\s+/g,' ').trim();
+
+  const aliases = {
+    'картошка':'картофель',
+    'помидоры':'помидор',
+    'томаты':'помидор',
+    'томат':'помидор',
+    'огурцы':'огурец',
+    'яйца':'яйцо',
+    'курица':'курица',
+    'куриное мясо':'курица',
+    'куриное филе':'курица',
+    'лук репчатый':'лук',
+    'репчатый лук':'лук',
+    'сахарный песок':'сахар',
+    'вода питьевая':'вода'
+  };
+
+  if (aliases[text]) text = aliases[text];
+
+  const forms = {
+    'яйца':'яйцо',
+    'помидоры':'помидор',
+    'томаты':'помидор',
+    'огурцы':'огурец',
+    'картошка':'картофель',
+    'макароны':'макароны',
+    'спагетти':'спагетти'
+  };
+
+  if (forms[text]) text = forms[text];
+
+  return text;
+}
+
+function ingredientIsAllowed(candidate,allowedIngredients) {
+  const candidateName = normalizeIngredient(candidate);
+
+  if (!candidateName) return false;
+
+  return allowedIngredients.some(item => {
+    const allowedName = normalizeIngredient(item);
+
+    if (!allowedName) return false;
+
+    return candidateName === allowedName;
+  });
+}
+
+function showRecipeCards(recipes) {
+  const resultText = document.getElementById('resultText');
+  resultText.innerHTML = '';
+
+  recipes.forEach((recipe,index) => {
+    const card = document.createElement('div');
+    card.className = 'recipe-card';
+
+    const title = document.createElement('h3');
+    title.textContent = (index + 1) + '. ' + recipe.title;
+    card.appendChild(title);
+
+    const ingredientsSection = document.createElement('div');
+    ingredientsSection.className = 'recipe-section';
+
+    const ingredientsTitle = document.createElement('strong');
+    ingredientsTitle.textContent = '🧺 Ингредиенты';
+    ingredientsSection.appendChild(ingredientsTitle);
+
+    const ingredientsList = document.createElement('ul');
+
+    recipe.ingredients.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item.name + (item.amount ? ' — ' + item.amount : '');
+      ingredientsList.appendChild(li);
+    });
+
+    ingredientsSection.appendChild(ingredientsList);
+    card.appendChild(ingredientsSection);
+
+    const stepsSection = document.createElement('div');
+    stepsSection.className = 'recipe-section';
+
+    const stepsTitle = document.createElement('strong');
+    stepsTitle.textContent = '👨‍🍳 Приготовление';
+    stepsSection.appendChild(stepsTitle);
+
+    const stepsList = document.createElement('ol');
+
+    recipe.steps.forEach(step => {
+      const li = document.createElement('li');
+      li.textContent = step;
+      stepsList.appendChild(li);
+    });
+
+    stepsSection.appendChild(stepsList);
+    card.appendChild(stepsSection);
+
+    if (recipe.time) {
+      const time = document.createElement('div');
+      time.className = 'recipe-meta';
+      time.textContent = '⏱ Время приготовления: ' + recipe.time;
+      card.appendChild(time);
+    }
+
+    if (recipe.result) {
+      const result = document.createElement('div');
+      result.className = 'recipe-meta';
+      result.textContent = '✨ Результат: ' + recipe.result;
+      card.appendChild(result);
+    }
+
+    resultText.appendChild(card);
+  });
+}
+
+async function generateRecipe() {
+  const mainProducts = getInputValues('main-prod-input');
+  const extraProducts = getInputValues('extra-prod-input');
+
+  if (!mainProducts.length) {
+    alert('Укажи хотя бы один основной продукт.');
     return;
   }
+
+  const allowedIngredients = [...mainProducts,...extraProducts];
+  const mealType = document.getElementById('mealType').value;
 
   const btn = document.getElementById('generateBtn');
   const resultCard = document.getElementById('resultCard');
   const resultText = document.getElementById('resultText');
 
   btn.disabled = true;
-  btn.innerText = '⏳ Шеф думает...';
+  btn.innerText = '⏳ Шеф придумывает рецепты...';
   resultCard.classList.remove('hidden');
-  resultText.innerText = 'Соединяюсь с сервером...';
+  resultText.innerText = 'Соединяюсь с ИИ-Шефом...';
 
   const systemPrompt = `
-Ты строгий домашний шеф-повар.
-Придумывай блюда ИСКЛЮЧИТЕЛЬНО из продуктов пользователя.
+Ты — творческий домашний шеф-повар.
+Твоя задача — самостоятельно ПРИДУМАТЬ два разных оригинальных рецепта.
+Не ищи и не пересказывай готовые рецепты из интернета или кулинарных книг.
 
-ЖЁСТКИЕ ПРАВИЛА:
-1. Используй только перечисленные продукты.
-2. Запрещено добавлять любые другие продукты.
-3. Не добавляй даже по желанию сыр, масло, соль, перец,
-специи, воду, зелень, соусы, муку, яйца и другие ингредиенты,
-если пользователь их не указал.
-4. Не подразумевай, что у пользователя есть базовые продукты.
-5. Каждый ингредиент должен присутствовать в исходном списке.
-6. Если полноценное блюдо невозможно, честно скажи об этом.
-7. Не предлагай украшения и добавки, которых нет в списке.
-8. Можно использовать разные способы нарезки, смешивания
-и термической обработки имеющихся продуктов.
+ПОЛЬЗОВАТЕЛЬ ПЕРЕДАЛ ДВА СПИСКА:
+1. Основные продукты — основа блюда.
+2. Дополнительные ингредиенты — разрешённые добавки.
 
-ФОРМАТ:
-- Название блюда.
-- Какие продукты используются.
-- Количество и пропорции, если возможно определить.
-- Пошаговое приготовление.
-- В конце: «Использованы только продукты из вашего списка».
+СТРОГИЕ ПРАВИЛА:
+1. Используй только продукты из этих двух списков.
+2. Каждый ингредиент в обоих рецептах обязан быть указан пользователем.
+3. Дополнительные ингредиенты разрешено использовать, но только если они есть во втором списке.
+4. Соль, сахар, вода, масло, перец, специи, мука, яйца и любые другие продукты НЕ считаются автоматически разрешёнными.
+5. Нельзя добавлять ингредиенты «по умолчанию».
+6. Нельзя добавлять продукты для жарки, варки, украшения или подачи, если их нет в списках.
+7. Не пиши в шагах приготовления названия незаявленных продуктов.
+8. Не предлагай необязательные добавки, соусы, зелень и украшения.
+9. По возможности используй все основные продукты в каждом рецепте.
+10. Придумай два РАЗНЫХ блюда или два действительно разных способа приготовления.
+11. Не повторяй один рецепт под разными названиями.
+12. Количество ингредиентов указывай реалистично. Не выдумывай продукты ради полноценности блюда.
+13. Если из разрешённых продуктов невозможно приготовить два полноценных разных блюда, честно сообщи об этом в поле result соответствующего рецепта. Не нарушай правила ради количества.
+14. Не добавляй ингредиенты в список состава, если их нет в списках пользователя.
 
-Перед отправкой проверь каждый ингредиент.
-Отвечай на русском языке, понятно и по делу.
+ФОРМАТ ОТВЕТА:
+Верни только корректный JSON, без Markdown и пояснений вне JSON.
+
+Структура:
+{
+  "recipes": [
+    {
+      "title": "Название блюда",
+      "ingredients": [
+        {"name": "Название продукта из списка пользователя", "amount": "Количество"}
+      ],
+      "steps": [
+        "Короткий шаг приготовления",
+        "Следующий шаг"
+      ],
+      "time": "Примерное время",
+      "result": "Кратко о результате"
+    },
+    {
+      "title": "Название второго блюда",
+      "ingredients": [
+        {"name": "Название продукта из списка пользователя", "amount": "Количество"}
+      ],
+      "steps": [
+        "Короткий шаг приготовления",
+        "Следующий шаг"
+      ],
+      "time": "Примерное время",
+      "result": "Кратко о результате"
+    }
+  ]
+}
+
+ТРЕБОВАНИЯ К КАЧЕСТВУ:
+- Ровно два варианта.
+- Каждый рецепт компактный и понятный.
+- В каждом рецепте примерно 3–5 шагов.
+- Не пиши длинных вступлений.
+- Все названия продуктов в ingredients должны совпадать с продуктами пользователя.
+- В шагах используй только эти же разрешённые продукты.
+- Перед отправкой самостоятельно проверь оба рецепта на посторонние ингредиенты.
+- Отвечай на русском языке.
+`;
+
+  const userPrompt = `
+ОСНОВНЫЕ ПРОДУКТЫ:
+${mainProducts.join(', ')}
+
+ДОПОЛНИТЕЛЬНЫЕ РАЗРЕШЁННЫЕ ИНГРЕДИЕНТЫ:
+${extraProducts.length ? extraProducts.join(', ') : 'НЕТ. Дополнительные ингредиенты запрещены.'}
+
+ЖЕЛАЕМЫЙ ТИП БЛЮДА:
+${mealType}
+
+Придумай два разных оригинальных варианта строго из разрешённых продуктов.
+Не добавляй ничего от себя.
 `;
 
   try {
@@ -426,37 +695,97 @@ async function generateRecipe() {
         model:'openai/gpt-oss-120b',
         messages:[
           {role:'system',content:systemPrompt},
-          {
-            role:'user',
-            content:
-              `МОИ ПРОДУКТЫ: ${products.join(', ')}.\n` +
-              `Тип блюда: ${document.getElementById('mealType').value}.\n` +
-              'Составь рецепт строго по правилам системной инструкции.'
-          }
+          {role:'user',content:userPrompt}
         ],
-        temperature:0.3,
-        max_tokens:1200
+        temperature:0.7,
+        max_tokens:1400,
+        response_format:{type:'json_object'}
       })
     });
 
     const data = await response.json();
+
     if (!response.ok) {
       throw new Error(data.error?.message || JSON.stringify(data));
     }
 
-    const answer = data.choices?.[0]?.message?.content;
-    if (!answer) throw new Error('Сервер вернул пустой ответ.');
-    resultText.innerText = answer;
+    let answer = data.choices?.[0]?.message?.content;
+
+    if (!answer) {
+      throw new Error('Сервер вернул пустой ответ.');
+    }
+
+    answer = answer.trim()
+      .replace(/^```json\s*/i,'')
+      .replace(/^```\s*/,'')
+      .replace(/\s*```$/,'');
+
+    let parsed;
+
+    try {
+      parsed = JSON.parse(answer);
+    } catch(error) {
+      throw new Error('ИИ вернул ответ, который не удалось разобрать. Попробуй ещё раз.');
+    }
+
+    if (!Array.isArray(parsed.recipes) || parsed.recipes.length !== 2) {
+      throw new Error('ИИ должен вернуть ровно два рецепта. Попробуй ещё раз.');
+    }
+
+    // Проверяем обязательные поля и состав каждого рецепта.
+    const violations = [];
+
+    parsed.recipes.forEach((recipe,index) => {
+      if (
+        !recipe ||
+        typeof recipe.title !== 'string' ||
+        !Array.isArray(recipe.ingredients) ||
+        !Array.isArray(recipe.steps)
+      ) {
+        violations.push('Вариант ' + (index + 1) + ': неправильный формат рецепта.');
+        return;
+      }
+
+      if (!recipe.ingredients.length || !recipe.steps.length) {
+        violations.push('Вариант ' + (index + 1) + ': не хватает состава или шагов.');
+        return;
+      }
+
+      recipe.ingredients.forEach(item => {
+        if (
+          !item ||
+          typeof item.name !== 'string' ||
+          !ingredientIsAllowed(item.name,allowedIngredients)
+        ) {
+          violations.push(
+            'Вариант ' + (index + 1) + ': запрещённый ингредиент «' +
+            (item?.name || 'неизвестно') + '».'
+          );
+        }
+      });
+    });
+
+    if (violations.length) {
+      throw new Error(
+        'Проверка состава обнаружила незаявленные продукты:\n' +
+        violations.join('\n') +
+        '\nРецепты не показаны, чтобы не нарушать твои условия. Попробуй повторить запрос.'
+      );
+    }
+
+    showRecipeCards(parsed.recipes);
 
   } catch(error) {
-    resultText.innerText = 'Не удалось получить рецепт.\n\n' + error.message;
+    resultText.innerText =
+      'Не удалось получить подходящие рецепты.\n\n' + error.message;
   } finally {
     btn.disabled = false;
-    btn.innerText = '✨ Придумать рецепт';
+    btn.innerText = '✨ Придумать 2 рецепта';
   }
 }
 
 // ПРИЁМКА ТОВАРА
+
 let invoiceBase64 = null;
 let invoiceResultText = '';
 
@@ -640,7 +969,6 @@ async function recognizeInvoice() {
       throw new Error('В ответе отсутствует список товарных строк.');
     }
 
-    // Отображение результата обрабатывается отдельно от запроса к Groq.
     try {
       showInvoiceResult(parsed);
     } catch(displayError) {
@@ -669,8 +997,6 @@ function showInvoiceResult(data) {
   const resultCard = document.getElementById('invoiceResultCard');
   const tableBody = document.getElementById('invoiceTableBody');
   const summary = document.getElementById('invoiceSummary');
-
-  // Используем одно название переменной во всей функции.
   const warningsBox = document.getElementById('invoiceWarnings');
 
   if (!resultCard || !tableBody || !summary || !warningsBox) {
