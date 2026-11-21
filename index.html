@@ -13,430 +13,388 @@
   --text:#1e293b;
   --muted:#64748b;
   --border:#e2e8f0;
+  --green:#16a34a;
 }
-* {
-  box-sizing:border-box;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-}
-body {
-  margin:0;
-  padding:16px;
-  background:var(--bg);
-  color:var(--text);
-}
+* {box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+body {margin:0;padding:16px;background:var(--bg);color:var(--text);}
 .container {max-width:600px;margin:0 auto;}
-.header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:18px;
-}
+.header {display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
 h1 {font-size:23px;margin:0;}
 h2 {font-size:19px;margin:0 0 12px;}
 h3 {font-size:16px;margin:0 0 10px;}
-.badge {
-  background:#dcfce7;
-  color:#166534;
-  font-size:12px;
-  font-weight:600;
-  padding:5px 10px;
-  border-radius:20px;
-}
-.card {
-  background:var(--card);
-  border-radius:16px;
-  padding:16px;
-  box-shadow:0 2px 10px rgba(0,0,0,.04);
-  margin-bottom:16px;
-}
-.module-grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-.module {
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:18px 12px;
-  text-align:left;
-  cursor:pointer;
-  min-height:125px;
-}
-.module-icon {
-  font-size:30px;
-  display:block;
-  margin-bottom:10px;
-}
-.module strong {
-  display:block;
-  font-size:15px;
-  margin-bottom:5px;
-}
-.module small {
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.4;
-}
-label {
-  display:block;
-  font-size:13px;
-  font-weight:600;
-  color:var(--muted);
-  margin-bottom:8px;
-}
-input,select {
-  width:100%;
-  padding:12px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  font-size:15px;
-  outline:none;
-  background:#fff;
-}
-input:focus,select:focus {
-  border-color:var(--primary);
-}
-.item-row {
-  display:flex;
-  gap:8px;
-  margin-bottom:8px;
-}
-.del-btn {
-  background:#fee2e2;
-  color:#dc2626;
-  border:0;
-  border-radius:10px;
-  width:44px;
-  font-size:18px;
-  cursor:pointer;
-  flex-shrink:0;
-}
-.add-btn {
-  width:100%;
-  padding:10px;
-  background:#f1f5f9;
-  color:var(--text);
-  border:1px dashed #cbd5e1;
-  border-radius:10px;
-  font-size:14px;
-  font-weight:600;
-  cursor:pointer;
-  margin-top:4px;
-}
-.gen-btn {
-  width:100%;
-  padding:14px;
-  background:var(--primary);
-  color:#fff;
-  border:0;
-  border-radius:12px;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-  margin-top:12px;
-}
-.gen-btn:disabled {opacity:.6;}
-.secondary-btn {
-  width:100%;
-  padding:11px;
-  background:#f1f5f9;
-  color:var(--text);
-  border:0;
-  border-radius:10px;
-  font-size:14px;
-  font-weight:600;
-  cursor:pointer;
-  margin-bottom:12px;
-}
-.back-btn {
-  background:none;
-  border:0;
-  color:#475569;
-  font-size:14px;
-  font-weight:600;
-  padding:8px 0;
-  cursor:pointer;
-}
+.badge {background:#dcfce7;color:#166534;font-size:12px;font-weight:600;padding:5px 10px;border-radius:20px;}
+.card {background:var(--card);border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.04);margin-bottom:16px;}
+.module-grid {display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.module {background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px 12px;text-align:left;cursor:pointer;min-height:125px;}
+.module-icon {font-size:30px;display:block;margin-bottom:10px;}
+.module strong {display:block;font-size:15px;margin-bottom:5px;}
+.module small {color:var(--muted);font-size:12px;line-height:1.4;}
+label {display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;}
+input,select,textarea {width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;font-size:15px;outline:none;background:#fff;color:var(--text);}
+input:focus,select:focus,textarea:focus {border-color:var(--primary);}
+textarea {resize:vertical;min-height:76px;}
+.item-row {display:flex;gap:8px;margin-bottom:8px;}
+.del-btn {background:#fee2e2;color:#dc2626;border:0;border-radius:10px;width:44px;font-size:18px;cursor:pointer;flex-shrink:0;}
+.add-btn {width:100%;padding:10px;background:#f1f5f9;color:var(--text);border:1px dashed #cbd5e1;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;}
+.gen-btn {width:100%;padding:14px;background:var(--primary);color:#fff;border:0;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:12px;}
+.gen-btn:disabled {opacity:.6;cursor:wait;}
+.secondary-btn {width:100%;padding:11px;background:#f1f5f9;color:var(--text);border:0;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:9px;}
+.action-row {display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.action-row button {margin:0;}
+.back-btn {background:none;border:0;color:#475569;font-size:14px;font-weight:600;padding:8px 0;cursor:pointer;}
 .hidden {display:none!important;}
-.result {
-  line-height:1.5;
-  font-size:14px;
-  overflow-wrap:anywhere;
-}
-.recipe-card {
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:14px;
-  margin-top:12px;
-  background:#fff;
-}
-.recipe-card h3 {
-  font-size:17px;
-  line-height:1.35;
-  margin-bottom:12px;
-}
-.recipe-section {
-  margin-top:11px;
-}
-.recipe-section strong {
-  display:block;
-  font-size:13px;
-  margin-bottom:5px;
-}
-.recipe-section ul,
-.recipe-section ol {
-  margin:5px 0 0;
-  padding-left:21px;
-}
-.recipe-section li {
-  margin-bottom:5px;
-  line-height:1.45;
-}
-.recipe-meta {
-  color:var(--muted);
-  font-size:12px;
-  margin-top:10px;
-}
-.token-usage {
-  margin-top:14px;
-  padding:12px;
-  background:#f1f5f9;
-  border-radius:10px;
-  font-size:12px;
-  line-height:1.6;
-  color:#475569;
-}
-.token-usage strong {
-  color:#1e293b;
-}
-.status {
-  background:#f1f5f9;
-  border-radius:10px;
-  padding:12px;
-  font-size:14px;
-  line-height:1.5;
-  margin-top:12px;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-.photo-preview {
-  display:block;
-  width:100%;
-  max-height:360px;
-  object-fit:contain;
-  background:#f8fafc;
-  border:1px solid var(--border);
-  border-radius:12px;
-  margin:12px 0;
-}
-.table-wrap {
-  overflow-x:auto;
-  width:100%;
-  margin-top:12px;
-}
-table {
-  border-collapse:collapse;
-  width:100%;
-  min-width:620px;
-  font-size:13px;
-}
-th,td {
-  border:1px solid var(--border);
-  padding:9px 7px;
-  text-align:left;
-  vertical-align:top;
-}
+.result {line-height:1.5;font-size:14px;overflow-wrap:anywhere;}
+.recipe-card {border:1px solid var(--border);border-radius:13px;padding:14px;margin-top:12px;background:#fff;}
+.recipe-card h3 {font-size:17px;line-height:1.35;margin-bottom:12px;}
+.recipe-section {margin-top:13px;}
+.recipe-section strong {display:block;font-size:13px;margin-bottom:5px;}
+.recipe-section ul,.recipe-section ol {margin:5px 0 0;padding-left:21px;}
+.recipe-section li {margin-bottom:6px;line-height:1.45;}
+.recipe-meta {color:var(--muted);font-size:12px;margin-top:9px;line-height:1.45;}
+.status {background:#f1f5f9;border-radius:10px;padding:12px;font-size:13px;line-height:1.5;margin-top:12px;white-space:pre-wrap;overflow-wrap:anywhere;}
+.photo-preview {display:block;width:100%;max-height:360px;object-fit:contain;background:#f8fafc;border:1px solid var(--border);border-radius:12px;margin:12px 0;}
+.table-wrap {overflow-x:auto;width:100%;margin-top:12px;}
+table {border-collapse:collapse;width:100%;min-width:620px;font-size:13px;}
+th,td {border:1px solid var(--border);padding:9px 7px;text-align:left;vertical-align:top;}
 th {background:#f1f5f9;font-weight:700;}
-.warning {
-  color:#b45309;
-  background:#fffbeb;
-  border-radius:9px;
-  padding:10px;
-  font-size:13px;
-  margin-top:12px;
-  line-height:1.45;
-}
-.muted {
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.5;
-}
-.file-label {
-  display:block;
-  padding:14px;
-  border:2px dashed #cbd5e1;
-  border-radius:12px;
-  text-align:center;
-  color:#475569;
-  font-weight:600;
-  cursor:pointer;
-}
+.warning {color:#b45309;background:#fffbeb;border-radius:9px;padding:10px;font-size:13px;margin-top:12px;line-height:1.45;}
+.muted {color:var(--muted);font-size:13px;line-height:1.5;}
+.file-label {display:block;padding:14px;border:2px dashed #cbd5e1;border-radius:12px;text-align:center;color:#475569;font-weight:600;cursor:pointer;}
 .file-label input {display:none;}
-.section-hint {
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.4;
-  margin:-3px 0 10px;
-}
+.section-hint {color:var(--muted);font-size:12px;line-height:1.4;margin:-3px 0 10px;}
+.mode-choice {width:100%;padding:16px;text-align:left;border:1px solid var(--border);background:#fff;border-radius:13px;margin:7px 0;cursor:pointer;}
+.mode-choice strong {display:block;font-size:15px;margin-bottom:5px;}
+.mode-choice small {color:var(--muted);font-size:12px;line-height:1.4;}
+.mode-choice:active,.module:active {transform:scale(.99);}
+.nav-row {display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.nav-btn {padding:11px 6px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:13px;font-weight:600;color:var(--text);}
+.nav-btn.active {background:#fff0e9;border-color:var(--primary);color:#c2410c;}
+.check-grid {display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0;}
+.check-item {display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);font-weight:500;}
+.check-item input {width:18px;height:18px;accent-color:var(--primary);}
+details {margin-top:14px;border:1px solid var(--border);border-radius:10px;padding:11px;}
+summary {font-size:13px;font-weight:700;cursor:pointer;}
+.history-item {border:1px solid var(--border);border-radius:11px;padding:12px;margin-top:9px;background:#fff;}
+.history-item strong {display:block;font-size:14px;line-height:1.4;}
+.history-item small {display:block;color:var(--muted);font-size:11px;margin-top:5px;}
+.history-actions {display:flex;gap:7px;margin-top:9px;}
+.history-actions button {flex:1;padding:8px 5px;border:0;border-radius:8px;background:#f1f5f9;font-size:12px;font-weight:600;}
+.favorite-btn {background:#fff7ed!important;color:#c2410c;}
+.recipe-buttons {display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.recipe-buttons button {margin:0;}
+.token-box {background:#f8fafc;border:1px solid var(--border);padding:10px;border-radius:10px;margin-top:12px;font-size:12px;line-height:1.6;color:var(--muted);}
+.kitchen-note {font-size:12px;color:var(--muted);line-height:1.45;margin-top:8px;}
+.empty-state {text-align:center;padding:22px 10px;color:var(--muted);font-size:13px;line-height:1.5;}
+.small-danger {color:#dc2626;background:#fff1f2;}
 @media(max-width:380px) {
   .module-grid {grid-template-columns:1fr;}
+  body {padding:11px;}
 }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <div class="header">
-    <h1>🤖 AI-БРАГИНА</h1>
-    <span class="badge">Онлайн</span>
+<div class="header">
+  <h1>🤖 AI-БРАГИНА</h1>
+  <span class="badge">Онлайн</span>
+</div>
+
+<section id="home">
+  <div class="card">
+    <h2>Твои помощники</h2>
+    <p class="muted">Выбери нужный инструмент.</p>
+    <div class="module-grid">
+      <button class="module" onclick="openModule('chef')">
+        <span class="module-icon">🍳</span>
+        <strong>ИИ-Шеф</strong>
+        <small>Создание рецептов, история и избранное</small>
+      </button>
+      <button class="module" onclick="openModule('invoice')">
+        <span class="module-icon">📦</span>
+        <strong>Приёмка товара</strong>
+        <small>Распознавание накладных по фотографии</small>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ИИ-ШЕФ -->
+<section id="chef" class="hidden">
+  <button class="back-btn" onclick="goHome()">← На главную</button>
+
+  <div class="nav-row">
+    <button id="chefTab" class="nav-btn active" onclick="showChefStart()">🍳 ИИ-Шеф</button>
+    <button id="historyTab" class="nav-btn" onclick="showHistory()">📚 Мои рецепты</button>
   </div>
 
-  <section id="home">
-    <div class="card">
-      <h2>Твои помощники</h2>
-      <p class="muted">Выбери нужный инструмент.</p>
-      <div class="module-grid">
-        <button class="module" onclick="openModule('chef')">
-          <span class="module-icon">🍳</span>
-          <strong>ИИ-Шеф</strong>
-          <small>Рецепты из продуктов, которые есть дома</small>
-        </button>
-        <button class="module" onclick="openModule('invoice')">
-          <span class="module-icon">📦</span>
-          <strong>Приёмка товара</strong>
-          <small>Распознавание накладных по фотографии</small>
-        </button>
-      </div>
-    </div>
-  </section>
+  <div id="chefStart" class="card">
+    <h2>🍳 ИИ-Шеф</h2>
+    <p class="muted">Выбери, как будем готовить.</p>
 
-  <section id="chef" class="hidden">
-    <button class="back-btn" onclick="goHome()">← На главную</button>
+    <button class="mode-choice" onclick="openChefMode('specific')">
+      <strong>🍽️ Приготовить конкретное блюдо</strong>
+      <small>Назови блюдо — ИИ создаст полноценный рецепт со всеми необходимыми продуктами и списком покупок.</small>
+    </button>
 
-    <div class="card">
-      <h2>🍳 ИИ-Шеф на кухне</h2>
+    <button class="mode-choice" onclick="openChefMode('pantry')">
+      <strong>🥘 Приготовить из имеющихся продуктов</strong>
+      <small>Укажи продукты дома — ИИ придумает блюдо, не добавляя незаявленные ингредиенты.</small>
+    </button>
 
-      <label>Основные продукты</label>
-      <p class="section-hint">
-        Продукты, из которых нужно придумать блюдо.
-      </p>
+    <button class="secondary-btn" onclick="showHistory()" style="margin-top:12px">📚 Открыть историю рецептов</button>
+  </div>
 
-      <div id="productsList">
-        <div class="item-row">
-          <input type="text" class="main-prod-input"
-            placeholder="Например: молоко">
-        </div>
-        <div class="item-row">
-          <input type="text" class="main-prod-input"
-            placeholder="Например: мука">
-          <button class="del-btn"
-            onclick="this.parentElement.remove()">×</button>
-        </div>
-      </div>
+  <!-- РЕЖИМ КОНКРЕТНОГО БЛЮДА -->
+  <div id="specificForm" class="card hidden">
+    <button class="back-btn" onclick="showChefStart()">← К выбору режима</button>
+    <h2>🍽️ Конкретное блюдо</h2>
 
-      <button class="add-btn"
-        onclick="addProduct('productsList','main-prod-input','Введите основной продукт...')">
-        + Добавить основной продукт
-      </button>
+    <label for="dishName">Какое блюдо приготовить?</label>
+    <input id="dishName" placeholder="Например: самса с курицей">
 
-      <label style="margin-top:18px">Дополнительные ингредиенты</label>
-      <p class="section-hint">
-        Например: соль, сахар, вода. ИИ сможет использовать только то, что ты здесь укажешь.
-      </p>
+    <label for="specificServings" style="margin-top:14px">Количество порций</label>
+    <select id="specificServings">
+      <option value="2">2 порции</option>
+      <option value="4" selected>4 порции</option>
+      <option value="6">6 порций</option>
+      <option value="8">8 порций</option>
+      <option value="10">10 порций</option>
+    </select>
 
-      <div id="extrasList">
-        <div class="item-row">
-          <input type="text" class="extra-prod-input"
-            placeholder="Например: соль или сахар">
-        </div>
-      </div>
+    <label for="specificWishes" style="margin-top:14px">Пожелания к блюду (необязательно)</label>
+    <textarea id="specificWishes" placeholder="Например: сочная начинка, хрустящая корочка, побольше соуса..."></textarea>
 
-      <button class="add-btn"
-        onclick="addProduct('extrasList','extra-prod-input','Введите дополнительный ингредиент...')">
-        + Добавить дополнительный ингредиент
-      </button>
-
-      <label style="margin-top:18px">Что хочется приготовить?</label>
-      <select id="mealType">
-        <option value="Любое вкусное блюдо">На усмотрение ИИ-Шефа</option>
-        <option value="Быстрый завтрак">Быстрый завтрак</option>
-        <option value="Сытный ужин">Сытный ужин</option>
-        <option value="Выпечка или десерт">Выпечка или десерт</option>
+    <details>
+      <summary>⚙️ Дополнительные настройки приготовления</summary>
+      <label for="specificEquipment" style="margin-top:12px">Доступная техника</label>
+      <select id="specificEquipment">
+        <option value="Обычная кухня: плита и духовка">Плита и духовка</option>
+        <option value="Только плита">Только плита</option>
+        <option value="Только духовка">Только духовка</option>
+        <option value="Мультиварка">Мультиварка</option>
+        <option value="Аэрогриль">Аэрогриль</option>
+        <option value="Плита, духовка и другая обычная кухонная техника">Вся обычная кухонная техника</option>
       </select>
 
-      <button id="generateBtn" class="gen-btn"
-        onclick="generateRecipe()">
-        🍳 Что можно приготовить?
-      </button>
-    </div>
+      <label for="specificTime" style="margin-top:12px">Сколько времени есть?</label>
+      <select id="specificTime">
+        <option value="Без ограничения времени">Без ограничения</option>
+        <option value="До 30 минут">До 30 минут</option>
+        <option value="До 60 минут">До 60 минут</option>
+        <option value="До 90 минут">До 90 минут</option>
+      </select>
 
-    <div id="resultCard" class="card hidden">
-      <label>Что предлагает ИИ-Шеф</label>
-      <div id="resultText" class="result"></div>
-      <div id="tokenUsage" class="token-usage hidden"></div>
-    </div>
-  </section>
+      <label for="specificDifficulty" style="margin-top:12px">Сложность</label>
+      <select id="specificDifficulty">
+        <option value="На усмотрение шефа">На усмотрение шефа</option>
+        <option value="Простое домашнее приготовление">Просто</option>
+        <option value="Средняя сложность">Средне</option>
+        <option value="Профессиональная технология, если она оправдана">Можно посложнее</option>
+      </select>
+    </details>
 
-  <section id="invoice" class="hidden">
-    <button class="back-btn" onclick="goHome()">← На главную</button>
-    <div class="card">
-      <h2>📦 Приёмка товара</h2>
-      <p class="muted">
-        Загрузи фотографию накладной. ИИ попробует распознать
-        наименования, количество, единицы измерения и цены.
-      </p>
-      <label class="file-label">
-        📷 Выбрать фотографию накладной
-        <input type="file" id="invoiceFile"
-          accept="image/jpeg,image/png,image/webp"
-          onchange="previewInvoice(event)">
-      </label>
-      <img id="invoicePreview" class="photo-preview hidden" alt="Фото накладной">
-      <div id="invoiceFileInfo" class="muted"></div>
-      <button id="recognizeBtn" class="gen-btn"
-        onclick="recognizeInvoice()" disabled>
-        🔍 Распознать накладную
-      </button>
-      <div id="invoiceStatus" class="status hidden"></div>
-    </div>
+    <button id="specificGenerateBtn" class="gen-btn" onclick="generateRecipe(false)">
+      🍽️ Создать рецепт
+    </button>
+  </div>
 
-    <div id="invoiceResultCard" class="card hidden">
-      <h3>Результат распознавания</h3>
-      <div id="invoiceSummary" class="muted"></div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>№</th>
-              <th>Наименование товара</th>
-              <th>Артикул</th>
-              <th>Количество</th>
-              <th>Ед.</th>
-              <th>Цена за ед.</th>
-              <th>Сумма</th>
-            </tr>
-          </thead>
-          <tbody id="invoiceTableBody"></tbody>
-        </table>
+  <!-- РЕЖИМ ИЗ ПРОДУКТОВ -->
+  <div id="pantryForm" class="card hidden">
+    <button class="back-btn" onclick="showChefStart()">← К выбору режима</button>
+    <h2>🥘 Что есть в холодильнике?</h2>
+
+    <label>Основные продукты</label>
+    <p class="section-hint">Продукты, которые должны стать основой блюда.</p>
+    <div id="productsList">
+      <div class="item-row">
+        <input type="text" class="main-prod-input" placeholder="Например: курица">
       </div>
-      <div id="invoiceWarnings"></div>
-      <button class="secondary-btn"
-        onclick="copyInvoiceResult()" style="margin-top:14px">
-        📋 Скопировать результат
-      </button>
+      <div class="item-row">
+        <input type="text" class="main-prod-input" placeholder="Например: картофель">
+        <button class="del-btn" onclick="this.parentElement.remove()">×</button>
+      </div>
     </div>
-  </section>
+    <button class="add-btn" onclick="addProduct('productsList','main-prod-input','Введите основной продукт...')">+ Добавить основной продукт</button>
+
+    <label style="margin-top:18px">Дополнительные ингредиенты</label>
+    <p class="section-hint">Указывай только то, что действительно есть и разрешаешь использовать.</p>
+    <div id="extrasList">
+      <div class="item-row">
+        <input type="text" class="extra-prod-input" placeholder="Например: сыр">
+      </div>
+    </div>
+    <button class="add-btn" onclick="addProduct('extrasList','extra-prod-input','Введите дополнительный ингредиент...')">+ Добавить дополнительный ингредиент</button>
+
+    <details open>
+      <summary>🧂 Моя кухонная база</summary>
+      <p class="kitchen-note">Отметь продукты, которые обычно есть дома. ИИ сможет использовать только отмеченные позиции.</p>
+      <div class="check-grid" id="staplesChecks">
+        <label class="check-item"><input type="checkbox" value="соль" checked> Соль</label>
+        <label class="check-item"><input type="checkbox" value="чёрный перец" checked> Чёрный перец</label>
+        <label class="check-item"><input type="checkbox" value="сахар" checked> Сахар</label>
+        <label class="check-item"><input type="checkbox" value="растительное масло" checked> Растительное масло</label>
+        <label class="check-item"><input type="checkbox" value="вода" checked> Вода</label>
+      </div>
+      <label for="customStaples">Другие постоянные продукты (необязательно)</label>
+      <input id="customStaples" placeholder="Например: чеснок, паприка">
+      <p class="kitchen-note">Настройки кухонной базы сохраняются на этом устройстве.</p>
+    </details>
+
+    <label for="mealType" style="margin-top:16px">Что хочется приготовить?</label>
+    <select id="mealType">
+      <option value="Любое удачное блюдо">На усмотрение ИИ-Шефа</option>
+      <option value="Быстрый завтрак">Быстрый завтрак</option>
+      <option value="Сытный обед или ужин">Сытный обед или ужин</option>
+      <option value="Выпечка или десерт">Выпечка или десерт</option>
+      <option value="Закуска или салат">Закуска или салат</option>
+    </select>
+
+    <label for="pantryServings" style="margin-top:14px">Количество порций</label>
+    <select id="pantryServings">
+      <option value="2">2 порции</option>
+      <option value="4" selected>4 порции</option>
+      <option value="6">6 порций</option>
+      <option value="8">8 порций</option>
+    </select>
+
+    <label for="pantryWishes" style="margin-top:14px">Пожелания (необязательно)</label>
+    <textarea id="pantryWishes" placeholder="Например: чтобы было сытно, с подливой, не слишком жирно..."></textarea>
+
+    <button id="pantryGenerateBtn" class="gen-btn" onclick="generateRecipe(false)">
+      🍳 Что можно приготовить?
+    </button>
+  </div>
+
+  <!-- РЕЗУЛЬТАТ -->
+  <div id="resultCard" class="card hidden">
+    <h2>👨‍🍳 Рецепт от ИИ-Шефа</h2>
+    <div id="resultText" class="result"></div>
+    <div id="tokenStats" class="token-box hidden"></div>
+    <div class="recipe-buttons">
+      <button id="regenerateBtn" class="secondary-btn" onclick="generateRecipe(true)">🔄 Другой вариант</button>
+      <button class="secondary-btn" onclick="copyCurrentRecipe()">📋 Копировать</button>
+      <button class="secondary-btn" onclick="shareCurrentRecipe()">📤 Поделиться</button>
+      <button id="shoppingCopyBtn" class="secondary-btn" onclick="copyShoppingList()">🛒 Список покупок</button>
+    </div>
+    <p class="kitchen-note">Понравившиеся рецепты автоматически сохраняются в «Мои рецепты».</p>
+  </div>
+
+  <!-- ИСТОРИЯ -->
+  <div id="historyScreen" class="card hidden">
+    <h2>📚 Мои рецепты</h2>
+    <div class="nav-row">
+      <button id="allHistoryBtn" class="nav-btn active" onclick="renderHistory('all')">Все рецепты</button>
+      <button id="favoritesHistoryBtn" class="nav-btn" onclick="renderHistory('favorites')">⭐ Избранное</button>
+    </div>
+    <div id="historyList"></div>
+    <button class="secondary-btn" onclick="exportRecipes()" style="margin-top:14px">💾 Экспортировать рецепты</button>
+    <button class="secondary-btn" onclick="document.getElementById('importFile').click()">📥 Импортировать рецепты</button>
+    <input type="file" id="importFile" accept=".json,application/json" class="hidden" onchange="importRecipes(event)">
+    <button class="secondary-btn small-danger" onclick="clearHistory()">🗑 Очистить историю</button>
+    <button class="secondary-btn small-danger" onclick="clearFavorites()">Удалить все избранные</button>
+  </div>
+</section>
+
+<!-- ПРИЁМКА ТОВАРА: СОХРАНЁН СУЩЕСТВУЮЩИЙ МОДУЛЬ -->
+<section id="invoice" class="hidden">
+  <button class="back-btn" onclick="goHome()">← На главную</button>
+  <div class="card">
+    <h2>📦 Приёмка товара</h2>
+    <p class="muted">
+      Загрузи фотографию накладной. ИИ попробует распознать наименования,
+      количество, единицы измерения и цены.
+    </p>
+    <label class="file-label">
+      📷 Выбрать фотографию накладной
+      <input type="file" id="invoiceFile" accept="image/jpeg,image/png,image/webp" onchange="previewInvoice(event)">
+    </label>
+    <img id="invoicePreview" class="photo-preview hidden" alt="Фото накладной">
+    <div id="invoiceFileInfo" class="muted"></div>
+    <button id="recognizeBtn" class="gen-btn" onclick="recognizeInvoice()" disabled>🔍 Распознать накладную</button>
+    <div id="invoiceStatus" class="status hidden"></div>
+  </div>
+  <div id="invoiceResultCard" class="card hidden">
+    <h3>Результат распознавания</h3>
+    <div id="invoiceSummary" class="muted"></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>№</th><th>Наименование товара</th><th>Артикул</th>
+            <th>Количество</th><th>Ед.</th><th>Цена за ед.</th><th>Сумма</th>
+          </tr>
+        </thead>
+        <tbody id="invoiceTableBody"></tbody>
+      </table>
+    </div>
+    <div id="invoiceWarnings"></div>
+    <button class="secondary-btn" onclick="copyInvoiceResult()" style="margin-top:14px">📋 Скопировать результат</button>
+  </div>
+</section>
+
 </div>
 
 <script>
 const WORKER_URL = 'https://chef-api.bosstayson24.workers.dev';
+
+const STORAGE_KEY = 'ai_bragina_data_v2';
+const MAX_HISTORY = 100;
+
+let currentRecipe = null;
+let currentRecipeId = null;
+let currentMode = null;
+let currentSignature = '';
+let sessionVariants = [];
+let sessionTokens = 0;
+let currentHistoryFilter = 'all';
+let lastRequestUsage = null;
+let isGenerating = false;
+
+let appData = {
+  version: 2,
+  history: [],
+  favorites: [],
+  kitchen: {
+    staples: ['соль','чёрный перец','сахар','растительное масло','вода'],
+    custom: ''
+  }
+};
+
+function loadAppData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.version === 2) {
+        appData.history = Array.isArray(parsed.history) ? parsed.history : [];
+        appData.favorites = Array.isArray(parsed.favorites) ? parsed.favorites : [];
+        appData.kitchen = parsed.kitchen || appData.kitchen;
+      }
+    }
+  } catch (e) {
+    console.warn('Не удалось прочитать локальные данные:',e);
+  }
+  applyKitchenSettings();
+}
+
+function saveAppData() {
+  try {
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));
+    return true;
+  } catch (e) {
+    console.error('Ошибка сохранения:',e);
+    alert('Не удалось сохранить данные на устройстве. Возможно, память браузера заполнена.');
+    return false;
+  }
+}
 
 function openModule(name) {
   document.getElementById('home').classList.add('hidden');
   document.getElementById('chef').classList.add('hidden');
   document.getElementById('invoice').classList.add('hidden');
   document.getElementById(name).classList.remove('hidden');
+  if (name === 'chef') showChefStart();
 }
 
 function goHome() {
@@ -445,26 +403,50 @@ function goHome() {
   document.getElementById('invoice').classList.add('hidden');
 }
 
+function showChefStart() {
+  document.getElementById('chefStart').classList.remove('hidden');
+  document.getElementById('specificForm').classList.add('hidden');
+  document.getElementById('pantryForm').classList.add('hidden');
+  document.getElementById('historyScreen').classList.add('hidden');
+  document.getElementById('chefTab').classList.add('active');
+  document.getElementById('historyTab').classList.remove('active');
+}
+
+function openChefMode(mode) {
+  currentMode = mode;
+  document.getElementById('chefStart').classList.add('hidden');
+  document.getElementById('historyScreen').classList.add('hidden');
+  document.getElementById('specificForm').classList.toggle('hidden',mode !== 'specific');
+  document.getElementById('pantryForm').classList.toggle('hidden',mode !== 'pantry');
+  document.getElementById('chefTab').classList.add('active');
+  document.getElementById('historyTab').classList.remove('active');
+}
+
+function showHistory() {
+  document.getElementById('chefStart').classList.add('hidden');
+  document.getElementById('specificForm').classList.add('hidden');
+  document.getElementById('pantryForm').classList.add('hidden');
+  document.getElementById('historyScreen').classList.remove('hidden');
+  document.getElementById('chefTab').classList.remove('active');
+  document.getElementById('historyTab').classList.add('active');
+  renderHistory(currentHistoryFilter);
+}
+
 function addProduct(listId,className,placeholder) {
   const row = document.createElement('div');
   row.className = 'item-row';
-
   const input = document.createElement('input');
   input.type = 'text';
   input.className = className;
   input.placeholder = placeholder;
-
   const button = document.createElement('button');
   button.className = 'del-btn';
   button.textContent = '×';
   button.type = 'button';
   button.onclick = () => row.remove();
-
   row.append(input,button);
   document.getElementById(listId).appendChild(row);
 }
-
-// ИИ-ШЕФ
 
 function getInputValues(className) {
   return Array.from(document.querySelectorAll('.' + className))
@@ -472,9 +454,33 @@ function getInputValues(className) {
     .filter(Boolean);
 }
 
+function getKitchenStaples() {
+  return Array.from(document.querySelectorAll('#staplesChecks input:checked'))
+    .map(input => input.value);
+}
+
+function applyKitchenSettings() {
+  const staples = appData.kitchen?.staples || [];
+  document.querySelectorAll('#staplesChecks input').forEach(input => {
+    input.checked = staples.includes(input.value);
+  });
+  document.getElementById('customStaples').value = appData.kitchen?.custom || '';
+}
+
+function saveKitchenSettings() {
+  appData.kitchen = {
+    staples: getKitchenStaples(),
+    custom: document.getElementById('customStaples').value.trim()
+  };
+  saveAppData();
+}
+
+document.getElementById('staplesChecks').addEventListener('change',saveKitchenSettings);
+document.getElementById('customStaples').addEventListener('change',saveKitchenSettings);
+
+// Сопоставление названий ингредиентов для проверки состава.
 function normalizeIngredient(value) {
   let text = String(value || '').toLowerCase().trim();
-
   text = text.replace(/\([^)]*\)/g,' ');
   text = text.replace(/\d+(?:[.,]\d+)?\s*(грамм(?:а|ов)?|г|кг|мл|л|литр(?:а|ов)?|шт\.?|штук(?:а|и)?|ст\.?\s*л\.?|ч\.?\s*л\.?)/gi,' ');
   text = text.replace(/\b(по вкусу|для подачи|для украшения|примерно|немного|щепотка|щепотки)\b/gi,' ');
@@ -488,259 +494,266 @@ function normalizeIngredient(value) {
     'томат':'помидор',
     'огурцы':'огурец',
     'яйца':'яйцо',
-    'курица':'курица',
     'куриное мясо':'курица',
     'куриное филе':'курица',
     'лук репчатый':'лук',
     'репчатый лук':'лук',
     'сахарный песок':'сахар',
-    'вода питьевая':'вода'
+    'масло растительное':'растительное масло',
+    'чёрный перец молотый':'чёрный перец',
+    'черный перец':'чёрный перец'
   };
-
-  if (aliases[text]) text = aliases[text];
-
-  const forms = {
-    'яйца':'яйцо',
-    'помидоры':'помидор',
-    'томаты':'помидор',
-    'огурцы':'огурец',
-    'картошка':'картофель',
-    'макароны':'макароны',
-    'спагетти':'спагетти'
-  };
-
-  if (forms[text]) text = forms[text];
-
-  return text;
+  return aliases[text] || text;
 }
 
 function ingredientIsAllowed(candidate,allowedIngredients) {
   const candidateName = normalizeIngredient(candidate);
-
   if (!candidateName) return false;
-
-  return allowedIngredients.some(item => {
-    const allowedName = normalizeIngredient(item);
-
-    if (!allowedName) return false;
-
-    return candidateName === allowedName;
-  });
+  return allowedIngredients.some(item => normalizeIngredient(item) === candidateName);
 }
 
-function showRecipeCards(recipes) {
-  const resultText = document.getElementById('resultText');
-  resultText.innerHTML = '';
-
-  recipes.forEach((recipe,index) => {
-    const card = document.createElement('div');
-    card.className = 'recipe-card';
-
-    const title = document.createElement('h3');
-    title.textContent = (index === 0 ? '⭐ Лучший вариант: ' : '🍽 Альтернатива: ') + recipe.title;
-    card.appendChild(title);
-
-    const ingredientsSection = document.createElement('div');
-    ingredientsSection.className = 'recipe-section';
-
-    const ingredientsTitle = document.createElement('strong');
-    ingredientsTitle.textContent = '🧺 Ингредиенты';
-    ingredientsSection.appendChild(ingredientsTitle);
-
-    const ingredientsList = document.createElement('ul');
-
-    recipe.ingredients.forEach(item => {
-      const li = document.createElement('li');
-      li.textContent = item.name + (item.amount ? ' — ' + item.amount : '');
-      ingredientsList.appendChild(li);
-    });
-
-    ingredientsSection.appendChild(ingredientsList);
-    card.appendChild(ingredientsSection);
-
-    const stepsSection = document.createElement('div');
-    stepsSection.className = 'recipe-section';
-
-    const stepsTitle = document.createElement('strong');
-    stepsTitle.textContent = '👨‍🍳 Приготовление';
-    stepsSection.appendChild(stepsTitle);
-
-    const stepsList = document.createElement('ol');
-
-    recipe.steps.forEach(step => {
-      const li = document.createElement('li');
-      li.textContent = step;
-      stepsList.appendChild(li);
-    });
-
-    stepsSection.appendChild(stepsList);
-    card.appendChild(stepsSection);
-
-    if (recipe.time) {
-      const time = document.createElement('div');
-      time.className = 'recipe-meta';
-      time.textContent = '⏱ Время приготовления: ' + recipe.time;
-      card.appendChild(time);
-    }
-
-    if (recipe.result) {
-      const result = document.createElement('div');
-      result.className = 'recipe-meta';
-      result.textContent = '✨ Результат: ' + recipe.result;
-      card.appendChild(result);
-    }
-
-    resultText.appendChild(card);
-  });
-}
-
-function showTokenUsage(usage) {
-  const box = document.getElementById('tokenUsage');
-
-  if (!usage) {
-    box.textContent = 'Расход токенов: сервер не передал статистику использования.';
-    box.classList.remove('hidden');
-    return;
+function getCurrentInputs() {
+  if (currentMode === 'specific') {
+    return {
+      mode:'specific',
+      dish:document.getElementById('dishName').value.trim(),
+      servings:document.getElementById('specificServings').value,
+      wishes:document.getElementById('specificWishes').value.trim(),
+      equipment:document.getElementById('specificEquipment').value,
+      time:document.getElementById('specificTime').value,
+      difficulty:document.getElementById('specificDifficulty').value
+    };
   }
 
-  const inputTokens = Number(usage.prompt_tokens);
-  const outputTokens = Number(usage.completion_tokens);
-  const totalTokens = Number(usage.total_tokens);
-
-  box.innerHTML =
-    '<strong>📊 Расход токенов Groq</strong><br>' +
-    'Входные: ' + (Number.isFinite(inputTokens) ? inputTokens : 'нет данных') + '<br>' +
-    'Выходные: ' + (Number.isFinite(outputTokens) ? outputTokens : 'нет данных') + '<br>' +
-    '<strong>Всего: ' + (Number.isFinite(totalTokens) ? totalTokens : 'нет данных') + '</strong>';
-
-  box.classList.remove('hidden');
+  const main = getInputValues('main-prod-input');
+  const extras = getInputValues('extra-prod-input');
+  const staples = getKitchenStaples();
+  const custom = document.getElementById('customStaples').value
+    .split(',')
+    .map(x => x.trim())
+    .filter(Boolean);
+  return {
+    mode:'pantry',
+    main,
+    extras,
+    staples:[...staples,...custom],
+    mealType:document.getElementById('mealType').value,
+    servings:document.getElementById('pantryServings').value,
+    wishes:document.getElementById('pantryWishes').value.trim()
+  };
 }
 
-async function generateRecipe() {
-  const mainProducts = getInputValues('main-prod-input');
-  const extraProducts = getInputValues('extra-prod-input');
+function signatureForInputs(inputs) {
+  return JSON.stringify(inputs);
+}
 
-  if (!mainProducts.length) {
+function setGenerationButtons(disabled) {
+  document.getElementById('specificGenerateBtn').disabled = disabled;
+  document.getElementById('pantryGenerateBtn').disabled = disabled;
+  document.getElementById('regenerateBtn').disabled = disabled;
+}
+
+function makeSystemPrompt(inputs) {
+  if (inputs.mode === 'specific') {
+    return `Ты профессиональный шеф-повар и технолог общественного питания.
+Создай один полноценный, проверенный по логике приготовления рецепт указанного пользователем блюда.
+
+ВАЖНО:
+- Это режим конкретного блюда. Не ограничивайся продуктами пользователя: он готов купить всё необходимое.
+- Сохраняй идентичность заказанного блюда. Не подменяй его другим блюдом.
+- Подбирай ингредиенты, пропорции и технологию так, чтобы результат действительно получился вкусным.
+- Указывай точные количества продуктов, включая специи, соусы и масло, если они нужны.
+- Учитывай количество порций, оборудование, время и пожелания.
+- Давай реалистичные температуры, длительность и признаки готовности.
+- Для мяса и птицы соблюдай пищевую безопасность.
+- Не придумывай невозможные сочетания и не указывай взаимоисключающие действия.
+- Шагов должно быть столько, сколько реально нужно для качественного результата.
+- Список покупок должен включать все ингредиенты с количеством.
+- Если есть предыдущие варианты, создай заметно отличающийся способ приготовления или вариант рецепта, но не меняй само заказанное блюдо.
+- Не повторяй предыдущие варианты, их основные приёмы и сочетания.
+- Не добавляй длинных вступлений и общих фраз.
+- Отвечай на русском.
+
+Верни только JSON:
+{
+ "title":"Название блюда",
+ "servings":"Количество порций",
+ "difficulty":"Сложность",
+ "time":"Общее время",
+ "ingredients":[{"name":"Продукт","amount":"Количество"}],
+ "steps":["Шаг 1","Шаг 2"],
+ "result":"Какой результат получится",
+ "tips":["Полезный конкретный совет"],
+ "shopping_list":["Продукт — количество"],
+ "improvements":[]
+}`;
+  }
+
+  return `Ты профессиональный шеф-повар. Твоя задача — придумать одно действительно вкусное и реалистичное блюдо из продуктов пользователя.
+
+СТРОГИЕ ПРАВИЛА:
+- Разрешены ТОЛЬКО продукты из переданных списков: основные продукты, дополнительные ингредиенты и кухонная база.
+- Не считай соль, перец, масло, сахар, воду, специи и любые другие продукты доступными автоматически. Они разрешены только если перечислены.
+- Нельзя добавлять отсутствующие продукты в состав, шаги приготовления, украшение, соус или подачу.
+- Названия ингредиентов в составе должны соответствовать разрешённым продуктам.
+- Не используй продукты, которых нет в списках, даже если они кажутся обязательными.
+- Если блюдо нельзя качественно приготовить из имеющегося набора, выбери более подходящее блюдо или честно сообщи об ограничении.
+- Не маскируй отсутствующие ингредиенты словами «по желанию».
+- Дополнительные продукты, которые могли бы улучшить блюдо, можно указать ТОЛЬКО отдельно в improvements. Они не должны попадать в ingredients или steps.
+- По возможности используй основные продукты.
+- Указывай реалистичные пропорции, технологию, температуру и признаки готовности.
+- Учитывай количество порций и пожелания.
+- Если есть предыдущие варианты, предложи другое блюдо или существенно другую технику, а не просто переименуй прежнее.
+- Не повторяй предыдущие варианты.
+- Пиши на русском, компактно и понятно.
+
+Верни только JSON:
+{
+ "title":"Название блюда",
+ "servings":"Количество порций",
+ "difficulty":"Сложность",
+ "time":"Общее время",
+ "ingredients":[{"name":"Продукт из разрешённого списка","amount":"Количество"}],
+ "steps":["Шаг 1","Шаг 2"],
+ "result":"Ожидаемый результат",
+ "tips":["Полезный совет"],
+ "shopping_list":[],
+ "improvements":["Дополнительный продукт — зачем он может пригодиться"]
+}`;
+}
+
+function makeUserPrompt(inputs) {
+  const previous = sessionVariants.length
+    ? sessionVariants.slice(-7).map((item,i) =>
+        (i+1)+'. '+item.title+' — '+item.summary
+      ).join('\n')
+    : 'Предыдущих вариантов нет.';
+
+  if (inputs.mode === 'specific') {
+    return `ЗАКАЗАННОЕ БЛЮДО: ${inputs.dish}
+ПОРЦИИ: ${inputs.servings}
+ПОЖЕЛАНИЯ: ${inputs.wishes || 'Нет особых пожеланий'}
+ТЕХНИКА: ${inputs.equipment}
+ОГРАНИЧЕНИЕ ПО ВРЕМЕНИ: ${inputs.time}
+СЛОЖНОСТЬ: ${inputs.difficulty}
+
+ПРЕДЫДУЩИЕ ВАРИАНТЫ, КОТОРЫЕ НУЖНО НЕ ПОВТОРЯТЬ:
+${previous}
+
+Создай один качественный рецепт именно этого блюда. Если это повторная генерация, измени подход, технологию или состав в разумных пределах, сохранив узнаваемость блюда.`;
+  }
+
+  return `ОСНОВНЫЕ ПРОДУКТЫ:
+${inputs.main.join(', ')}
+
+ДОПОЛНИТЕЛЬНЫЕ РАЗРЕШЁННЫЕ ИНГРЕДИЕНТЫ:
+${inputs.extras.length ? inputs.extras.join(', ') : 'Нет'}
+
+КУХОННАЯ БАЗА — РАЗРЕШЁННЫЕ ПРОДУКТЫ:
+${inputs.staples.length ? inputs.staples.join(', ') : 'Ничего не выбрано'}
+
+ЖЕЛАЕМЫЙ ТИП БЛЮДА: ${inputs.mealType}
+ПОРЦИИ: ${inputs.servings}
+ПОЖЕЛАНИЯ: ${inputs.wishes || 'Нет особых пожеланий'}
+
+ПРЕДЫДУЩИЕ ВАРИАНТЫ, КОТОРЫЕ НУЖНО НЕ ПОВТОРЯТЬ:
+${previous}
+
+Придумай один лучший рецепт строго из разрешённых продуктов. Дополнительные улучшения укажи отдельно.`;
+}
+
+function cleanJsonAnswer(answer) {
+  return String(answer || '').trim()
+    .replace(/^```json\s*/i,'')
+    .replace(/^```\s*/,'')
+    .replace(/\s*```$/,'');
+}
+
+function validateRecipe(recipe,inputs) {
+  if (!recipe || typeof recipe.title !== 'string' ||
+      !Array.isArray(recipe.ingredients) ||
+      !Array.isArray(recipe.steps)) {
+    throw new Error('ИИ вернул рецепт в неправильном формате. Попробуй ещё раз.');
+  }
+  if (!recipe.title.trim() || !recipe.ingredients.length || !recipe.steps.length) {
+    throw new Error('В рецепте отсутствует название, состав или приготовление.');
+  }
+
+  if (inputs.mode === 'pantry') {
+    const allowed = [...inputs.main,...inputs.extras,...inputs.staples];
+    const violations = [];
+    recipe.ingredients.forEach(item => {
+      if (!item || typeof item.name !== 'string' ||
+          !ingredientIsAllowed(item.name,allowed)) {
+        violations.push(item?.name || 'неизвестный продукт');
+      }
+    });
+    if (violations.length) {
+      throw new Error('ИИ добавил незаявленные продукты: ' +
+        [...new Set(violations)].join(', ') +
+        '. Рецепт не показан, чтобы не нарушать твои условия. Нажми «Другой вариант».');
+    }
+  }
+
+  recipe.ingredients = recipe.ingredients.map(item => ({
+    name:String(item.name || ''),
+    amount:String(item.amount || 'по необходимости')
+  }));
+  recipe.steps = recipe.steps.map(String);
+  recipe.tips = Array.isArray(recipe.tips) ? recipe.tips.map(String) : [];
+  recipe.improvements = Array.isArray(recipe.improvements) ? recipe.improvements.map(String) : [];
+  recipe.shopping_list = Array.isArray(recipe.shopping_list)
+    ? recipe.shopping_list.map(String)
+    : recipe.ingredients.map(x => x.name+' — '+x.amount);
+  recipe.servings = String(recipe.servings || inputs.servings || '');
+  recipe.difficulty = String(recipe.difficulty || 'Не указана');
+  recipe.time = String(recipe.time || 'Не указано');
+  recipe.result = String(recipe.result || '');
+  return recipe;
+}
+
+async function generateRecipe(isRegeneration) {
+  if (isGenerating) return;
+
+  const inputs = getCurrentInputs();
+
+  if (inputs.mode === 'specific' && !inputs.dish) {
+    alert('Напиши, какое блюдо хочешь приготовить.');
+    return;
+  }
+  if (inputs.mode === 'pantry' && !inputs.main.length) {
     alert('Укажи хотя бы один основной продукт.');
     return;
   }
 
-  const allowedIngredients = [...mainProducts,...extraProducts];
-  const mealType = document.getElementById('mealType').value;
+  const signature = signatureForInputs(inputs);
+  if (signature !== currentSignature) {
+    currentSignature = signature;
+    sessionVariants = [];
+  }
 
-  const btn = document.getElementById('generateBtn');
+  if (!isRegeneration) sessionVariants = [];
+
+  isGenerating = true;
+  setGenerationButtons(true);
+
   const resultCard = document.getElementById('resultCard');
   const resultText = document.getElementById('resultText');
-  const tokenUsage = document.getElementById('tokenUsage');
-
-  btn.disabled = true;
-  btn.innerText = '⏳ Шеф подбирает лучший рецепт...';
+  const tokenStats = document.getElementById('tokenStats');
   resultCard.classList.remove('hidden');
-  resultText.innerText = 'Соединяюсь с ИИ-Шефом...';
-  tokenUsage.classList.add('hidden');
-  tokenUsage.textContent = '';
 
-  const systemPrompt = `
-Ты — профессиональный шеф-повар и технолог домашней кухни.
-Ты умеешь создавать действительно вкусные, реалистичные и выполнимые блюда из ограниченного набора продуктов.
+  if (!isRegeneration || !currentRecipe) {
+    resultText.innerText = '⏳ ИИ-Шеф подбирает рецепт и рассчитывает ингредиенты...';
+  } else {
+    resultText.insertAdjacentHTML('afterbegin',
+      '<div class="status" id="loadingNote">⏳ Ищем другой вариант. Предыдущий рецепт пока сохранён ниже.</div>');
+  }
 
-ТВОЯ ГЛАВНАЯ ЗАДАЧА:
-Не пытайся любой ценой придумать два рецепта.
-Сначала тщательно оцени, что реально можно приготовить из продуктов пользователя.
-Выбери ОДИН самый удачный рецепт.
-Второй рецепт добавляй только в том случае, если он действительно вкусный, полноценный и заметно отличается от первого.
-Разрешено вернуть только один рецепт. Максимум — два.
-
-СПИСКИ ПРОДУКТОВ:
-Пользователь указывает основные продукты и дополнительные ингредиенты.
-Оба списка являются единственным источником разрешённых продуктов.
-Основные продукты — основа блюда.
-Дополнительные ингредиенты — разрешённые добавки.
-
-СТРОГИЕ ОГРАНИЧЕНИЯ:
-1. Используй только продукты, прямо указанные пользователем в обоих списках.
-2. Не добавляй соль, сахар, масло, воду, перец, специи, муку, яйца, соусы, зелень или другие продукты, если пользователь их не указал.
-3. Нельзя считать какие-либо продукты стандартными или подразумеваемыми.
-4. Не добавляй ингредиенты для жарки, варки, украшения, подачи или соуса, если их нет в списках.
-5. Не предлагай необязательные добавки.
-6. Не упоминай незаявленные продукты даже в шагах приготовления.
-7. Не маскируй посторонний продукт под частью другого ингредиента.
-8. Названия ингредиентов в составе должны соответствовать продуктам пользователя.
-9. Не придумывай продукты ради того, чтобы рецепт выглядел полноценным.
-10. Если без отсутствующего ингредиента блюдо невозможно приготовить нормально, не предлагай такое блюдо.
-
-ТРЕБОВАНИЯ К ВКУСУ И ТЕХНОЛОГИИ:
-1. Предлагай блюда, которые человек действительно захочет приготовить и съесть.
-2. Учитывай совместимость продуктов и их естественный вкус.
-3. Указывай реалистичные пропорции и количество каждого ингредиента.
-4. Не делай блюдо водянистым, сухим, сырым внутри, переваренным или испорченным по текстуре.
-5. Правильно выбирай способ обработки продуктов: жарка, тушение, варка, запекание или другой подходящий способ.
-6. Указывай понятную последовательность действий.
-7. Если важны температура, нагрев или время, обязательно указывай их.
-8. Не предлагай опасные или сомнительные способы приготовления.
-9. Не обещай хрустящую корочку, если технология и состав её не обеспечивают.
-10. Учитывай, что у пользователя может не быть ничего, кроме перечисленных продуктов. Не рассчитывай на дополнительные ингредиенты.
-
-ВЫБОР РЕЦЕПТОВ:
-1. Первый рецепт — самый удачный из возможных.
-2. Второй рецепт — только если он действительно хорош и отличается от первого способом приготовления или результатом.
-3. Не делай второй рецепт просто ради количества.
-4. Не повторяй одно блюдо под разными названиями.
-5. Если продуктов мало, честно верни один рецепт.
-6. Если из продуктов невозможно приготовить нормальное блюдо, верни пустой массив recipes и объясни причину в message.
-7. По возможности используй основные продукты, но не порти рецепт ради использования каждого продукта.
-
-ФОРМАТ ОТВЕТА:
-Верни только корректный JSON, без Markdown и пояснений вне JSON.
-
-Структура:
-{
-  "recipes": [
-    {
-      "title": "Название блюда",
-      "ingredients": [
-        {"name": "Название разрешённого продукта", "amount": "Количество"}
-      ],
-      "steps": [
-        "Первый шаг",
-        "Второй шаг",
-        "Третий шаг"
-      ],
-      "time": "Примерное время",
-      "result": "Какое блюдо получится по вкусу и текстуре"
-    }
-  ],
-  "message": "Короткое пояснение, если подходящего блюда нет или есть важное замечание"
-}
-
-ТРЕБОВАНИЯ К ОФОРМЛЕНИЮ:
-- Один или два рецепта, не больше.
-- В каждом рецепте 3–5 понятных шагов.
-- Ингредиенты с конкретными и реалистичными количествами.
-- Короткие, но информативные инструкции.
-- Время приготовления указывай реалистично.
-- Отвечай на русском языке.
-- Не пиши длинных вступлений.
-- Перед отправкой проверь, что в составе и шагах нет незаявленных продуктов.
-`;
-
-  const userPrompt = `
-ОСНОВНЫЕ ПРОДУКТЫ:
-${mainProducts.join(', ')}
-
-ДОПОЛНИТЕЛЬНЫЕ РАЗРЕШЁННЫЕ ИНГРЕДИЕНТЫ:
-${extraProducts.length ? extraProducts.join(', ') : 'НЕТ. Дополнительные ингредиенты запрещены.'}
-
-ЖЕЛАЕМЫЙ ТИП БЛЮДА:
-${mealType}
-
-Самостоятельно оцени возможные блюда.
-Верни лучший рецепт и только при наличии действительно хорошей альтернативы — второй.
-Не добавляй ничего, чего нет в списках.
-`;
+  const systemPrompt = makeSystemPrompt(inputs);
+  const userPrompt = makeUserPrompt(inputs);
 
   try {
-    const response = await fetch(WORKER_URL, {
+    const response = await fetch(WORKER_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
@@ -749,116 +762,411 @@ ${mealType}
           {role:'system',content:systemPrompt},
           {role:'user',content:userPrompt}
         ],
-        temperature:0.65,
-        max_tokens:1400,
+        temperature:0.8,
+        max_tokens:1600,
         response_format:{type:'json_object'}
       })
     });
 
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.error?.message || JSON.stringify(data));
     }
 
-    showTokenUsage(data.usage);
-
-    let answer = data.choices?.[0]?.message?.content;
-
-    if (!answer) {
-      throw new Error('Сервер вернул пустой ответ.');
-    }
-
-    answer = answer.trim()
-      .replace(/^```json\s*/i,'')
-      .replace(/^```\s*/,'')
-      .replace(/\s*```$/,'');
+    const answer = cleanJsonAnswer(data.choices?.[0]?.message?.content);
+    if (!answer) throw new Error('Сервер вернул пустой ответ.');
 
     let parsed;
-
     try {
       parsed = JSON.parse(answer);
-    } catch(error) {
+    } catch (e) {
       throw new Error('ИИ вернул ответ, который не удалось разобрать. Попробуй ещё раз.');
     }
 
-    if (!Array.isArray(parsed.recipes) || parsed.recipes.length > 2) {
-      throw new Error('ИИ вернул неправильное количество рецептов. Попробуй ещё раз.');
-    }
+    const recipe = validateRecipe(parsed,inputs);
 
-    if (parsed.recipes.length === 0) {
-      resultText.innerText =
-        parsed.message ||
-        'Из этих продуктов не удалось подобрать полноценное блюдо. Попробуй добавить ещё ингредиенты.';
-      return;
-    }
+    // Не заменяем предыдущий результат до успешной проверки нового.
+    currentRecipe = recipe;
+    currentMode = inputs.mode;
+    currentRecipeId = 'r_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
 
-    const violations = [];
-
-    parsed.recipes.forEach((recipe,index) => {
-      if (
-        !recipe ||
-        typeof recipe.title !== 'string' ||
-        !Array.isArray(recipe.ingredients) ||
-        !Array.isArray(recipe.steps)
-      ) {
-        violations.push('Вариант ' + (index + 1) + ': неправильный формат рецепта.');
-        return;
-      }
-
-      if (
-        !recipe.ingredients.length ||
-        recipe.steps.length < 3 ||
-        recipe.steps.length > 5
-      ) {
-        violations.push(
-          'Вариант ' + (index + 1) + ': проверь количество ингредиентов или шагов.'
-        );
-        return;
-      }
-
-      recipe.ingredients.forEach(item => {
-        if (
-          !item ||
-          typeof item.name !== 'string' ||
-          !ingredientIsAllowed(item.name,allowedIngredients)
-        ) {
-          violations.push(
-            'Вариант ' + (index + 1) + ': запрещённый ингредиент «' +
-            (item?.name || 'неизвестно') + '».'
-          );
-        }
-      });
+    const summary = recipe.ingredients.slice(0,4).map(x => x.name).join(', ');
+    sessionVariants.push({
+      title:recipe.title,
+      summary:summary || recipe.steps[0] || ''
     });
 
-    if (violations.length) {
-      throw new Error(
-        'Проверка состава обнаружила незаявленные продукты:\n' +
-        violations.join('\n') +
-        '\nРецепты не показаны, чтобы не нарушать твои условия. Попробуй повторить запрос.'
-      );
+    const usage = data.usage || null;
+    lastRequestUsage = usage;
+    if (usage && Number.isFinite(Number(usage.total_tokens))) {
+      sessionTokens += Number(usage.total_tokens);
     }
 
-    showRecipeCards(parsed.recipes);
+    showRecipe(recipe,inputs.mode);
+    saveGeneratedRecipe(recipe,inputs.mode,inputs);
+    showTokenStats(usage);
+  } catch (error) {
+    const loading = document.getElementById('loadingNote');
+    if (loading) loading.remove();
 
-    if (parsed.message) {
-      const note = document.createElement('div');
-      note.className = 'status';
-      note.textContent = parsed.message;
-      resultText.appendChild(note);
+    if (currentRecipe && isRegeneration) {
+      const errorBox = document.createElement('div');
+      errorBox.className = 'warning';
+      errorBox.textContent = 'Не удалось получить другой вариант: ' + error.message +
+        ' Предыдущий рецепт остался на экране.';
+      resultText.prepend(errorBox);
+    } else {
+      resultText.innerText = 'Не удалось получить рецепт.\n\n' + error.message;
     }
-
-  } catch(error) {
-    resultText.innerText =
-      'Не удалось получить подходящий рецепт.\n\n' + error.message;
   } finally {
-    btn.disabled = false;
-    btn.innerText = '🍳 Что можно приготовить?';
+    isGenerating = false;
+    setGenerationButtons(false);
+    document.getElementById('specificGenerateBtn').innerText = '🍽️ Создать рецепт';
+    document.getElementById('pantryGenerateBtn').innerText = '🍳 Что можно приготовить?';
   }
 }
 
-// ПРИЁМКА ТОВАРА
+function createSection(title,items,ordered) {
+  if (!items || !items.length) return null;
+  const section = document.createElement('div');
+  section.className = 'recipe-section';
+  const heading = document.createElement('strong');
+  heading.textContent = title;
+  section.appendChild(heading);
+  const list = document.createElement(ordered ? 'ol' : 'ul');
+  items.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = String(item);
+    list.appendChild(li);
+  });
+  section.appendChild(list);
+  return section;
+}
 
+function showRecipe(recipe,mode) {
+  const resultText = document.getElementById('resultText');
+  resultText.innerHTML = '';
+
+  const card = document.createElement('div');
+  card.className = 'recipe-card';
+
+  const title = document.createElement('h3');
+  title.textContent = '🍽️ ' + recipe.title;
+  card.appendChild(title);
+
+  const meta = document.createElement('div');
+  meta.className = 'recipe-meta';
+  meta.textContent = '👥 ' + recipe.servings +
+    ' · 📊 ' + recipe.difficulty +
+    ' · ⏱ ' + recipe.time;
+  card.appendChild(meta);
+
+  const ingredients = recipe.ingredients.map(item => item.name+' — '+item.amount);
+  card.appendChild(createSection('🧺 Ингредиенты',ingredients,false));
+  card.appendChild(createSection('👨‍🍳 Приготовление',recipe.steps,true));
+
+  if (recipe.result) {
+    const result = document.createElement('div');
+    result.className = 'recipe-section';
+    const heading = document.createElement('strong');
+    heading.textContent = '✨ Что получится';
+    const text = document.createElement('div');
+    text.textContent = recipe.result;
+    result.append(heading,text);
+    card.appendChild(result);
+  }
+
+  if (recipe.tips.length) {
+    card.appendChild(createSection('💡 Советы шефа',recipe.tips,false));
+  }
+
+  if (mode === 'specific') {
+    card.appendChild(createSection('🛒 Список покупок',recipe.shopping_list,false));
+  } else if (recipe.improvements.length) {
+    card.appendChild(createSection('➕ Чем можно улучшить (не входит в рецепт)',recipe.improvements,false));
+  }
+
+  resultText.appendChild(card);
+
+  const shoppingButton = document.getElementById('shoppingCopyBtn');
+  shoppingButton.classList.toggle('hidden',mode !== 'specific');
+
+  document.getElementById('resultCard').classList.remove('hidden');
+}
+
+function showTokenStats(usage) {
+  const box = document.getElementById('tokenStats');
+  box.classList.remove('hidden');
+
+  if (usage) {
+    const prompt = Number(usage.prompt_tokens);
+    const completion = Number(usage.completion_tokens);
+    const total = Number(usage.total_tokens);
+    box.textContent =
+      '📊 Последний запрос: входные — ' + (Number.isFinite(prompt) ? prompt : 'нет данных') +
+      ' · выходные — ' + (Number.isFinite(completion) ? completion : 'нет данных') +
+      ' · всего — ' + (Number.isFinite(total) ? total : 'нет данных') +
+      '\n📈 Расход этой сессии: ' + sessionTokens + ' токенов';
+  } else {
+    box.textContent = '📊 Статистика токенов для последнего запроса не получена от сервера.\n' +
+      '📈 Подтверждённый расход этой сессии: ' + sessionTokens + ' токенов.';
+  }
+}
+
+function saveGeneratedRecipe(recipe,mode,inputs) {
+  const entry = {
+    id:currentRecipeId,
+    title:recipe.title,
+    mode,
+    date:new Date().toISOString(),
+    recipe,
+    inputs
+  };
+  appData.history.unshift(entry);
+  appData.history = appData.history.slice(0,MAX_HISTORY);
+  saveAppData();
+}
+
+function isFavorite(id) {
+  return appData.favorites.includes(id);
+}
+
+function renderHistory(filter) {
+  currentHistoryFilter = filter;
+  document.getElementById('allHistoryBtn').classList.toggle('active',filter === 'all');
+  document.getElementById('favoritesHistoryBtn').classList.toggle('active',filter === 'favorites');
+
+  const list = document.getElementById('historyList');
+  list.innerHTML = '';
+
+  let entries = appData.history;
+  if (filter === 'favorites') {
+    entries = entries.filter(item => appData.favorites.includes(item.id));
+  }
+
+  if (!entries.length) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.textContent = filter === 'favorites'
+      ? 'Здесь пока нет избранных рецептов. Отмечай звёздочкой те, которые понравились.'
+      : 'История пока пуста. Создай первый рецепт в ИИ-Шефе.';
+    list.appendChild(empty);
+    return;
+  }
+
+  entries.forEach(entry => {
+    const item = document.createElement('div');
+    item.className = 'history-item';
+
+    const title = document.createElement('strong');
+    title.textContent = (isFavorite(entry.id) ? '⭐ ' : '') + entry.title;
+    item.appendChild(title);
+
+    const date = document.createElement('small');
+    date.textContent = new Date(entry.date).toLocaleString('ru-RU') +
+      ' · ' + (entry.mode === 'specific' ? 'Конкретное блюдо' : 'Из продуктов');
+    item.appendChild(date);
+
+    const actions = document.createElement('div');
+    actions.className = 'history-actions';
+
+    const open = document.createElement('button');
+    open.textContent = 'Открыть';
+    open.onclick = () => openSavedRecipe(entry.id);
+
+    const favorite = document.createElement('button');
+    favorite.textContent = isFavorite(entry.id) ? '⭐ Убрать' : '☆ В избранное';
+    favorite.className = isFavorite(entry.id) ? 'favorite-btn' : '';
+    favorite.onclick = () => toggleFavorite(entry.id);
+
+    const share = document.createElement('button');
+    share.textContent = '📤 Отправить';
+    share.onclick = () => shareRecipeEntry(entry);
+
+    const remove = document.createElement('button');
+    remove.textContent = '🗑';
+    remove.onclick = () => deleteRecipe(entry.id);
+
+    actions.append(open,favorite,share,remove);
+    item.appendChild(actions);
+    list.appendChild(item);
+  });
+}
+
+function openSavedRecipe(id) {
+  const entry = appData.history.find(x => x.id === id);
+  if (!entry) return;
+
+  currentRecipe = entry.recipe;
+  currentRecipeId = entry.id;
+  currentMode = entry.mode;
+
+  document.getElementById('historyScreen').classList.add('hidden');
+  document.getElementById('chefStart').classList.add('hidden');
+  document.getElementById('specificForm').classList.toggle('hidden',entry.mode !== 'specific');
+  document.getElementById('pantryForm').classList.toggle('hidden',entry.mode !== 'pantry');
+  document.getElementById('chefTab').classList.add('active');
+  document.getElementById('historyTab').classList.remove('active');
+
+  showRecipe(entry.recipe,entry.mode);
+  document.getElementById('tokenStats').classList.add('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleFavorite(id) {
+  if (isFavorite(id)) {
+    appData.favorites = appData.favorites.filter(x => x !== id);
+  } else {
+    appData.favorites.push(id);
+  }
+  saveAppData();
+  renderHistory(currentHistoryFilter);
+}
+
+function deleteRecipe(id) {
+  if (!confirm('Удалить этот рецепт из истории?')) return;
+  appData.history = appData.history.filter(x => x.id !== id);
+  appData.favorites = appData.favorites.filter(x => x !== id);
+  saveAppData();
+  renderHistory(currentHistoryFilter);
+}
+
+function clearHistory() {
+  if (!confirm('Удалить всю историю рецептов? Избранное останется, если рецепты ещё сохранены в истории.')) return;
+  appData.history = [];
+  appData.favorites = [];
+  saveAppData();
+  renderHistory(currentHistoryFilter);
+}
+
+function clearFavorites() {
+  if (!confirm('Убрать все рецепты из избранного?')) return;
+  appData.favorites = [];
+  saveAppData();
+  renderHistory(currentHistoryFilter);
+}
+
+function recipeToText(entry) {
+  const r = entry.recipe;
+  let text = '🍽️ ' + r.title + '\n';
+  text += 'Порции: ' + (r.servings || '') + '\n';
+  text += 'Сложность: ' + (r.difficulty || '') + '\n';
+  text += 'Время: ' + (r.time || '') + '\n\n';
+  text += '🧺 ИНГРЕДИЕНТЫ:\n';
+  r.ingredients.forEach(x => text += '• ' + x.name + ' — ' + x.amount + '\n');
+  text += '\n👨‍🍳 ПРИГОТОВЛЕНИЕ:\n';
+  r.steps.forEach((x,i) => text += (i+1) + '. ' + x + '\n');
+  if (r.result) text += '\n✨ РЕЗУЛЬТАТ:\n' + r.result + '\n';
+  if (r.tips?.length) text += '\n💡 СОВЕТЫ:\n' + r.tips.map(x=>'• '+x).join('\n');
+  if (entry.mode === 'specific' && r.shopping_list?.length) {
+    text += '\n\n🛒 СПИСОК ПОКУПОК:\n' + r.shopping_list.map(x=>'• '+x).join('\n');
+  }
+  if (entry.mode === 'pantry' && r.improvements?.length) {
+    text += '\n\n➕ ЧЕМ МОЖНО УЛУЧШИТЬ:\n' + r.improvements.map(x=>'• '+x).join('\n');
+  }
+  text += '\n\nСоздано в AI-БРАГИНА';
+  return text;
+}
+
+function getCurrentEntry() {
+  if (!currentRecipe) return null;
+  return {
+    id:currentRecipeId || 'current',
+    title:currentRecipe.title,
+    mode:currentMode || 'pantry',
+    recipe:currentRecipe
+  };
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    alert('Скопировано!');
+  } catch (e) {
+    const area = document.createElement('textarea');
+    area.value = text;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+    alert('Скопировано!');
+  }
+}
+
+function copyCurrentRecipe() {
+  const entry = getCurrentEntry();
+  if (entry) copyText(recipeToText(entry));
+}
+
+function copyShoppingList() {
+  if (!currentRecipe?.shopping_list?.length) return;
+  copyText('🛒 СПИСОК ПОКУПОК: ' + currentRecipe.title + '\n\n' +
+    currentRecipe.shopping_list.map(x=>'• '+x).join('\n'));
+}
+
+async function shareRecipeEntry(entry) {
+  const text = recipeToText(entry);
+  if (navigator.share) {
+    try {
+      await navigator.share({title:entry.title,text});
+    } catch (e) {
+      if (e.name !== 'AbortError') copyText(text);
+    }
+  } else {
+    copyText(text);
+  }
+}
+
+async function shareCurrentRecipe() {
+  const entry = getCurrentEntry();
+  if (entry) await shareRecipeEntry(entry);
+}
+
+function exportRecipes() {
+  const backup = {
+    version:2,
+    exportedAt:new Date().toISOString(),
+    history:appData.history,
+    favorites:appData.favorites,
+    kitchen:appData.kitchen
+  };
+  const blob = new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'AI-BRAGINA-recipes.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importRecipes(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!Array.isArray(data.history)) throw new Error('В файле нет списка рецептов.');
+      const existing = new Set(appData.history.map(x=>x.id));
+      const imported = data.history.filter(x =>
+        x && x.id && x.recipe && typeof x.title === 'string' && !existing.has(x.id)
+      );
+      appData.history = [...imported,...appData.history].slice(0,MAX_HISTORY);
+      if (Array.isArray(data.favorites)) {
+        appData.favorites = [...new Set([...appData.favorites,...data.favorites])];
+      }
+      saveAppData();
+      renderHistory(currentHistoryFilter);
+      alert('Импортировано рецептов: ' + imported.length);
+    } catch (e) {
+      alert('Не удалось импортировать файл: ' + e.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ПРИЁМКА ТОВАРА — прежняя логика
 let invoiceBase64 = null;
 let invoiceResultText = '';
 
@@ -883,7 +1191,6 @@ function previewInvoice(event) {
   }
 
   const allowedTypes = ['image/jpeg','image/png','image/webp'];
-
   if (!allowedTypes.includes(file.type)) {
     alert('Выбери фотографию JPG, PNG или WEBP.');
     event.target.value = '';
@@ -901,22 +1208,18 @@ function previewInvoice(event) {
   }
 
   const reader = new FileReader();
-
   reader.onload = () => {
     if (typeof reader.result !== 'string') {
       alert('Не удалось прочитать фотографию.');
       return;
     }
-
     invoiceBase64 = reader.result;
     preview.src = reader.result;
     preview.classList.remove('hidden');
-    info.innerText =
-      'Файл: ' + file.name +
-      ' · Размер: ' + (file.size / 1024 / 1024).toFixed(2) + ' МБ';
+    info.innerText = 'Файл: ' + file.name + ' · Размер: ' +
+      (file.size / 1024 / 1024).toFixed(2) + ' МБ';
     button.disabled = false;
   };
-
   reader.onerror = () => alert('Ошибка чтения фотографии.');
   reader.readAsDataURL(file);
 }
@@ -934,60 +1237,49 @@ async function recognizeInvoice() {
   button.disabled = true;
   button.innerText = '⏳ ИИ изучает накладную...';
   status.classList.remove('hidden');
-  status.innerText =
-    'Отправляем фотографию в Vision-модель Groq.\n' +
-    'ИИ изучает таблицу. Это может занять некоторое время.';
+  status.innerText = 'Отправляем фотографию в Vision-модель Groq.\nИИ изучает таблицу. Это может занять некоторое время.';
   resultCard.classList.add('hidden');
 
   const systemPrompt = `
-Ты специалист по распознаванию товарных накладных,
-счетов и таблиц с товарами.
-
+Ты специалист по распознаванию товарных накладных, счетов и таблиц с товарами.
 Прочитай фотографию и извлеки ВСЕ товарные строки.
-
 ПРАВИЛА:
 1. Не пропускай строки таблицы.
 2. Не объединяй разные товары.
 3. Сохраняй наименования максимально близко к оригиналу.
-4. Извлекай количество, единицу измерения,
-цену за единицу и сумму строки.
+4. Извлекай количество, единицу измерения, цену за единицу и сумму строки.
 5. Если есть артикул, извлеки его.
 6. Не вычисляй наценку, розничную цену или прибыль.
 7. Не придумывай отсутствующие цифры и названия.
 8. Неразборчивые или отсутствующие значения обозначай null.
 9. Не путай цену за единицу с суммой строки.
 10. Каждая строка таблицы должна быть отражена отдельно.
-11. Если строка есть, но текст не читается,
-не удаляй её — добавь uncertain=true.
+11. Если строка есть, но текст не читается, не удаляй её — добавь uncertain=true.
 12. Обрабатывай только видимую страницу.
-
 Верни только JSON:
-
 {
-  "document_type": "тип документа или неизвестно",
-  "items": [
-    {
-      "row_number": 1,
-      "name": "наименование товара",
-      "article": null,
-      "quantity": "количество или null",
-      "unit": "единица измерения или null",
-      "unit_price": "цена за единицу или null",
-      "total": "сумма строки или null",
-      "uncertain": false,
-      "note": null
-    }
-  ],
-  "warnings": [],
-  "general_comment": "краткий комментарий"
+ "document_type":"тип документа или неизвестно",
+ "items":[
+  {
+   "row_number":1,
+   "name":"наименование товара",
+   "article":null,
+   "quantity":"количество или null",
+   "unit":"единица измерения или null",
+   "unit_price":"цена за единицу или null",
+   "total":"сумма строки или null",
+   "uncertain":false,
+   "note":null
+  }
+ ],
+ "warnings":[],
+ "general_comment":"краткий комментарий"
 }
-
-Все значения должны соответствовать фотографии.
-Не добавляй пояснения за пределами JSON.
+Все значения должны соответствовать фотографии. Не добавляй пояснения за пределами JSON.
 `;
 
   try {
-    const response = await fetch(WORKER_URL, {
+    const response = await fetch(WORKER_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
@@ -997,14 +1289,8 @@ async function recognizeInvoice() {
           {
             role:'user',
             content:[
-              {
-                type:'text',
-                text:'Распознай накладную. Извлеки все товарные строки и верни JSON.'
-              },
-              {
-                type:'image_url',
-                image_url:{url:invoiceBase64}
-              }
+              {type:'text',text:'Распознай накладную. Извлеки все товарные строки и верни JSON.'},
+              {type:'image_url',image_url:{url:invoiceBase64}}
             ]
           }
         ],
@@ -1015,27 +1301,16 @@ async function recognizeInvoice() {
     });
 
     const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || JSON.stringify(data));
 
-    if (!response.ok) {
-      throw new Error(data.error?.message || JSON.stringify(data));
-    }
-
-    let answer = data.choices?.[0]?.message?.content;
+    let answer = cleanJsonAnswer(data.choices?.[0]?.message?.content);
     if (!answer) throw new Error('Модель вернула пустой ответ.');
-
-    answer = answer.trim()
-      .replace(/^```json\s*/i,'')
-      .replace(/^```\s*/,'')
-      .replace(/\s*```$/,'');
 
     let parsed;
     try {
       parsed = JSON.parse(answer);
-    } catch(e) {
-      throw new Error(
-        'Ответ модели пришёл, но JSON не удалось разобрать. ' +
-        'Возможно, ответ обрезан лимитом токенов. Попробуй ещё раз.'
-      );
+    } catch (e) {
+      throw new Error('Ответ модели пришёл, но JSON не удалось разобрать. Возможно, ответ обрезан лимитом токенов. Попробуй ещё раз.');
     }
 
     if (!Array.isArray(parsed.items)) {
@@ -1044,22 +1319,15 @@ async function recognizeInvoice() {
 
     try {
       showInvoiceResult(parsed);
-    } catch(displayError) {
-      console.error('Ошибка отображения:', displayError);
-      throw new Error(
-        'ИИ вернул ответ, но сайт не смог показать таблицу: ' +
-        displayError.message
-      );
+    } catch (displayError) {
+      console.error('Ошибка отображения:',displayError);
+      throw new Error('ИИ вернул ответ, но сайт не смог показать таблицу: ' + displayError.message);
     }
 
-    status.innerText =
-      'Распознавание завершено. Найдено строк: ' +
-      parsed.items.length + '.';
-
-  } catch(error) {
-    console.error('Ошибка распознавания:', error);
-    status.innerText =
-      'Не удалось завершить распознавание.\n\n' + error.message;
+    status.innerText = 'Распознавание завершено. Найдено строк: ' + parsed.items.length + '.';
+  } catch (error) {
+    console.error('Ошибка распознавания:',error);
+    status.innerText = 'Не удалось завершить распознавание.\n\n' + error.message;
   } finally {
     button.disabled = false;
     button.innerText = '🔍 Распознать накладную';
@@ -1078,17 +1346,14 @@ function showInvoiceResult(data) {
 
   tableBody.innerHTML = '';
   warningsBox.innerHTML = '';
-
   const items = Array.isArray(data.items) ? data.items : [];
 
-  summary.textContent =
-    'Тип документа: ' + (data.document_type || 'Не определён') +
+  summary.textContent = 'Тип документа: ' + (data.document_type || 'Не определён') +
     '. Строк распознано: ' + items.length +
     (data.general_comment ? '. ' + data.general_comment : '');
 
   items.forEach((item,index) => {
     const tr = document.createElement('tr');
-
     const values = [
       item.row_number ?? index + 1,
       item.name ?? 'Не распознано',
@@ -1105,24 +1370,19 @@ function showInvoiceResult(data) {
       tr.appendChild(td);
     });
 
-    if (item.uncertain) {
-      tr.style.background = '#fffbeb';
-    }
-
+    if (item.uncertain) tr.style.background = '#fffbeb';
     tableBody.appendChild(tr);
 
     if (item.uncertain || item.note) {
       const note = document.createElement('div');
       note.className = 'warning';
-      note.textContent =
-        'Строка ' + (item.row_number ?? index + 1) +
+      note.textContent = 'Строка ' + (item.row_number ?? index + 1) +
         ': ' + (item.note || 'Есть неуверенно распознанные данные.');
       warningsBox.appendChild(note);
     }
   });
 
   const warnings = Array.isArray(data.warnings) ? data.warnings : [];
-
   warnings.forEach(message => {
     const warning = document.createElement('div');
     warning.className = 'warning';
@@ -1136,20 +1396,10 @@ function showInvoiceResult(data) {
 
 async function copyInvoiceResult() {
   if (!invoiceResultText) return;
-
-  try {
-    await navigator.clipboard.writeText(invoiceResultText);
-    alert('Результат скопирован.');
-  } catch(error) {
-    const area = document.createElement('textarea');
-    area.value = invoiceResultText;
-    document.body.appendChild(area);
-    area.select();
-    document.execCommand('copy');
-    area.remove();
-    alert('Результат скопирован.');
-  }
+  await copyText(invoiceResultText);
 }
+
+// Старт приложения
+loadAppData();
 </script>
 </body>
-</html>
