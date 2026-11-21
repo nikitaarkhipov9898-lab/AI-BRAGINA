@@ -13,7 +13,6 @@
   --text:#1e293b;
   --muted:#64748b;
   --border:#e2e8f0;
-  --green:#15803d;
 }
 * {
   box-sizing:border-box;
@@ -25,28 +24,16 @@ body {
   background:var(--bg);
   color:var(--text);
 }
-.container {
-  max-width:600px;
-  margin:0 auto;
-}
+.container {max-width:600px;margin:0 auto;}
 .header {
   display:flex;
   justify-content:space-between;
   align-items:center;
   margin-bottom:18px;
 }
-h1 {
-  font-size:23px;
-  margin:0;
-}
-h2 {
-  font-size:19px;
-  margin:0 0 12px;
-}
-h3 {
-  font-size:16px;
-  margin:0 0 10px;
-}
+h1 {font-size:23px;margin:0;}
+h2 {font-size:19px;margin:0 0 12px;}
+h3 {font-size:16px;margin:0 0 10px;}
 .badge {
   background:#dcfce7;
   color:#166534;
@@ -75,9 +62,6 @@ h3 {
   text-align:left;
   cursor:pointer;
   min-height:125px;
-}
-.module:active {
-  transform:scale(.98);
 }
 .module-icon {
   font-size:30px;
@@ -149,9 +133,7 @@ input,select {
   cursor:pointer;
   margin-top:12px;
 }
-.gen-btn:disabled {
-  opacity:.6;
-}
+.gen-btn:disabled {opacity:.6;}
 .secondary-btn {
   width:100%;
   padding:11px;
@@ -173,9 +155,7 @@ input,select {
   padding:8px 0;
   cursor:pointer;
 }
-.hidden {
-  display:none!important;
-}
+.hidden {display:none!important;}
 .result {
   white-space:pre-wrap;
   line-height:1.5;
@@ -199,6 +179,8 @@ input,select {
   font-size:14px;
   line-height:1.5;
   margin-top:12px;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
 }
 .table-wrap {
   overflow-x:auto;
@@ -217,10 +199,7 @@ th,td {
   text-align:left;
   vertical-align:top;
 }
-th {
-  background:#f1f5f9;
-  font-weight:700;
-}
+th {background:#f1f5f9;font-weight:700;}
 .warning {
   color:#b45309;
   background:#fffbeb;
@@ -245,9 +224,7 @@ th {
   font-weight:600;
   cursor:pointer;
 }
-.file-label input {
-  display:none;
-}
+.file-label input {display:none;}
 @media(max-width:380px) {
   .module-grid {grid-template-columns:1fr;}
 }
@@ -261,19 +238,16 @@ th {
     <span class="badge">Онлайн</span>
   </div>
 
-  <!-- ГЛАВНАЯ -->
   <section id="home">
     <div class="card">
       <h2>Твои помощники</h2>
       <p class="muted">Выбери нужный инструмент.</p>
-
       <div class="module-grid">
         <button class="module" onclick="openModule('chef')">
           <span class="module-icon">🍳</span>
           <strong>ИИ-Шеф</strong>
           <small>Рецепты из продуктов, которые есть дома</small>
         </button>
-
         <button class="module" onclick="openModule('invoice')">
           <span class="module-icon">📦</span>
           <strong>Приёмка товара</strong>
@@ -283,15 +257,11 @@ th {
     </div>
   </section>
 
-  <!-- ИИ-ШЕФ -->
   <section id="chef" class="hidden">
     <button class="back-btn" onclick="goHome()">← На главную</button>
-
     <div class="card">
       <h2>🍳 ИИ-Шеф на кухне</h2>
-
       <label>Какие продукты есть дома?</label>
-
       <div id="productsList">
         <div class="item-row">
           <input type="text" class="prod-input" placeholder="Например: колбаса">
@@ -301,9 +271,7 @@ th {
           <button class="del-btn" onclick="this.parentElement.remove()">×</button>
         </div>
       </div>
-
       <button class="add-btn" onclick="addProduct()">+ Добавить ещё продукт</button>
-
       <label style="margin-top:16px">Что хочется приготовить?</label>
       <select id="mealType">
         <option value="Любое вкусное блюдо">На усмотрение ИИ-Шефа</option>
@@ -311,59 +279,42 @@ th {
         <option value="Сытный ужин">Сытный ужин</option>
         <option value="Выпечка или десерт">Выпечка или десерт</option>
       </select>
-
       <button id="generateBtn" class="gen-btn" onclick="generateRecipe()">
         ✨ Придумать рецепт
       </button>
     </div>
-
     <div id="resultCard" class="card hidden">
       <label>Рецепт от вашего ИИ:</label>
       <div id="resultText" class="result"></div>
     </div>
   </section>
 
-  <!-- ПРИЁМКА ТОВАРА -->
   <section id="invoice" class="hidden">
     <button class="back-btn" onclick="goHome()">← На главную</button>
-
     <div class="card">
       <h2>📦 Приёмка товара</h2>
       <p class="muted">
         Загрузи фотографию накладной. ИИ попробует распознать
         наименования, количество, единицы измерения и цены.
       </p>
-
       <label class="file-label">
         📷 Выбрать фотографию накладной
-        <input
-          type="file"
-          id="invoiceFile"
+        <input type="file" id="invoiceFile"
           accept="image/jpeg,image/png,image/webp"
-          onchange="previewInvoice(event)"
-        >
+          onchange="previewInvoice(event)">
       </label>
-
       <img id="invoicePreview" class="photo-preview hidden" alt="Фото накладной">
-
       <div id="invoiceFileInfo" class="muted"></div>
-
-      <button
-        id="recognizeBtn"
-        class="gen-btn"
-        onclick="recognizeInvoice()"
-        disabled
-      >
+      <button id="recognizeBtn" class="gen-btn"
+        onclick="recognizeInvoice()" disabled>
         🔍 Распознать накладную
       </button>
-
       <div id="invoiceStatus" class="status hidden"></div>
     </div>
 
     <div id="invoiceResultCard" class="card hidden">
       <h3>Результат распознавания</h3>
       <div id="invoiceSummary" class="muted"></div>
-
       <div class="table-wrap">
         <table>
           <thead>
@@ -379,14 +330,12 @@ th {
           <tbody id="invoiceTableBody"></tbody>
         </table>
       </div>
-
       <div id="invoiceWarnings"></div>
       <button class="secondary-btn" onclick="copyInvoiceResult()" style="margin-top:14px">
         📋 Скопировать результат
       </button>
     </div>
   </section>
-
 </div>
 
 <script>
@@ -408,31 +357,23 @@ function goHome() {
 function addProduct() {
   const row = document.createElement('div');
   row.className = 'item-row';
-
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'prod-input';
   input.placeholder = 'Введите продукт...';
-
   const button = document.createElement('button');
   button.className = 'del-btn';
   button.textContent = '×';
   button.onclick = () => row.remove();
-
   row.append(input, button);
   document.getElementById('productsList').appendChild(row);
 }
 
-// -----------------------------
 // ИИ-ШЕФ
-// -----------------------------
-
 async function generateRecipe() {
   const products = Array.from(
     document.querySelectorAll('.prod-input')
-  )
-  .map(input => input.value.trim())
-  .filter(Boolean);
+  ).map(input => input.value.trim()).filter(Boolean);
 
   if (!products.length) {
     alert('Напишите хотя бы один продукт!');
@@ -450,21 +391,20 @@ async function generateRecipe() {
 
   const systemPrompt = `
 Ты строгий домашний шеф-повар.
-Твоя задача — придумать блюдо ИСКЛЮЧИТЕЛЬНО
-из продуктов, которые пользователь перечислил.
+Придумывай блюда ИСКЛЮЧИТЕЛЬНО из продуктов пользователя.
 
 ЖЁСТКИЕ ПРАВИЛА:
-1. Используй только перечисленные пользователем продукты.
+1. Используй только перечисленные продукты.
 2. Запрещено добавлять любые другие продукты.
-3. Не добавляй даже «по желанию» сыр, масло, соль,
-перец, специи, воду, зелень, соусы, муку, яйца
-и любые другие ингредиенты, если пользователь их не указал.
+3. Не добавляй даже по желанию сыр, масло, соль, перец,
+специи, воду, зелень, соусы, муку, яйца и другие ингредиенты,
+если пользователь их не указал.
 4. Не подразумевай, что у пользователя есть базовые продукты.
 5. Каждый ингредиент должен присутствовать в исходном списке.
 6. Если полноценное блюдо невозможно, честно скажи об этом.
 7. Не предлагай украшения и добавки, которых нет в списке.
-8. Можно использовать разные способы нарезки,
-смешивания и термической обработки имеющихся продуктов.
+8. Можно использовать разные способы нарезки, смешивания
+и термической обработки имеющихся продуктов.
 
 ФОРМАТ:
 - Название блюда.
@@ -499,37 +439,24 @@ async function generateRecipe() {
     });
 
     const data = await response.json();
-
     if (!response.ok) {
-      throw new Error(
-        data.error?.message || JSON.stringify(data)
-      );
+      throw new Error(data.error?.message || JSON.stringify(data));
     }
 
     const answer = data.choices?.[0]?.message?.content;
-
-    if (!answer) {
-      throw new Error('Сервер вернул пустой ответ.');
-    }
-
+    if (!answer) throw new Error('Сервер вернул пустой ответ.');
     resultText.innerText = answer;
 
   } catch(error) {
-    resultText.innerText =
-      'Не удалось получить рецепт.\n\n' + error.message;
+    resultText.innerText = 'Не удалось получить рецепт.\n\n' + error.message;
   } finally {
     btn.disabled = false;
     btn.innerText = '✨ Придумать рецепт';
   }
 }
 
-// -----------------------------
 // ПРИЁМКА ТОВАРА
-// -----------------------------
-
 let invoiceBase64 = null;
-let invoiceMime = null;
-let invoiceFileName = '';
 let invoiceResultText = '';
 
 function previewInvoice(event) {
@@ -541,10 +468,7 @@ function previewInvoice(event) {
   const resultCard = document.getElementById('invoiceResultCard');
 
   invoiceBase64 = null;
-  invoiceMime = null;
-  invoiceFileName = '';
   invoiceResultText = '';
-
   button.disabled = true;
   status.classList.add('hidden');
   resultCard.classList.add('hidden');
@@ -555,11 +479,7 @@ function previewInvoice(event) {
     return;
   }
 
-  const allowedTypes = [
-    'image/jpeg',
-    'image/png',
-    'image/webp'
-  ];
+  const allowedTypes = ['image/jpeg','image/png','image/webp'];
 
   if (!allowedTypes.includes(file.type)) {
     alert('Выбери фотографию JPG, PNG или WEBP.');
@@ -569,8 +489,6 @@ function previewInvoice(event) {
     return;
   }
 
-  // Ограничиваем размер исходного файла,
-  // чтобы Base64-запрос не превысил лимит Groq.
   if (file.size > 14 * 1024 * 1024) {
     alert('Фотография слишком большая. Выбери файл до 14 МБ.');
     event.target.value = '';
@@ -579,35 +497,24 @@ function previewInvoice(event) {
     return;
   }
 
-  invoiceFileName = file.name;
-  invoiceMime = file.type;
-
   const reader = new FileReader();
 
   reader.onload = () => {
-    const dataUrl = reader.result;
-
-    if (typeof dataUrl !== 'string') {
+    if (typeof reader.result !== 'string') {
       alert('Не удалось прочитать фотографию.');
       return;
     }
 
-    invoiceBase64 = dataUrl;
-
-    preview.src = dataUrl;
+    invoiceBase64 = reader.result;
+    preview.src = reader.result;
     preview.classList.remove('hidden');
-
     info.innerText =
       'Файл: ' + file.name +
       ' · Размер: ' + (file.size / 1024 / 1024).toFixed(2) + ' МБ';
-
     button.disabled = false;
   };
 
-  reader.onerror = () => {
-    alert('Ошибка чтения фотографии.');
-  };
-
+  reader.onerror = () => alert('Ошибка чтения фотографии.');
   reader.readAsDataURL(file);
 }
 
@@ -623,39 +530,35 @@ async function recognizeInvoice() {
 
   button.disabled = true;
   button.innerText = '⏳ ИИ изучает накладную...';
-
   status.classList.remove('hidden');
   status.innerText =
     'Отправляем фотографию в Vision-модель Groq.\n' +
-    'Модель изучает таблицу и распознаёт строки. Это может занять некоторое время.';
-
+    'ИИ изучает таблицу. Это может занять некоторое время.';
   resultCard.classList.add('hidden');
 
   const systemPrompt = `
 Ты специалист по распознаванию товарных накладных,
 счетов и таблиц с товарами.
 
-Твоя задача — внимательно прочитать фотографию
-и извлечь из неё ВСЕ товарные строки.
+Прочитай фотографию и извлеки ВСЕ товарные строки.
 
-ВАЖНО:
+ПРАВИЛА:
 1. Не пропускай строки таблицы.
-2. Не объединяй разные товары в одну строку.
+2. Не объединяй разные товары.
 3. Сохраняй наименования максимально близко к оригиналу.
 4. Извлекай количество, единицу измерения,
 цену за единицу и сумму строки.
-5. Если артикул присутствует, извлеки его.
+5. Если есть артикул, извлеки его.
 6. Не вычисляй наценку, розничную цену или прибыль.
 7. Не придумывай отсутствующие цифры и названия.
-8. Если значение неразборчиво или отсутствует,
-верни null и укажи проблему в поле warnings.
-9. Не путай цену за единицу с суммой всей строки.
-10. Проверяй, что каждая строка таблицы отражена отдельно.
-11. Если фотография содержит несколько страниц,
-обрабатывай только видимую страницу.
-12. Если таблица неразборчива, честно сообщи об этом.
+8. Неразборчивые или отсутствующие значения обозначай null.
+9. Не путай цену за единицу с суммой строки.
+10. Каждая строка таблицы должна быть отражена отдельно.
+11. Если строка есть, но текст не читается,
+не удаляй её — добавь uncertain=true.
+12. Обрабатывай только видимую страницу.
 
-Верни только корректный JSON следующей структуры:
+Верни только JSON:
 
 {
   "document_type": "тип документа или неизвестно",
@@ -677,9 +580,7 @@ async function recognizeInvoice() {
 }
 
 Все значения должны соответствовать фотографии.
-Если строка есть, но текст не читается,
-не удаляй её — добавь её с uncertain=true.
-Не добавляй никаких пояснений за пределами JSON.
+Не добавляй пояснения за пределами JSON.
 `;
 
   try {
@@ -689,66 +590,46 @@ async function recognizeInvoice() {
       body:JSON.stringify({
         model:'qwen/qwen3.8-27b',
         messages:[
-          {
-            role:'system',
-            content:systemPrompt
-          },
+          {role:'system',content:systemPrompt},
           {
             role:'user',
             content:[
               {
                 type:'text',
-                text:
-                  'Распознай эту накладную. ' +
-                  'Извлеки все товарные строки и верни JSON ' +
-                  'строго по заданной структуре.'
+                text:'Распознай накладную. Извлеки все товарные строки и верни JSON.'
               },
               {
                 type:'image_url',
-                image_url:{
-                  url:invoiceBase64
-                }
+                image_url:{url:invoiceBase64}
               }
             ]
           }
         ],
         temperature:0.1,
-        max_tokens:5000,
-        response_format:{
-          type:'json_object'
-        }
+        max_tokens:800,
+        response_format:{type:'json_object'}
       })
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(
-        data.error?.message || JSON.stringify(data)
-      );
+      throw new Error(data.error?.message || JSON.stringify(data));
     }
 
     let answer = data.choices?.[0]?.message?.content;
+    if (!answer) throw new Error('Модель вернула пустой ответ.');
 
-    if (!answer) {
-      throw new Error('Модель вернула пустой ответ.');
-    }
-
-    // Убираем возможные Markdown-ограждения JSON.
     answer = answer.trim()
       .replace(/^```json\s*/i,'')
       .replace(/^```\s*/,'')
       .replace(/\s*```$/,'');
 
     let parsed;
-
     try {
       parsed = JSON.parse(answer);
     } catch(e) {
-      throw new Error(
-        'Модель вернула ответ, который не удалось разобрать как JSON. ' +
-        answer.slice(0,1000)
-      );
+      throw new Error('Не удалось разобрать JSON: ' + answer.slice(0,500));
     }
 
     if (!Array.isArray(parsed.items)) {
@@ -756,15 +637,13 @@ async function recognizeInvoice() {
     }
 
     showInvoiceResult(parsed);
-
     status.innerText =
       'Распознавание завершено. Найдено строк: ' +
       parsed.items.length + '.';
 
   } catch(error) {
     status.innerText =
-      'Не удалось распознать накладную.\n\n' +
-      error.message;
+      'Не удалось распознать накладную.\n\n' + error.message;
   } finally {
     button.disabled = false;
     button.innerText = '🔍 Распознать накладную';
@@ -787,7 +666,6 @@ function showInvoiceResult(data) {
 
   data.items.forEach((item,index) => {
     const tr = document.createElement('tr');
-
     const values = [
       item.row_number ?? index + 1,
       item.name ?? 'Не распознано',
@@ -797,16 +675,13 @@ function showInvoiceResult(data) {
       item.total ?? '—'
     ];
 
-    values.forEach((value) => {
+    values.forEach(value => {
       const td = document.createElement('td');
       td.textContent = String(value);
       tr.appendChild(td);
     });
 
-    if (item.uncertain) {
-      tr.style.background = '#fffbeb';
-    }
-
+    if (item.uncertain) tr.style.background = '#fffbeb';
     tableBody.appendChild(tr);
 
     if (item.uncertain || item.note) {
@@ -824,17 +699,11 @@ function showInvoiceResult(data) {
       const warning = document.createElement('div');
       warning.className = 'warning';
       warning.textContent = String(message);
-      warings.appendChild(warning);
+      warnings.appendChild(warning);
     });
   }
 
-  if (data.article) {
-    // Артикулы сохраняются в данных модели,
-    // но пока не выводятся отдельной колонкой.
-  }
-
   invoiceResultText = JSON.stringify(data,null,2);
-
   resultCard.classList.remove('hidden');
 }
 
@@ -857,4 +726,3 @@ async function copyInvoiceResult() {
 </script>
 </body>
 </html>
- 
