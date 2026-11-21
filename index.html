@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f4f6f9">
 <title>AI-БРАГИНА</title>
 <style>
 :root {
@@ -77,8 +78,8 @@ summary {font-size:13px;font-weight:700;cursor:pointer;}
 .history-item {border:1px solid var(--border);border-radius:11px;padding:12px;margin-top:9px;background:#fff;}
 .history-item strong {display:block;font-size:14px;line-height:1.4;}
 .history-item small {display:block;color:var(--muted);font-size:11px;margin-top:5px;}
-.history-actions {display:flex;gap:7px;margin-top:9px;}
-.history-actions button {flex:1;padding:8px 5px;border:0;border-radius:8px;background:#f1f5f9;font-size:12px;font-weight:600;}
+.history-actions {display:flex;gap:7px;margin-top:9px;flex-wrap:wrap;}
+.history-actions button {flex:1;min-width:65px;padding:8px 5px;border:0;border-radius:8px;background:#f1f5f9;font-size:12px;font-weight:600;}
 .favorite-btn {background:#fff7ed!important;color:#c2410c;}
 .recipe-buttons {display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
 .recipe-buttons button {margin:0;}
@@ -296,7 +297,7 @@ summary {font-size:13px;font-weight:700;cursor:pointer;}
   </div>
 </section>
 
-<!-- ПРИЁМКА ТОВАРА: СОХРАНЁН СУЩЕСТВУЮЩИЙ МОДУЛЬ -->
+<!-- ПРИЁМКА ТОВАРА: ЛОГИКА МОДУЛЯ СОХРАНЕНА -->
 <section id="invoice" class="hidden">
   <button class="back-btn" onclick="goHome()">← На главную</button>
   <div class="card">
@@ -336,8 +337,9 @@ summary {font-size:13px;font-weight:700;cursor:pointer;}
 </div>
 
 <script>
-const WORKER_URL = 'https://chef-api.bosstayson24.workers.dev';
+'use strict';
 
+const WORKER_URL = 'https://chef-api.bosstayson24.workers.dev';
 const STORAGE_KEY = 'ai_bragina_data_v2';
 const MAX_HISTORY = 100;
 
@@ -361,20 +363,59 @@ let appData = {
   }
 };
 
+function makeId() {
+  return 'r_' + Date.now() + '_' + Math.random().toString(36).slice(2,9);
+}
+
+function isValidRecipeEntry(entry) {
+  return !!(
+    entry &&
+    typeof entry === 'object' &&
+    typeof entry.id === 'string' &&
+    typeof entry.title === 'string' &&
+    entry.recipe &&
+    typeof entry.recipe === 'object' &&
+    Array.isArray(entry.recipe.ingredients) &&
+    Array.isArray(entry.recipe.steps) &&
+    (entry.mode === 'specific' || entry.mode === 'pantry')
+  );
+}
+
 function loadAppData() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
+
       if (parsed && parsed.version === 2) {
-        appData.history = Array.isArray(parsed.history) ? parsed.history : [];
-        appData.favorites = Array.isArray(parsed.favorites) ? parsed.favorites : [];
-        appData.kitchen = parsed.kitchen || appData.kitchen;
+        appData.history = Array.isArray(parsed.history)
+          ? parsed.history.filter(isValidRecipeEntry).slice(0,MAX_HISTORY)
+          : [];
+
+        const validIds = new Set(appData.history.map(item => item.id));
+
+        appData.favorites = Array.isArray(parsed.favorites)
+          ? [...new Set(parsed.favorites.filter(id =>
+              typeof id === 'string' && validIds.has(id)
+            ))]
+          : [];
+
+        if (parsed.kitchen && typeof parsed.kitchen === 'object') {
+          appData.kitchen = {
+            staples: Array.isArray(parsed.kitchen.staples)
+              ? parsed.kitchen.staples.filter(x => typeof x === 'string')
+              : appData.kitchen.staples,
+            custom: typeof parsed.kitchen.custom === 'string'
+              ? parsed.kitchen.custom
+              : ''
+          };
+        }
       }
     }
   } catch (e) {
     console.warn('Не удалось прочитать локальные данные:',e);
   }
+
   applyKitchenSettings();
 }
 
@@ -435,15 +476,19 @@ function showHistory() {
 function addProduct(listId,className,placeholder) {
   const row = document.createElement('div');
   row.className = 'item-row';
+
   const input = document.createElement('input');
   input.type = 'text';
   input.className = className;
   input.placeholder = placeholder;
+
   const button = document.createElement('button');
   button.className = 'del-btn';
   button.textContent = '×';
   button.type = 'button';
+  button.setAttribute('aria-label','Удалить продукт');
   button.onclick = () => row.remove();
+
   row.append(input,button);
   document.getElementById(listId).appendChild(row);
 }
@@ -461,10 +506,13 @@ function getKitchenStaples() {
 
 function applyKitchenSettings() {
   const staples = appData.kitchen?.staples || [];
+
   document.querySelectorAll('#staplesChecks input').forEach(input => {
     input.checked = staples.includes(input.value);
   });
-  document.getElementById('customStaples').value = appData.kitchen?.custom || '';
+
+  document.getElementById('customStaples').value =
+    appData.kitchen?.custom || '';
 }
 
 function saveKitchenSettings() {
@@ -478,9 +526,10 @@ function saveKitchenSettings() {
 document.getElementById('staplesChecks').addEventListener('change',saveKitchenSettings);
 document.getElementById('customStaples').addEventListener('change',saveKitchenSettings);
 
-// Сопоставление названий ингредиентов для проверки состава.
+// Нормализация названий продуктов для проверки состава.
 function normalizeIngredient(value) {
   let text = String(value || '').toLowerCase().trim();
+
   text = text.replace(/\([^)]*\)/g,' ');
   text = text.replace(/\d+(?:[.,]\d+)?\s*(грамм(?:а|ов)?|г|кг|мл|л|литр(?:а|ов)?|шт\.?|штук(?:а|и)?|ст\.?\s*л\.?|ч\.?\s*л\.?)/gi,' ');
   text = text.replace(/\b(по вкусу|для подачи|для украшения|примерно|немного|щепотка|щепотки)\b/gi,' ');
@@ -496,20 +545,29 @@ function normalizeIngredient(value) {
     'яйца':'яйцо',
     'куриное мясо':'курица',
     'куриное филе':'курица',
+    'филе курицы':'курица',
     'лук репчатый':'лук',
     'репчатый лук':'лук',
     'сахарный песок':'сахар',
     'масло растительное':'растительное масло',
     'чёрный перец молотый':'чёрный перец',
-    'черный перец':'чёрный перец'
+    'черный перец':'чёрный перец',
+    'перец чёрный':'чёрный перец',
+    'перец черный':'чёрный перец',
+    'говядина':'говядина',
+    'свинина':'свинина'
   };
+
   return aliases[text] || text;
 }
 
 function ingredientIsAllowed(candidate,allowedIngredients) {
   const candidateName = normalizeIngredient(candidate);
   if (!candidateName) return false;
-  return allowedIngredients.some(item => normalizeIngredient(item) === candidateName);
+
+  return allowedIngredients.some(item =>
+    normalizeIngredient(item) === candidateName
+  );
 }
 
 function getCurrentInputs() {
@@ -528,10 +586,12 @@ function getCurrentInputs() {
   const main = getInputValues('main-prod-input');
   const extras = getInputValues('extra-prod-input');
   const staples = getKitchenStaples();
+
   const custom = document.getElementById('customStaples').value
     .split(',')
     .map(x => x.trim())
     .filter(Boolean);
+
   return {
     mode:'pantry',
     main,
@@ -553,10 +613,102 @@ function setGenerationButtons(disabled) {
   document.getElementById('regenerateBtn').disabled = disabled;
 }
 
+function restoreRecipeInputs(entry) {
+  if (!entry || !entry.inputs) return;
+
+  const inputs = entry.inputs;
+
+  if (entry.mode === 'specific') {
+    document.getElementById('dishName').value = inputs.dish || '';
+    document.getElementById('specificServings').value = inputs.servings || '4';
+    document.getElementById('specificWishes').value = inputs.wishes || '';
+    document.getElementById('specificEquipment').value =
+      inputs.equipment || 'Обычная кухня: плита и духовка';
+    document.getElementById('specificTime').value =
+      inputs.time || 'Без ограничения времени';
+    document.getElementById('specificDifficulty').value =
+      inputs.difficulty || 'На усмотрение шефа';
+  } else {
+    const productsList = document.getElementById('productsList');
+    const extrasList = document.getElementById('extrasList');
+
+    productsList.innerHTML = '';
+    extrasList.innerHTML = '';
+
+    const main = Array.isArray(inputs.main) ? inputs.main : [];
+    const extras = Array.isArray(inputs.extras) ? inputs.extras : [];
+
+    (main.length ? main : ['']).forEach((value,index) => {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'main-prod-input';
+      input.placeholder = 'Введите основной продукт';
+      input.value = value;
+
+      row.appendChild(input);
+
+      if (index > 0) {
+        const button = document.createElement('button');
+        button.className = 'del-btn';
+        button.type = 'button';
+        button.textContent = '×';
+        button.onclick = () => row.remove();
+        row.appendChild(button);
+      }
+
+      productsList.appendChild(row);
+    });
+
+    (extras.length ? extras : ['']).forEach((value,index) => {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'extra-prod-input';
+      input.placeholder = 'Введите дополнительный ингредиент';
+      input.value = value;
+
+      row.appendChild(input);
+
+      if (index > 0) {
+        const button = document.createElement('button');
+        button.className = 'del-btn';
+        button.type = 'button';
+        button.textContent = '×';
+        button.onclick = () => row.remove();
+        row.appendChild(button);
+      }
+
+      extrasList.appendChild(row);
+    });
+
+    const selectedStaples = Array.isArray(inputs.staples) ? inputs.staples : [];
+    const defaultStaples = ['соль','чёрный перец','сахар','растительное масло','вода'];
+
+    document.querySelectorAll('#staplesChecks input').forEach(input => {
+      input.checked = selectedStaples.includes(input.value);
+    });
+
+    document.getElementById('customStaples').value =
+      selectedStaples.filter(item => !defaultStaples.includes(item)).join(', ');
+
+    document.getElementById('mealType').value =
+      inputs.mealType || 'Любое удачное блюдо';
+    document.getElementById('pantryServings').value = inputs.servings || '4';
+    document.getElementById('pantryWishes').value = inputs.wishes || '';
+  }
+
+  currentSignature = signatureForInputs(getCurrentInputs());
+}
+
 function makeSystemPrompt(inputs) {
   if (inputs.mode === 'specific') {
     return `Ты профессиональный шеф-повар и технолог общественного питания.
-Создай один полноценный, проверенный по логике приготовления рецепт указанного пользователем блюда.
+Создай один полноценный, технологически грамотный рецепт указанного пользователем блюда.
 
 ВАЖНО:
 - Это режим конкретного блюда. Не ограничивайся продуктами пользователя: он готов купить всё необходимое.
@@ -565,7 +717,11 @@ function makeSystemPrompt(inputs) {
 - Указывай точные количества продуктов, включая специи, соусы и масло, если они нужны.
 - Учитывай количество порций, оборудование, время и пожелания.
 - Давай реалистичные температуры, длительность и признаки готовности.
-- Для мяса и птицы соблюдай пищевую безопасность.
+- Учитывай вид мяса, часть туши и размер кусков. Жёсткое мясо может требовать длительного тушения, а не короткой обжарки.
+- Не указывай время приготовления, которое не соответствует выбранному продукту и технологии.
+- Не добавляй сахар без реальной кулинарной необходимости.
+- Не допускай повторного переваривания уже приготовленных продуктов.
+- Для птицы указывай безопасную степень готовности. Внутренняя температура птицы должна достигать 74 °C.
 - Не придумывай невозможные сочетания и не указывай взаимоисключающие действия.
 - Шагов должно быть столько, сколько реально нужно для качественного результата.
 - Список покупок должен включать все ингредиенты с количеством.
@@ -589,19 +745,24 @@ function makeSystemPrompt(inputs) {
 }`;
   }
 
-  return `Ты профессиональный шеф-повар. Твоя задача — придумать одно действительно вкусное и реалистичное блюдо из продуктов пользователя.
+  return `Ты профессиональный шеф-повар и технолог общественного питания. Твоя задача — придумать одно действительно вкусное и реалистичное блюдо из продуктов пользователя.
 
 СТРОГИЕ ПРАВИЛА:
 - Разрешены ТОЛЬКО продукты из переданных списков: основные продукты, дополнительные ингредиенты и кухонная база.
 - Не считай соль, перец, масло, сахар, воду, специи и любые другие продукты доступными автоматически. Они разрешены только если перечислены.
-- Нельзя добавлять отсутствующие продукты в состав, шаги приготовления, украшение, соус или подачу.
-- Названия ингредиентов в составе должны соответствовать разрешённым продуктам.
+- Нельзя добавлять отсутствующие продукты в состав, шаги, украшение, соус или подачу.
+- Не предлагай в шагах ингредиенты, которых нет в разрешённом списке. Например, не пиши «добавьте чеснок», если чеснок не указан.
+- Названия ингредиентов в составе должны соответствовать разрешённым продуктам. Не заменяй один продукт другим без разрешения.
 - Не используй продукты, которых нет в списках, даже если они кажутся обязательными.
 - Если блюдо нельзя качественно приготовить из имеющегося набора, выбери более подходящее блюдо или честно сообщи об ограничении.
 - Не маскируй отсутствующие ингредиенты словами «по желанию».
 - Дополнительные продукты, которые могли бы улучшить блюдо, можно указать ТОЛЬКО отдельно в improvements. Они не должны попадать в ingredients или steps.
-- По возможности используй основные продукты.
+- По возможности используй основные продукты, но не обязательно все, если сочетание будет неудачным.
 - Указывай реалистичные пропорции, технологию, температуру и признаки готовности.
+- Учитывай вид мяса, часть туши и размер кусков. Не назначай жёсткому мясу слишком короткое время приготовления.
+- Не добавляй сахар без реальной кулинарной необходимости.
+- Не допускай повторного переваривания уже приготовленных продуктов.
+- Для птицы соблюдай пищевую безопасность: внутренняя температура должна достигать 74 °C.
 - Учитывай количество порций и пожелания.
 - Если есть предыдущие варианты, предложи другое блюдо или существенно другую технику, а не просто переименуй прежнее.
 - Не повторяй предыдущие варианты.
@@ -659,7 +820,7 @@ ${inputs.staples.length ? inputs.staples.join(', ') : 'Ничего не выб�
 ПРЕДЫДУЩИЕ ВАРИАНТЫ, КОТОРЫЕ НУЖНО НЕ ПОВТОРЯТЬ:
 ${previous}
 
-Придумай один лучший рецепт строго из разрешённых продуктов. Дополнительные улучшения укажи отдельно.`;
+Придумай один лучший рецепт строго из разрешённых продуктов. Проверь каждый ингредиент и каждое действие: в шагах не должно быть ни одного незаявленного продукта. Дополнительные улучшения укажи отдельно.`;
 }
 
 function cleanJsonAnswer(answer) {
@@ -675,19 +836,26 @@ function validateRecipe(recipe,inputs) {
       !Array.isArray(recipe.steps)) {
     throw new Error('ИИ вернул рецепт в неправильном формате. Попробуй ещё раз.');
   }
+
   if (!recipe.title.trim() || !recipe.ingredients.length || !recipe.steps.length) {
     throw new Error('В рецепте отсутствует название, состав или приготовление.');
+  }
+
+  if (recipe.ingredients.length > 40 || recipe.steps.length > 35) {
+    throw new Error('ИИ вернул слишком большой или некорректный рецепт. Попробуй ещё раз.');
   }
 
   if (inputs.mode === 'pantry') {
     const allowed = [...inputs.main,...inputs.extras,...inputs.staples];
     const violations = [];
+
     recipe.ingredients.forEach(item => {
       if (!item || typeof item.name !== 'string' ||
           !ingredientIsAllowed(item.name,allowed)) {
         violations.push(item?.name || 'неизвестный продукт');
       }
     });
+
     if (violations.length) {
       throw new Error('ИИ добавил незаявленные продукты: ' +
         [...new Set(violations)].join(', ') +
@@ -696,19 +864,27 @@ function validateRecipe(recipe,inputs) {
   }
 
   recipe.ingredients = recipe.ingredients.map(item => ({
-    name:String(item.name || ''),
-    amount:String(item.amount || 'по необходимости')
+    name:String(item.name || '').trim(),
+    amount:String(item.amount || 'по необходимости').trim()
   }));
-  recipe.steps = recipe.steps.map(String);
-  recipe.tips = Array.isArray(recipe.tips) ? recipe.tips.map(String) : [];
-  recipe.improvements = Array.isArray(recipe.improvements) ? recipe.improvements.map(String) : [];
+
+  recipe.steps = recipe.steps.map(step => String(step).trim()).filter(Boolean);
+  recipe.tips = Array.isArray(recipe.tips)
+    ? recipe.tips.map(String).filter(Boolean)
+    : [];
+  recipe.improvements = Array.isArray(recipe.improvements)
+    ? recipe.improvements.map(String).filter(Boolean)
+    : [];
+
   recipe.shopping_list = Array.isArray(recipe.shopping_list)
-    ? recipe.shopping_list.map(String)
+    ? recipe.shopping_list.map(String).filter(Boolean)
     : recipe.ingredients.map(x => x.name+' — '+x.amount);
+
   recipe.servings = String(recipe.servings || inputs.servings || '');
   recipe.difficulty = String(recipe.difficulty || 'Не указана');
   recipe.time = String(recipe.time || 'Не указано');
   recipe.result = String(recipe.result || '');
+
   return recipe;
 }
 
@@ -721,18 +897,30 @@ async function generateRecipe(isRegeneration) {
     alert('Напиши, какое блюдо хочешь приготовить.');
     return;
   }
+
   if (inputs.mode === 'pantry' && !inputs.main.length) {
     alert('Укажи хотя бы один основной продукт.');
     return;
   }
 
   const signature = signatureForInputs(inputs);
+
+  // История вариантов сбрасывается только при изменении введённых данных.
   if (signature !== currentSignature) {
     currentSignature = signature;
     sessionVariants = [];
+    sessionTokens = 0;
   }
 
-  if (!isRegeneration) sessionVariants = [];
+  if (!isRegeneration) {
+    sessionVariants = [];
+    sessionTokens = 0;
+  }
+
+  if (isRegeneration && !currentRecipe) {
+    alert('Сначала создай первый рецепт.');
+    return;
+  }
 
   isGenerating = true;
   setGenerationButtons(true);
@@ -740,13 +928,21 @@ async function generateRecipe(isRegeneration) {
   const resultCard = document.getElementById('resultCard');
   const resultText = document.getElementById('resultText');
   const tokenStats = document.getElementById('tokenStats');
+
   resultCard.classList.remove('hidden');
 
   if (!isRegeneration || !currentRecipe) {
     resultText.innerText = '⏳ ИИ-Шеф подбирает рецепт и рассчитывает ингредиенты...';
+    tokenStats.classList.add('hidden');
   } else {
-    resultText.insertAdjacentHTML('afterbegin',
-      '<div class="status" id="loadingNote">⏳ Ищем другой вариант. Предыдущий рецепт пока сохранён ниже.</div>');
+    const oldNote = document.getElementById('loadingNote');
+    if (oldNote) oldNote.remove();
+
+    const note = document.createElement('div');
+    note.className = 'status';
+    note.id = 'loadingNote';
+    note.textContent = '⏳ Ищем другой вариант. Предыдущий рецепт пока сохранён ниже.';
+    resultText.prepend(note);
   }
 
   const systemPrompt = makeSystemPrompt(inputs);
@@ -768,15 +964,26 @@ async function generateRecipe(isRegeneration) {
       })
     });
 
-    const data = await response.json();
+    let data;
+
+    try {
+      data = await response.json();
+    } catch (parseError) {
+      throw new Error('Сервер вернул ответ, который не удалось прочитать. Попробуй ещё раз.');
+    }
+
     if (!response.ok) {
-      throw new Error(data.error?.message || JSON.stringify(data));
+      throw new Error(data.error?.message || data.message || 'Ошибка сервера: ' + response.status);
     }
 
     const answer = cleanJsonAnswer(data.choices?.[0]?.message?.content);
-    if (!answer) throw new Error('Сервер вернул пустой ответ.');
+
+    if (!answer) {
+      throw new Error('Сервер вернул пустой ответ.');
+    }
 
     let parsed;
+
     try {
       parsed = JSON.parse(answer);
     } catch (e) {
@@ -785,12 +992,15 @@ async function generateRecipe(isRegeneration) {
 
     const recipe = validateRecipe(parsed,inputs);
 
-    // Не заменяем предыдущий результат до успешной проверки нового.
+    // Заменяем предыдущий результат только после успешной проверки нового.
+    const newRecipeId = makeId();
+
     currentRecipe = recipe;
     currentMode = inputs.mode;
-    currentRecipeId = 'r_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+    currentRecipeId = newRecipeId;
 
     const summary = recipe.ingredients.slice(0,4).map(x => x.name).join(', ');
+
     sessionVariants.push({
       title:recipe.title,
       summary:summary || recipe.steps[0] || ''
@@ -798,6 +1008,7 @@ async function generateRecipe(isRegeneration) {
 
     const usage = data.usage || null;
     lastRequestUsage = usage;
+
     if (usage && Number.isFinite(Number(usage.total_tokens))) {
       sessionTokens += Number(usage.total_tokens);
     }
@@ -805,6 +1016,7 @@ async function generateRecipe(isRegeneration) {
     showRecipe(recipe,inputs.mode);
     saveGeneratedRecipe(recipe,inputs.mode,inputs);
     showTokenStats(usage);
+
   } catch (error) {
     const loading = document.getElementById('loadingNote');
     if (loading) loading.remove();
@@ -812,15 +1024,17 @@ async function generateRecipe(isRegeneration) {
     if (currentRecipe && isRegeneration) {
       const errorBox = document.createElement('div');
       errorBox.className = 'warning';
-      errorBox.textContent = 'Не удалось получить другой вариант: ' + error.message +
-        ' Предыдущий рецепт остался на экране.';
+      errorBox.textContent = 'Не удалось получить другой вариант: ' +
+        error.message + ' Предыдущий рецепт остался на экране.';
       resultText.prepend(errorBox);
     } else {
       resultText.innerText = 'Не удалось получить рецепт.\n\n' + error.message;
     }
+
   } finally {
     isGenerating = false;
     setGenerationButtons(false);
+
     document.getElementById('specificGenerateBtn').innerText = '🍽️ Создать рецепт';
     document.getElementById('pantryGenerateBtn').innerText = '🍳 Что можно приготовить?';
   }
@@ -828,17 +1042,22 @@ async function generateRecipe(isRegeneration) {
 
 function createSection(title,items,ordered) {
   if (!items || !items.length) return null;
+
   const section = document.createElement('div');
   section.className = 'recipe-section';
+
   const heading = document.createElement('strong');
   heading.textContent = title;
   section.appendChild(heading);
+
   const list = document.createElement(ordered ? 'ol' : 'ul');
+
   items.forEach(item => {
     const li = document.createElement('li');
     li.textContent = String(item);
     list.appendChild(li);
   });
+
   section.appendChild(list);
   return section;
 }
@@ -861,17 +1080,23 @@ function showRecipe(recipe,mode) {
     ' · ⏱ ' + recipe.time;
   card.appendChild(meta);
 
-  const ingredients = recipe.ingredients.map(item => item.name+' — '+item.amount);
+  const ingredients = recipe.ingredients.map(item =>
+    item.name+' — '+item.amount
+  );
+
   card.appendChild(createSection('🧺 Ингредиенты',ingredients,false));
   card.appendChild(createSection('👨‍🍳 Приготовление',recipe.steps,true));
 
   if (recipe.result) {
     const result = document.createElement('div');
     result.className = 'recipe-section';
+
     const heading = document.createElement('strong');
     heading.textContent = '✨ Что получится';
+
     const text = document.createElement('div');
     text.textContent = recipe.result;
+
     result.append(heading,text);
     card.appendChild(result);
   }
@@ -902,13 +1127,18 @@ function showTokenStats(usage) {
     const prompt = Number(usage.prompt_tokens);
     const completion = Number(usage.completion_tokens);
     const total = Number(usage.total_tokens);
+
     box.textContent =
-      '📊 Последний запрос: входные — ' + (Number.isFinite(prompt) ? prompt : 'нет данных') +
-      ' · выходные — ' + (Number.isFinite(completion) ? completion : 'нет данных') +
-      ' · всего — ' + (Number.isFinite(total) ? total : 'нет данных') +
+      '📊 Последний запрос: входные — ' +
+      (Number.isFinite(prompt) ? prompt : 'нет данных') +
+      ' · выходные — ' +
+      (Number.isFinite(completion) ? completion : 'нет данных') +
+      ' · всего — ' +
+      (Number.isFinite(total) ? total : 'нет данных') +
       '\n📈 Расход этой сессии: ' + sessionTokens + ' токенов';
   } else {
-    box.textContent = '📊 Статистика токенов для последнего запроса не получена от сервера.\n' +
+    box.textContent =
+      '📊 Статистика токенов для последнего запроса не получена от сервера.\n' +
       '📈 Подтверждённый расход этой сессии: ' + sessionTokens + ' токенов.';
   }
 }
@@ -920,10 +1150,15 @@ function saveGeneratedRecipe(recipe,mode,inputs) {
     mode,
     date:new Date().toISOString(),
     recipe,
-    inputs
+    inputs:JSON.parse(JSON.stringify(inputs))
   };
+
   appData.history.unshift(entry);
   appData.history = appData.history.slice(0,MAX_HISTORY);
+
+  const validIds = new Set(appData.history.map(item => item.id));
+  appData.favorites = appData.favorites.filter(id => validIds.has(id));
+
   saveAppData();
 }
 
@@ -933,6 +1168,7 @@ function isFavorite(id) {
 
 function renderHistory(filter) {
   currentHistoryFilter = filter;
+
   document.getElementById('allHistoryBtn').classList.toggle('active',filter === 'all');
   document.getElementById('favoritesHistoryBtn').classList.toggle('active',filter === 'favorites');
 
@@ -940,6 +1176,7 @@ function renderHistory(filter) {
   list.innerHTML = '';
 
   let entries = appData.history;
+
   if (filter === 'favorites') {
     entries = entries.filter(item => appData.favorites.includes(item.id));
   }
@@ -950,6 +1187,7 @@ function renderHistory(filter) {
     empty.textContent = filter === 'favorites'
       ? 'Здесь пока нет избранных рецептов. Отмечай звёздочкой те, которые понравились.'
       : 'История пока пуста. Создай первый рецепт в ИИ-Шефе.';
+
     list.appendChild(empty);
     return;
   }
@@ -963,8 +1201,14 @@ function renderHistory(filter) {
     item.appendChild(title);
 
     const date = document.createElement('small');
-    date.textContent = new Date(entry.date).toLocaleString('ru-RU') +
+    const parsedDate = new Date(entry.date);
+
+    date.textContent =
+      (Number.isNaN(parsedDate.getTime())
+        ? 'Дата неизвестна'
+        : parsedDate.toLocaleString('ru-RU')) +
       ' · ' + (entry.mode === 'specific' ? 'Конкретное блюдо' : 'Из продуктов');
+
     item.appendChild(date);
 
     const actions = document.createElement('div');
@@ -985,6 +1229,7 @@ function renderHistory(filter) {
 
     const remove = document.createElement('button');
     remove.textContent = '🗑';
+    remove.setAttribute('aria-label','Удалить рецепт');
     remove.onclick = () => deleteRecipe(entry.id);
 
     actions.append(open,favorite,share,remove);
@@ -1001,6 +1246,16 @@ function openSavedRecipe(id) {
   currentRecipeId = entry.id;
   currentMode = entry.mode;
 
+  restoreRecipeInputs(entry);
+
+  sessionVariants = [{
+    title:entry.recipe.title,
+    summary:entry.recipe.ingredients
+      .slice(0,4)
+      .map(x => x.name)
+      .join(', ')
+  }];
+
   document.getElementById('historyScreen').classList.add('hidden');
   document.getElementById('chefStart').classList.add('hidden');
   document.getElementById('specificForm').classList.toggle('hidden',entry.mode !== 'specific');
@@ -1010,6 +1265,7 @@ function openSavedRecipe(id) {
 
   showRecipe(entry.recipe,entry.mode);
   document.getElementById('tokenStats').classList.add('hidden');
+
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -1017,31 +1273,40 @@ function toggleFavorite(id) {
   if (isFavorite(id)) {
     appData.favorites = appData.favorites.filter(x => x !== id);
   } else {
-    appData.favorites.push(id);
+    if (appData.history.some(item => item.id === id)) {
+      appData.favorites.push(id);
+    }
   }
+
   saveAppData();
   renderHistory(currentHistoryFilter);
 }
 
 function deleteRecipe(id) {
-  if (!confirm('Удалить этот рецепт из истории?')) return;
+  if (!confirm('Удалить этот рецепт из истории и избранного?')) return;
+
   appData.history = appData.history.filter(x => x.id !== id);
   appData.favorites = appData.favorites.filter(x => x !== id);
+
   saveAppData();
   renderHistory(currentHistoryFilter);
 }
 
 function clearHistory() {
-  if (!confirm('Удалить всю историю рецептов? Избранное останется, если рецепты ещё сохранены в истории.')) return;
+  if (!confirm('Удалить всю историю рецептов и список избранного?')) return;
+
   appData.history = [];
   appData.favorites = [];
+
   saveAppData();
   renderHistory(currentHistoryFilter);
 }
 
 function clearFavorites() {
-  if (!confirm('Убрать все рецепты из избранного?')) return;
+  if (!confirm('Убрать все рецепты из избранного? Сама история рецептов сохранится.')) return;
+
   appData.favorites = [];
+
   saveAppData();
   renderHistory(currentHistoryFilter);
 }
@@ -1049,27 +1314,49 @@ function clearFavorites() {
 function recipeToText(entry) {
   const r = entry.recipe;
   let text = '🍽️ ' + r.title + '\n';
+
   text += 'Порции: ' + (r.servings || '') + '\n';
   text += 'Сложность: ' + (r.difficulty || '') + '\n';
   text += 'Время: ' + (r.time || '') + '\n\n';
+
   text += '🧺 ИНГРЕДИЕНТЫ:\n';
-  r.ingredients.forEach(x => text += '• ' + x.name + ' — ' + x.amount + '\n');
+
+  r.ingredients.forEach(x => {
+    text += '• ' + x.name + ' — ' + x.amount + '\n';
+  });
+
   text += '\n👨‍🍳 ПРИГОТОВЛЕНИЕ:\n';
-  r.steps.forEach((x,i) => text += (i+1) + '. ' + x + '\n');
-  if (r.result) text += '\n✨ РЕЗУЛЬТАТ:\n' + r.result + '\n';
-  if (r.tips?.length) text += '\n💡 СОВЕТЫ:\n' + r.tips.map(x=>'• '+x).join('\n');
+
+  r.steps.forEach((x,i) => {
+    text += (i+1) + '. ' + x + '\n';
+  });
+
+  if (r.result) {
+    text += '\n✨ РЕЗУЛЬТАТ:\n' + r.result + '\n';
+  }
+
+  if (r.tips?.length) {
+    text += '\n💡 СОВЕТЫ:\n' + r.tips.map(x=>'• '+x).join('\n');
+  }
+
   if (entry.mode === 'specific' && r.shopping_list?.length) {
-    text += '\n\n🛒 СПИСОК ПОКУПОК:\n' + r.shopping_list.map(x=>'• '+x).join('\n');
+    text += '\n\n🛒 СПИСОК ПОКУПОК:\n' +
+      r.shopping_list.map(x=>'• '+x).join('\n');
   }
+
   if (entry.mode === 'pantry' && r.improvements?.length) {
-    text += '\n\n➕ ЧЕМ МОЖНО УЛУЧШИТЬ:\n' + r.improvements.map(x=>'• '+x).join('\n');
+    text += '\n\n➕ ЧЕМ МОЖНО УЛУЧШИТЬ:\n' +
+      r.improvements.map(x=>'• '+x).join('\n');
   }
+
   text += '\n\nСоздано в AI-БРАГИНА';
+
   return text;
 }
 
 function getCurrentEntry() {
   if (!currentRecipe) return null;
+
   return {
     id:currentRecipeId || 'current',
     title:currentRecipe.title,
@@ -1080,16 +1367,30 @@ function getCurrentEntry() {
 
 async function copyText(text) {
   try {
-    await navigator.clipboard.writeText(text);
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      throw new Error('Буфер обмена недоступен');
+    }
+
     alert('Скопировано!');
   } catch (e) {
     const area = document.createElement('textarea');
     area.value = text;
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+
     document.body.appendChild(area);
     area.select();
-    document.execCommand('copy');
+
+    const copied = document.execCommand('copy');
     area.remove();
-    alert('Скопировано!');
+
+    if (copied) {
+      alert('Скопировано!');
+    } else {
+      alert('Не удалось скопировать автоматически. Попробуй выделить и скопировать текст вручную.');
+    }
   }
 }
 
@@ -1100,12 +1401,16 @@ function copyCurrentRecipe() {
 
 function copyShoppingList() {
   if (!currentRecipe?.shopping_list?.length) return;
-  copyText('🛒 СПИСОК ПОКУПОК: ' + currentRecipe.title + '\n\n' +
-    currentRecipe.shopping_list.map(x=>'• '+x).join('\n'));
+
+  copyText(
+    '🛒 СПИСОК ПОКУПОК: ' + currentRecipe.title + '\n\n' +
+    currentRecipe.shopping_list.map(x=>'• '+x).join('\n')
+  );
 }
 
 async function shareRecipeEntry(entry) {
   const text = recipeToText(entry);
+
   if (navigator.share) {
     try {
       await navigator.share({title:entry.title,text});
@@ -1130,39 +1435,102 @@ function exportRecipes() {
     favorites:appData.favorites,
     kitchen:appData.kitchen
   };
-  const blob = new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+
+  const blob = new Blob(
+    [JSON.stringify(backup,null,2)],
+    {type:'application/json'}
+  );
+
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
+
   a.href = url;
   a.download = 'AI-BRAGINA-recipes.json';
+
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url),1000);
 }
 
 function importRecipes(event) {
   const file = event.target.files?.[0];
   if (!file) return;
+
+  if (file.size > 10 * 1024 * 1024) {
+    alert('Файл слишком большой. Максимальный размер — 10 МБ.');
+    event.target.value = '';
+    return;
+  }
+
   const reader = new FileReader();
+
   reader.onload = () => {
     try {
       const data = JSON.parse(reader.result);
-      if (!Array.isArray(data.history)) throw new Error('В файле нет списка рецептов.');
-      const existing = new Set(appData.history.map(x=>x.id));
-      const imported = data.history.filter(x =>
-        x && x.id && x.recipe && typeof x.title === 'string' && !existing.has(x.id)
-      );
-      appData.history = [...imported,...appData.history].slice(0,MAX_HISTORY);
-      if (Array.isArray(data.favorites)) {
-        appData.favorites = [...new Set([...appData.favorites,...data.favorites])];
+
+      if (!data || !Array.isArray(data.history)) {
+        throw new Error('В файле нет списка рецептов.');
       }
+
+      const existing = new Set(appData.history.map(x => x.id));
+      const imported = [];
+      const importedIds = new Set();
+
+      data.history.forEach(entry => {
+        if (!isValidRecipeEntry(entry)) return;
+        if (existing.has(entry.id) || importedIds.has(entry.id)) return;
+
+        imported.push(entry);
+        importedIds.add(entry.id);
+      });
+
+      appData.history = [...imported,...appData.history].slice(0,MAX_HISTORY);
+
+      if (Array.isArray(data.favorites)) {
+        const validIds = new Set(appData.history.map(item => item.id));
+
+        appData.favorites = [...new Set([
+          ...appData.favorites,
+          ...data.favorites.filter(id =>
+            typeof id === 'string' && validIds.has(id)
+          )
+        ])];
+      }
+
+      if (data.kitchen && typeof data.kitchen === 'object') {
+        if (Array.isArray(data.kitchen.staples)) {
+          appData.kitchen.staples = data.kitchen.staples
+            .filter(x => typeof x === 'string');
+        }
+
+        if (typeof data.kitchen.custom === 'string') {
+          appData.kitchen.custom = data.kitchen.custom;
+        }
+      }
+
+      const validIds = new Set(appData.history.map(item => item.id));
+      appData.favorites = appData.favorites.filter(id => validIds.has(id));
+
       saveAppData();
+      applyKitchenSettings();
       renderHistory(currentHistoryFilter);
+
       alert('Импортировано рецептов: ' + imported.length);
+
     } catch (e) {
       alert('Не удалось импортировать файл: ' + e.message);
     }
+
     event.target.value = '';
   };
+
+  reader.onerror = () => {
+    alert('Не удалось прочитать файл.');
+    event.target.value = '';
+  };
+
   reader.readAsText(file);
 }
 
@@ -1191,6 +1559,7 @@ function previewInvoice(event) {
   }
 
   const allowedTypes = ['image/jpeg','image/png','image/webp'];
+
   if (!allowedTypes.includes(file.type)) {
     alert('Выбери фотографию JPG, PNG или WEBP.');
     event.target.value = '';
@@ -1208,18 +1577,23 @@ function previewInvoice(event) {
   }
 
   const reader = new FileReader();
+
   reader.onload = () => {
     if (typeof reader.result !== 'string') {
       alert('Не удалось прочитать фотографию.');
       return;
     }
+
     invoiceBase64 = reader.result;
     preview.src = reader.result;
     preview.classList.remove('hidden');
+
     info.innerText = 'Файл: ' + file.name + ' · Размер: ' +
       (file.size / 1024 / 1024).toFixed(2) + ' МБ';
+
     button.disabled = false;
   };
+
   reader.onerror = () => alert('Ошибка чтения фотографии.');
   reader.readAsDataURL(file);
 }
@@ -1236,8 +1610,10 @@ async function recognizeInvoice() {
 
   button.disabled = true;
   button.innerText = '⏳ ИИ изучает накладную...';
+
   status.classList.remove('hidden');
   status.innerText = 'Отправляем фотографию в Vision-модель Groq.\nИИ изучает таблицу. Это может занять некоторое время.';
+
   resultCard.classList.add('hidden');
 
   const systemPrompt = `
@@ -1301,12 +1677,19 @@ async function recognizeInvoice() {
     });
 
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error?.message || JSON.stringify(data));
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || JSON.stringify(data));
+    }
 
     let answer = cleanJsonAnswer(data.choices?.[0]?.message?.content);
-    if (!answer) throw new Error('Модель вернула пустой ответ.');
+
+    if (!answer) {
+      throw new Error('Модель вернула пустой ответ.');
+    }
 
     let parsed;
+
     try {
       parsed = JSON.parse(answer);
     } catch (e) {
@@ -1325,9 +1708,11 @@ async function recognizeInvoice() {
     }
 
     status.innerText = 'Распознавание завершено. Найдено строк: ' + parsed.items.length + '.';
+
   } catch (error) {
     console.error('Ошибка распознавания:',error);
     status.innerText = 'Не удалось завершить распознавание.\n\n' + error.message;
+
   } finally {
     button.disabled = false;
     button.innerText = '🔍 Распознать накладную';
@@ -1346,6 +1731,7 @@ function showInvoiceResult(data) {
 
   tableBody.innerHTML = '';
   warningsBox.innerHTML = '';
+
   const items = Array.isArray(data.items) ? data.items : [];
 
   summary.textContent = 'Тип документа: ' + (data.document_type || 'Не определён') +
@@ -1354,6 +1740,7 @@ function showInvoiceResult(data) {
 
   items.forEach((item,index) => {
     const tr = document.createElement('tr');
+
     const values = [
       item.row_number ?? index + 1,
       item.name ?? 'Не распознано',
@@ -1370,7 +1757,10 @@ function showInvoiceResult(data) {
       tr.appendChild(td);
     });
 
-    if (item.uncertain) tr.style.background = '#fffbeb';
+    if (item.uncertain) {
+      tr.style.background = '#fffbeb';
+    }
+
     tableBody.appendChild(tr);
 
     if (item.uncertain || item.note) {
@@ -1378,11 +1768,13 @@ function showInvoiceResult(data) {
       note.className = 'warning';
       note.textContent = 'Строка ' + (item.row_number ?? index + 1) +
         ': ' + (item.note || 'Есть неуверенно распознанные данные.');
+
       warningsBox.appendChild(note);
     }
   });
 
   const warnings = Array.isArray(data.warnings) ? data.warnings : [];
+
   warnings.forEach(message => {
     const warning = document.createElement('div');
     warning.className = 'warning';
@@ -1403,3 +1795,4 @@ async function copyInvoiceResult() {
 loadAppData();
 </script>
 </body>
+</html>
