@@ -5,20 +5,22 @@ const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const PBKDF2_ITERATIONS = 100000;
 const SESSION_DAYS = 30;
 
-function corsHeaders() {
+function corsHeaders(origin = "") {
+  const allowedOrigins = [ALLOWED_ORIGIN, "https://admin-panel-chef-api.bosstayson24.workers.dev"];
+  const responseOrigin = allowedOrigins.includes(origin) ? origin : ALLOWED_ORIGIN;
   return {
-    "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+    "Access-Control-Allow-Origin": responseOrigin,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Vary": "Origin"
   };
 }
 
-function json(data, status = 200) {
+function json(data, status = 200, origin = "") {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
-      ...corsHeaders(),
+      ...corsHeaders(origin),
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "no-store"
     }
@@ -393,7 +395,7 @@ async function handleFetch(request, env) {
   }
 
   if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: corsHeaders() });
+    return new Response(null, { status: 204, headers: corsHeaders(request.headers.get("Origin") || "") });
   }
 
   // Public video discovery: proxy metadata only, never video streams. Cache upstream responses at the edge.
@@ -407,7 +409,8 @@ async function handleFetch(request, env) {
     };
     const topic = url.searchParams.get("topic") || "trending";
     const page = Math.min(5, Math.max(1, Number.parseInt(url.searchParams.get("page") || "1", 10) || 1));
-    if (!topics[topic]) return json({ error: "Неизвестная тема" }, 400);
+    const origin = request.headers.get("Origin") || "";
+    if (!topics[topic]) return json({ error: "Неизвестная тема" }, 400, origin);
     const upstreamUrl = "https://rutube.ru/api/search/video/?query=" +
       encodeURIComponent(topics[topic]) + "&page=" + page + "&format=json";
     const upstream = await fetch(upstreamUrl, {
@@ -418,9 +421,9 @@ async function handleFetch(request, env) {
       },
       cf: { cacheTtl: 300, cacheEverything: true }
     });
-    if (!upstream.ok) return json({ error: "Каталог RUTUBE временно недоступен", upstream_status: upstream.status }, 502);
+    if (!upstream.ok) return json({ error: "Каталог RUTUBE временно недоступен", upstream_status: upstream.status }, 502, origin);
     const data = await upstream.json();
-    return json(data);
+    return json(data, 200, origin);
   }
 
   if (path === "/health" && request.method === "GET") {
