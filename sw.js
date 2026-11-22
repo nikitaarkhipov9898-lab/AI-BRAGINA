@@ -1,4 +1,4 @@
-const CACHE_NAME = "svoe-shell-v2";
+const CACHE_NAME = "svoe-shell-v3";
 const APP_URL = "/app";
 const SHELL = [APP_URL, "/manifest.webmanifest", "/icon.svg"];
 
