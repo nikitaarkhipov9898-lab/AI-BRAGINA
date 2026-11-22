@@ -125,10 +125,10 @@
  </div>
  <div class="panel"><div class="section-head"><h2>Работа приложения</h2></div>
   <div class="setting-row"><div><strong>Показывать предупреждения</strong><small>О статусе экспериментальных инструментов</small></div><input class="switch" type="checkbox" id="set-warnings" onchange="updateSetting('warnings',this.checked)"></div>
-  <div class="setting-row"><div><strong>Сохранять историю рецептов</strong><small>Результаты останутся на этом устройстве</small></div><input class="switch" type="checkbox" id="set-history" onchange="updateSetting('history',this.checked)"></div>
+  <div class="setting-row"><div><strong>Сохранять историю рецептов</strong><small>История синхронизируется с аккаунтом на сервере</small></div><input class="switch" type="checkbox" id="set-history" onchange="updateSetting('history',this.checked)"></div>
   <div class="setting-row"><div><strong>Подтверждать удаление</strong><small>Защита от случайной очистки</small></div><input class="switch" type="checkbox" id="set-confirm" onchange="updateSetting('confirm',this.checked)"></div>
  </div>
- <div class="panel"><div class="section-head"><h2>Данные и приложение</h2></div><p class="muted">История рецептов и настройки хранятся локально в браузере этого устройства. Очистка данных браузера может удалить их.</p><button class="btn secondary" onclick="exportData()">Экспортировать данные</button><button class="btn secondary" onclick="document.getElementById('import-data').click()">Импортировать данные</button><input id="import-data" class="hidden" type="file" accept="application/json" onchange="importData(event)"><button class="btn secondary" onclick="resetSettings()">Сбросить настройки</button><div class="status">AI-БРАГИНА · Тестовая версия
+ <div class="panel"><div class="section-head"><h2>Данные и приложение</h2></div><p class="muted">Настройки и личные данные инструментов хранятся на устройстве. История рецептов и диалоги помощников синхронизируются с сервером и доступны в аккаунте.</p><button class="btn secondary" onclick="exportData()">Экспортировать данные</button><button class="btn secondary" onclick="document.getElementById('import-data').click()">Импортировать данные</button><input id="import-data" class="hidden" type="file" accept="application/json" onchange="importData(event)"><button class="btn secondary" onclick="resetSettings()">Сбросить настройки</button><div class="status">AI-БРАГИНА · Тестовая версия
 ИИ-Шеф — экспериментальный режим
 ИИ-Механик — ранняя версия
 Приёмка товара — в разработке</div></div>
