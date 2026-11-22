@@ -156,19 +156,23 @@ main section:not(.hidden){animation:pageArrive .38s cubic-bezier(.2,.75,.25,1) b
 /* СВОЁ — вертикальная лента коротких видео */
 .page-video .video-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .video-mark{width:48px;height:48px;display:grid;place-items:center;border-radius:17px;background:linear-gradient(145deg,#356e4c,#1d4b34);color:white;font-size:21px}
-.video-tabs{display:flex;gap:7px;background:var(--bg2);padding:5px;border-radius:14px;margin:12px 0}
-.video-tabs button{flex:1;border:0;border-radius:10px;background:transparent;color:var(--muted);padding:10px;font-size:12px;font-weight:800}
-.video-tabs button.active{background:var(--panel);color:var(--accent)}
+.video-discovery-tabs{display:flex;gap:7px;overflow:auto;padding:5px;background:var(--bg2);border-radius:14px;margin:12px 0;scrollbar-width:none}
+.video-discovery-tabs button{flex:none;border:0;border-radius:10px;background:transparent;color:var(--muted);padding:10px 13px;font-size:12px;font-weight:800;white-space:nowrap}
+.video-discovery-tabs button.active{background:var(--panel);color:var(--accent);box-shadow:0 2px 8px #0001}
 .video-feed{display:grid;gap:15px}
-.short-card{position:relative;width:min(100%,390px);margin:0 auto;background:#101510;border-radius:24px;overflow:hidden;aspect-ratio:9/14;min-height:410px;max-height:68vh;box-shadow:0 14px 32px #0002}
+.short-card{position:relative;width:min(100%,430px);margin:0 auto;background:#101510;border-radius:24px;overflow:hidden;aspect-ratio:9/14;min-height:410px;max-height:70vh;box-shadow:0 14px 32px #0002;scroll-snap-align:start}
 .short-card iframe{display:block;width:100%;height:100%;border:0;background:#101510}
-.short-overlay{position:absolute;left:0;right:0;bottom:0;padding:32px 13px 12px;background:linear-gradient(transparent,#000b);color:white;pointer-events:none}
-.short-overlay strong{font-size:13px}.short-actions{display:flex;gap:7px;margin-top:8px;pointer-events:auto}
-.short-actions button{border:1px solid #ffffff45;border-radius:10px;background:#101510dd;color:white;padding:8px;font-size:10px;font-weight:700}
+.short-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92}
+.short-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:66px;height:66px;border:1px solid #ffffff88;border-radius:50%;background:#173b2ccc;color:white;font-size:25px;display:grid;place-items:center;box-shadow:0 8px 28px #0005}
+.short-overlay{position:absolute;left:0;right:0;bottom:0;padding:48px 14px 14px;background:linear-gradient(transparent,#000d);color:white;pointer-events:none}
+.short-overlay strong{font-size:14px;line-height:1.4}.short-meta{font-size:10px;color:#ffffffbd;margin-top:5px}
+.short-actions{display:flex;gap:7px;margin-top:10px;pointer-events:auto}
+.short-actions button{border:1px solid #ffffff45;border-radius:10px;background:#101510dd;color:white;padding:8px 10px;font-size:10px;font-weight:700}
 .video-empty{text-align:center;padding:32px 18px;border:1px dashed var(--line);border-radius:20px;background:var(--panel)}
 .video-empty-icon{width:56px;height:56px;margin:0 auto 12px;border-radius:19px;background:color-mix(in srgb,var(--accent) 14%,transparent);display:grid;place-items:center;color:var(--accent);font-size:24px}
 .video-empty strong{font-size:14px}.video-empty p{font-size:12px;line-height:1.55;color:var(--muted)}
-.video-add-panel{margin-top:18px}
+.video-footnote{font-size:10px;line-height:1.55;color:var(--muted);text-align:center;max-width:430px;margin:14px auto}
+body[data-page="video"]{scroll-snap-type:y proximity}
 body[data-page="video"]{background-image:radial-gradient(ellipse at 90% 0%,#8eaa8730,transparent 40%),linear-gradient(155deg,#edf0e7,#e6ece5 60%,#f1eadf)}
 :root[data-theme="dark"] body[data-page="video"]{background-image:radial-gradient(ellipse at 90% 0%,#315f4030,transparent 40%),linear-gradient(155deg,#101a13,#111914 60%,#171b15)}
 
@@ -319,10 +323,18 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
 
 <section id="page-video" class="hidden page-video">
  <button class="back" onclick="showPage('home')">← Главная</button>
- <div class="video-heading"><div><div class="eyebrow">СВОЁ · ВИДЕО</div><h2 class="page-title">Короткие видео</h2><p class="page-sub">Вертикальная лента. Видеопоток идёт напрямую от площадки, не через сервер СВОЁ.</p></div><span class="video-mark">▶</span></div>
- <div class="video-tabs"><button class="active" onclick="setVideoTab('feed',this)">Лента</button><button onclick="setVideoTab('saved',this)">Избранное</button></div>
- <div id="video-feed" class="video-feed"></div>
- <div class="panel video-add-panel"><div class="section-head"><h2>Добавить ролик</h2><span class="muted">VK · RUTUBE</span></div><div class="field"><label for="video-source">Площадка</label><select id="video-source"><option value="vk">VK Видео</option><option value="rutube">RUTUBE</option></select></div><div class="field"><label for="video-url">Ссылка на видео</label><input id="video-url" type="url" placeholder="Вставь ссылку на ролик"></div><button class="btn" onclick="addShortVideo()">Добавить в ленту</button><p class="muted">Некоторые авторы запрещают встраивание — такие ролики придётся открывать на исходной площадке.</p></div>
+ <div class="video-heading"><div><div class="eyebrow">СВОЁ · ЛЕНТА</div><h2 class="page-title">Видео для своих</h2><p class="page-sub">Открывай раздел и листай подборку. Ничего искать и копировать не нужно.</p></div><span class="video-mark">▶</span></div>
+ <div class="video-discovery-tabs" id="video-discovery-tabs">
+  <button class="active" data-topic="trending" onclick="selectVideoTopic('trending',this)">Популярное</button>
+  <button data-topic="fun" onclick="selectVideoTopic('fun',this)">Юмор</button>
+  <button data-topic="animals" onclick="selectVideoTopic('animals',this)">Животные</button>
+  <button data-topic="auto" onclick="selectVideoTopic('auto',this)">Авто</button>
+  <button data-topic="useful" onclick="selectVideoTopic('useful',this)">Полезное</button>
+ </div>
+ <div id="video-feed" class="video-feed"><div class="video-empty"><div class="video-empty-icon">▶</div><strong>Собираем ленту</strong><p>Загружаем открытые ролики. Видео не проходит через сервер СВОЁ.</p></div></div>
+ <div id="video-feed-status" class="muted" style="text-align:center;padding:10px 4px"></div>
+ <button id="video-more-btn" class="btn secondary hidden" onclick="loadMoreAutoVideos()">Показать ещё</button>
+ <p class="video-footnote">Сейчас подборка формируется из открытых видео RUTUBE без входа в аккаунт. Плеер загружает ролик только по нажатию — это экономит память и трафик телефона.</p>
 </section>
 
 <section id="page-settings" class="hidden page-settings">
@@ -517,35 +529,89 @@ let settings={theme:'warm',compact:false,animations:true,reduced:false,tap:false
 let appData={version:4,tasks:[],history:[],favorites:[],mechanicCases:[],maintenance:{vehicle:{name:'',odometer:''},items:[]},kitchen:{staples:['соль','чёрный перец','сахар','растительное масло','вода'],custom:''}};
 function $(id){return document.getElementById(id)}
 
-const VIDEO_KEY='svoe_short_videos_v1';
-function getShortVideos(){try{return JSON.parse(localStorage.getItem(VIDEO_KEY)||'[]').filter(x=>x&&typeof x.embed==='string');}catch(e){return[];}}
-function saveShortVideos(items){localStorage.setItem(VIDEO_KEY,JSON.stringify(items.slice(0,80)));}
-function videoEmbed(source,raw){
- let u;try{u=new URL(raw.trim());}catch(e){throw new Error('Проверь ссылку на видео.');}
- if(source==='vk'){
-  if(!['vk.com','www.vk.com','m.vk.com'].includes(u.hostname))throw new Error('Для VK нужна ссылка с vk.com.');
-  if(u.pathname==='/video_ext.php'&&u.searchParams.get('oid')&&u.searchParams.get('id'))return u.href;
-  const parts=u.pathname.match(/^\/video(-?\d+)_(\d+)/);if(!parts)throw new Error('Нужна ссылка VK вида vk.com/video-123_456 или embed-ссылка.');
-  return 'https://vk.com/video_ext.php?oid='+encodeURIComponent(parts[1])+'&id='+encodeURIComponent(parts[2]);
- }
- if(!['rutube.ru','www.rutube.ru'].includes(u.hostname))throw new Error('Для RUTUBE нужна ссылка с rutube.ru.');
- const parts=u.pathname.match(/^\/(?:shorts|video)\/(?:private\/)?([a-f0-9]{32})\/?$/i)||u.pathname.match(/^\/play\/embed\/([a-f0-9]{32})\/?$/i);
- if(!parts)throw new Error('Не удалось определить ID ролика RUTUBE. Поддерживаются ссылки вида rutube.ru/shorts/ID, rutube.ru/video/ID и код плеера.');
- const access=u.searchParams.get('p');
- return 'https://rutube.ru/play/embed/'+parts[1]+(access?'/?p='+encodeURIComponent(access):'');
+const VIDEO_KEY='svoe_auto_video_cache_v1';
+const VIDEO_TOPICS={
+ trending:{label:'Популярное',query:'короткие видео популярное'},
+ fun:{label:'Юмор',query:'приколы юмор короткие видео'},
+ animals:{label:'Животные',query:'животные смешные короткие видео'},
+ auto:{label:'Авто',query:'автомобили авто короткие видео'},
+ useful:{label:'Полезное',query:'лайфхаки полезные советы короткие видео'}
+};
+let activeVideoTopic='trending',videoTopicPage=1,videoLoading=false,videoItems=[],videoHasMore=false;
+function readVideoCache(){try{const d=JSON.parse(localStorage.getItem(VIDEO_KEY)||'null');return d&&Date.now()-d.savedAt<3600000&&Array.isArray(d.items)?d.items:[];}catch(e){return[];}}
+function writeVideoCache(items){try{localStorage.setItem(VIDEO_KEY,JSON.stringify({savedAt:Date.now(),items:items.slice(0,60)}));}catch(e){}}
+function normalizeRutubeItem(v){
+ const candidates=[v.id,v.video_id,v.code,v.video_url,v.url,v.embed_url].filter(Boolean);
+ let id='';
+ for(const value of candidates){const m=String(value).match(/[a-f0-9]{32}/i);if(m){id=m[0];break;}}
+ if(!id)return null;
+ const duration=Number(v.duration||v.duration_seconds||0);
+ if(duration>150)return null;
+ if(!duration&&!String(v.video_url||v.url||'').includes('/shorts/'))return null;
+ return {id,embed:'https://rutube.ru/play/embed/'+id+'/',url:'https://rutube.ru/video/'+id+'/',title:String(v.title||v.name||'Короткое видео').slice(0,180),author:String(v.author?.name||v.author_name||v.channel_name||'RUTUBE'),duration,thumbnail:v.thumbnail_url||v.picture_url||v.poster_url||v.thumbnail||'',views:Number(v.hits||v.views_count||v.views||0)};
 }
-function addShortVideo(){
- const source=$('video-source').value,raw=$('video-url').value.trim();if(!raw){toast('Вставь ссылку на ролик.','error');return;}
- try{const embed=videoEmbed(source,raw),items=getShortVideos();if(items.some(x=>x.embed===embed)){toast('Это видео уже есть в ленте.');return;}items.unshift({id:'v_'+Date.now(),source,embed,original:raw,title:source==='vk'?'Видео VK':'Видео RUTUBE',saved:false});saveShortVideos(items);$('video-url').value='';renderShortVideos('feed');toast('Видео добавлено в ленту.');}catch(e){toast(e.message,'error');}
+function selectVideoTopic(topic,button){
+ if(!VIDEO_TOPICS[topic]||videoLoading)return;
+ activeVideoTopic=topic;videoTopicPage=1;videoItems=[];videoHasMore=false;
+ document.querySelectorAll('#video-discovery-tabs button').forEach(x=>x.classList.toggle('active',x===button));
+ loadAutoVideoFeed(true);
 }
-function setVideoTab(tab,button){document.querySelectorAll('.video-tabs button').forEach(x=>x.classList.remove('active'));if(button)button.classList.add('active');renderShortVideos(tab);}
-function renderShortVideos(tab){
- const box=$('video-feed');if(!box)return;let items=getShortVideos();if(tab==='saved')items=items.filter(x=>x.saved);box.innerHTML='';
- if(!items.length){const empty=document.createElement('div');empty.className='video-empty';empty.innerHTML='<div class="video-empty-icon">▶</div><strong>'+(tab==='saved'?'Пока нет избранного':'Лента пока пустая')+'</strong><p>'+(tab==='saved'?'Сохраняй понравившиеся ролики.':'Добавь ссылку на короткое видео VK или RUTUBE внизу страницы.')+'</p>';box.appendChild(empty);return;}
- items.forEach(item=>{const card=document.createElement('article');card.className='short-card';const frame=document.createElement('iframe');frame.src=item.embed;frame.title='Видео · '+(item.source==='vk'?'VK':'RUTUBE');frame.loading='lazy';frame.allow='autoplay; encrypted-media; fullscreen; picture-in-picture';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';card.appendChild(frame);const overlay=document.createElement('div');overlay.className='short-overlay';const title=document.createElement('strong');title.textContent=item.title+' · Источник: '+(item.source==='vk'?'VK Видео':'RUTUBE');const actions=document.createElement('div');actions.className='short-actions';const save=document.createElement('button');save.textContent=item.saved?'♥ Сохранено':'♡ В избранное';save.onclick=()=>{const all=getShortVideos(),v=all.find(x=>x.id===item.id);if(v){v.saved=!v.saved;saveShortVideos(all);renderShortVideos(tab);}};const open=document.createElement('button');open.textContent='Оригинал ↗';open.onclick=()=>window.open(item.original,'_blank','noopener,noreferrer');const del=document.createElement('button');del.textContent='Убрать';del.onclick=()=>{saveShortVideos(getShortVideos().filter(x=>x.id!==item.id));renderShortVideos(tab);};actions.append(save,open,del);overlay.append(title,actions);card.appendChild(overlay);box.appendChild(card);});
+async function loadAutoVideoFeed(reset=false){
+ const box=$('video-feed'),status=$('video-feed-status'),more=$('video-more-btn');
+ if(!box||videoLoading)return;
+ videoLoading=true;if(more)more.classList.add('hidden');
+ if(reset||!videoItems.length)box.innerHTML='<div class="video-empty"><div class="video-empty-icon">◌</div><strong>Подбираем ролики</strong><p>Ищем открытые короткие видео…</p></div>';
+ if(status)status.textContent='Загружаем подборку…';
+ const topic=VIDEO_TOPICS[activeVideoTopic]||VIDEO_TOPICS.trending;
+ try{
+  const url='https://rutube.ru/api/search/video/?query='+encodeURIComponent(topic.query)+'&page='+videoTopicPage;
+  const response=await fetch(url,{method:'GET',mode:'cors',credentials:'omit',headers:{'Accept':'application/json'},cache:'no-store'});
+  if(!response.ok)throw new Error('Видеоплощадка временно не отдаёт каталог ('+response.status+').');
+  const data=await response.json(),rows=Array.isArray(data.results)?data.results:Array.isArray(data)?data:[];
+  const normalized=rows.map(normalizeRutubeItem).filter(Boolean);
+  const seen=new Set(videoItems.map(x=>x.id));
+  const fresh=normalized.filter(x=>!seen.has(x.id));
+  videoItems=videoItems.concat(fresh).slice(0,60);
+  videoHasMore=!!(data.has_next||data.next)&&videoTopicPage<5;
+  if(reset)box.innerHTML='';
+  renderAutoVideoCards();
+  if(status)status.textContent=videoItems.length?'Подборка обновляется из открытого каталога · '+videoItems.length+' роликов':'В этой теме пока не нашлось коротких роликов. Попробуй другую тему.';
+  if(more)more.classList.toggle('hidden',!videoHasMore);
+  if(videoItems.length)writeVideoCache(videoItems);
+ }catch(error){
+  if(!videoItems.length){
+   const cached=readVideoCache();
+   if(cached.length){videoItems=cached;renderAutoVideoCards();if(status)status.textContent='Показана последняя сохранённая подборка. Для обновления нужен доступ к каталогу RUTUBE.';}
+   else{box.innerHTML='<div class="video-empty"><div class="video-empty-icon">!</div><strong>Не удалось загрузить ленту</strong><p>'+String(error.message||'Проверь подключение к интернету.')+'</p><p>СВОЁ не требует аккаунта VK. Сейчас автоматический каталог берётся из публичного поиска RUTUBE.</p><button class="mini-btn" onclick="loadAutoVideoFeed(true)">Повторить</button></div>';if(status)status.textContent='';}
+  }else if(status)status.textContent='Не удалось обновить подборку. Уже загруженные ролики остались на экране.';
+ }finally{videoLoading=false;}
 }
+function loadMoreAutoVideos(){if(!videoHasMore||videoLoading)return;videoTopicPage++;loadAutoVideoFeed(false);}
+function renderAutoVideoCards(){
+ const box=$('video-feed');if(!box)return;box.innerHTML='';
+ if(!videoItems.length){box.innerHTML='<div class="video-empty"><strong>Пока пусто</strong><p>В этой теме ещё нет доступных коротких роликов.</p></div>';return;}
+ videoItems.forEach((item,index)=>{
+  const card=document.createElement('article');card.className='short-card';card.dataset.videoId=item.id;
+  const poster=document.createElement('img');poster.className='short-poster';poster.alt='';poster.loading=index<2?'eager':'lazy';poster.src=item.thumbnail||'';if(!item.thumbnail)poster.style.display='none';card.appendChild(poster);
+  const play=document.createElement('button');play.className='short-play';play.type='button';play.textContent='▶';play.setAttribute('aria-label','Смотреть видео');play.onclick=()=>playAutoVideo(item,card);card.appendChild(play);
+  const overlay=document.createElement('div');overlay.className='short-overlay';
+  const title=document.createElement('strong');title.textContent=item.title;const meta=document.createElement('div');meta.className='short-meta';meta.textContent=item.author+(item.duration?' · '+Math.floor(item.duration/60)+':'+String(item.duration%60).padStart(2,'0'):'');
+  const actions=document.createElement('div');actions.className='short-actions';const save=document.createElement('button');save.textContent=isAutoVideoSaved(item.id)?'♥ В избранном':'♡ В избранное';save.onclick=()=>toggleAutoVideoSaved(item,save);const open=document.createElement('button');open.textContent='Открыть ↗';open.onclick=()=>window.open(item.url,'_blank','noopener,noreferrer');actions.append(save,open);overlay.append(title,meta,actions);card.appendChild(overlay);box.appendChild(card);
+ });
+}
+function playAutoVideo(item,card){
+ document.querySelectorAll('.short-card iframe').forEach(frame=>{const parent=frame.closest('.short-card');if(parent&&parent!==card){const poster=parent.querySelector('.short-poster');if(poster)poster.style.display='';frame.remove();const btn=parent.querySelector('.short-play');if(btn)btn.style.display='grid';}});
+ const old=card.querySelector('iframe');if(old)return;
+ const frame=document.createElement('iframe');frame.src=item.embed+'?autoplay=true';frame.title=item.title;frame.allow='autoplay; encrypted-media; fullscreen; picture-in-picture';frame.allowFullscreen=true;frame.loading='eager';frame.referrerPolicy='strict-origin-when-cross-origin';frame.style.position='absolute';frame.style.inset='0';card.insertBefore(frame,card.firstChild);
+ const poster=card.querySelector('.short-poster');if(poster)poster.style.display='none';const play=card.querySelector('.short-play');if(play)play.style.display='none';
+}
+function getSavedAutoVideos(){try{return JSON.parse(localStorage.getItem(VIDEO_KEY+'_saved')||'[]');}catch(e){return[];}}
+function isAutoVideoSaved(id){return getSavedAutoVideos().some(x=>x.id===id);}
+function toggleAutoVideoSaved(item,button){let saved=getSavedAutoVideos();if(saved.some(x=>x.id===item.id))saved=saved.filter(x=>x.id!==item.id);else saved.unshift(item);try{localStorage.setItem(VIDEO_KEY+'_saved',JSON.stringify(saved.slice(0,100)));}catch(e){}button.textContent=isAutoVideoSaved(item.id)?'♥ В избранном':'♡ В избранное';}
+function renderSavedAutoVideos(){const box=$('video-feed');if(!box)return;videoItems=getSavedAutoVideos();renderAutoVideoCards();if($('video-feed-status'))$('video-feed-status').textContent='Избранное хранится только на этом устройстве.';}
 
-function showPage(page){if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}const target=$('page-'+page);if(!target){toast('Раздел пока готовится.');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));target.classList.remove('hidden');document.body.dataset.page=page;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));const map={home:'nav-home',video:'nav-video',helpers:'nav-tools',chef:'nav-tools',mechanic:'nav-tools',invoice:'nav-tools',community:'nav-community',tasks:'nav-tasks',settings:'nav-settings',admin:'nav-settings'};const nav=$(map[page]||'nav-tools');if(nav)nav.classList.add('active');if(page==='tasks')renderTasks();if(page==='home')renderToday();if(page==='video')renderShortVideos('feed');window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
+
+function showPage(page){if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}const target=$('page-'+page);if(!target){toast('Раздел пока готовится.');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));target.classList.remove('hidden');document.body.dataset.page=page;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));const map={home:'nav-home',video:'nav-video',helpers:'nav-tools',chef:'nav-tools',mechanic:'nav-tools',invoice:'nav-tools',community:'nav-community',tasks:'nav-tasks',settings:'nav-settings',admin:'nav-settings'};const nav=$(map[page]||'nav-tools');if(nav)nav.classList.add('active');if(page==='tasks')renderTasks();if(page==='home')renderToday();if(page==='video'){videoItems=[];videoTopicPage=1;loadAutoVideoFeed(true);}window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
 function dispatchHomeCommand(){const q=String($('home-command-input')?.value||'').trim().toLowerCase();if(!q){showPage('helpers');return;}if(/рецепт|еда|приготов|ужин|завтрак|шеф/.test(q)){showPage('chef');return;}if(/машин|авто|двигател|механик/.test(q)){showPage('mechanic');return;}if(/уч[её]т|товар|склад|остат|инвентар|наклад/.test(q)){showPage('invoice');return;}if(/задач|напом|дело|план/.test(q)){showPage('tasks');return;}if(/чат|сообщ|семь|друз|общен/.test(q)){showPage('community');return;}showPage('helpers');toast('Подходящий раздел пока не найден. Посмотри каталог помощников.');}
 function addTask(){const title=String($('task-title')?.value||'').trim();if(!title){toast('Напиши, что нужно сделать.','error');return;}appData.tasks=Array.isArray(appData.tasks)?appData.tasks:[];appData.tasks.unshift({id:crypto.randomUUID(),title:title.slice(0,160),due:$('task-due')?.value||'',done:false,createdAt:new Date().toISOString()});$('task-title').value='';$('task-due').value='';saveData();renderTasks();renderToday();toast('Задача добавлена.');}
 function toggleTask(id){const t=(appData.tasks||[]).find(x=>x.id===id);if(!t)return;t.done=!t.done;saveData();renderTasks();renderToday();}
