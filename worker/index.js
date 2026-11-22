@@ -347,6 +347,36 @@ async function handleFetch(request, env) {
     await ensureAuthSchema(env);
   }
 
+  const pwaFiles = {
+    "/manifest.webmanifest": {
+      file: "manifest.webmanifest",
+      type: "application/manifest+json; charset=utf-8"
+    },
+    "/sw.js": {
+      file: "sw.js",
+      type: "application/javascript; charset=utf-8"
+    },
+    "/icon.svg": {
+      file: "icon.svg",
+      type: "image/svg+xml"
+    }
+  };
+  if (pwaFiles[path] && request.method === "GET") {
+    const asset = pwaFiles[path];
+    const response = await fetch(
+      "https://raw.githubusercontent.com/nikitaarkhipov9898-lab/AI-BRAGINA/admin-panel/" + asset.file,
+      { headers: { "Accept": "*/*" }, cf: { cacheTtl: path === "/sw.js" ? 0 : 300 } }
+    );
+    if (!response.ok) return new Response("Файл приложения не найден", { status: 502 });
+    const headers = {
+      "Content-Type": asset.type,
+      "Cache-Control": path === "/sw.js" ? "no-cache" : "public, max-age=300",
+      "X-Content-Type-Options": "nosniff"
+    };
+    if (path === "/sw.js") headers["Service-Worker-Allowed"] = "/";
+    return new Response(response.body, { status: 200, headers });
+  }
+
   if (path === "/app" && request.method === "GET") {
     const page = await fetch("https://raw.githubusercontent.com/nikitaarkhipov9898-lab/AI-BRAGINA/admin-panel/index.html", {
       headers: { "Accept": "text/html" },
