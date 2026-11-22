@@ -160,6 +160,18 @@ main section:not(.hidden){animation:pageArrive .38s cubic-bezier(.2,.75,.25,1) b
 .video-discovery-tabs button{flex:none;border:0;border-radius:10px;background:transparent;color:var(--muted);padding:10px 13px;font-size:12px;font-weight:800;white-space:nowrap}
 .video-discovery-tabs button.active{background:var(--panel);color:var(--accent);box-shadow:0 2px 8px #0001}
 .video-feed{display:grid;gap:15px}
+body.svoe-video-focus{overflow:hidden!important}
+body.svoe-video-focus #page-video{position:fixed;inset:0;z-index:1200;display:flex;flex-direction:column;padding:0!important;margin:0!important;width:100%;height:100%;height:100dvh;max-width:none;overflow:hidden;background:#050706}
+body.svoe-video-focus #page-video>.back,body.svoe-video-focus #page-video>.video-heading,body.svoe-video-focus #page-video>.video-discovery-tabs,body.svoe-video-focus #page-video>#video-feed-status,body.svoe-video-focus #page-video>#video-more-btn,body.svoe-video-focus #page-video>.video-footnote{display:none!important}
+body.svoe-video-focus #page-video>#video-feed{display:block;flex:1;min-height:0;width:100%;height:100%;overflow-y:auto;overscroll-behavior-y:contain;scroll-snap-type:y mandatory;scrollbar-width:none}
+body.svoe-video-focus #page-video>#video-feed::-webkit-scrollbar{display:none}
+body.svoe-video-focus .short-card{width:100%;height:100%;height:100dvh;min-height:100dvh;max-height:none;aspect-ratio:auto;margin:0;border-radius:0;box-shadow:none;scroll-snap-align:start;scroll-snap-stop:always}
+body.svoe-video-focus .short-card iframe{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+body.svoe-video-focus .short-poster{z-index:0}
+body.svoe-video-focus .short-overlay{z-index:2;padding:70px 18px max(26px,env(safe-area-inset-bottom))}
+.video-focus-close{display:none}
+body.svoe-video-focus .video-focus-close{display:grid;position:fixed;z-index:1210;top:max(12px,env(safe-area-inset-top));left:14px;width:42px;height:42px;border:1px solid #ffffff55;border-radius:50%;background:#101510aa;color:white;font-size:23px;place-items:center;backdrop-filter:blur(8px)}
+
 .short-card{position:relative;width:min(100%,430px);margin:0 auto;background:#101510;border-radius:24px;overflow:hidden;aspect-ratio:9/14;min-height:410px;max-height:70vh;box-shadow:0 14px 32px #0002;scroll-snap-align:start}
 .short-card iframe{display:block;width:100%;height:100%;border:0;background:#101510}
 .short-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92}
@@ -332,6 +344,7 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
   <button data-topic="useful" onclick="selectVideoTopic('useful',this)">Полезное</button>
   <button data-topic="saved" onclick="showSavedAutoVideos(this)">Избранное</button>
  </div>
+ <button class="video-focus-close" type="button" aria-label="Закрыть полноэкранную ленту" onclick="closeVideoFocus()">×</button>
  <div id="video-feed" class="video-feed"><div class="video-empty"><div class="video-empty-icon">▶</div><strong>Собираем ленту</strong><p>Загружаем открытые ролики. Видео не проходит через сервер СВОЁ.</p></div></div>
  <div id="video-feed-status" class="muted" style="text-align:center;padding:10px 4px"></div>
  <button id="video-more-btn" class="btn secondary hidden" onclick="loadMoreAutoVideos()">Показать ещё</button>
@@ -589,21 +602,47 @@ async function loadAutoVideoFeed(reset=false){
  }finally{videoLoading=false;}
 }
 function loadMoreAutoVideos(){if(!videoHasMore||videoLoading)return;videoTopicPage++;loadAutoVideoFeed(false);}
+let videoFocusObserver=null,videoAutoplayArmed=false,videoFocusMode=false;
+function enterVideoFocus(firstItem){
+ const feed=$('video-feed');if(!feed)return;
+ videoFocusMode=true;videoAutoplayArmed=true;document.body.classList.add('svoe-video-focus');
+ if(videoFocusObserver)videoFocusObserver.disconnect();
+ if(firstItem){const card=[...feed.querySelectorAll('.short-card')].find(x=>x.dataset.videoId===firstItem.id);if(card){card.scrollIntoView({block:'start'});playAutoVideo(firstItem,card);}}
+ setupVideoFocusObserver();
+}
+function closeVideoFocus(){
+ videoFocusMode=false;videoAutoplayArmed=false;document.body.classList.remove('svoe-video-focus');
+ if(videoFocusObserver){videoFocusObserver.disconnect();videoFocusObserver=null;}
+ document.querySelectorAll('.short-card iframe').forEach(x=>x.remove());
+ document.querySelectorAll('.short-card').forEach(card=>{const p=card.querySelector('.short-poster');if(p)p.style.display='';const b=card.querySelector('.short-play');if(b)b.style.display='grid';});
+}
+function setupVideoFocusObserver(){
+ const feed=$('video-feed');if(!feed||!('IntersectionObserver'in window))return;
+ if(videoFocusObserver)videoFocusObserver.disconnect();
+ videoFocusObserver=new IntersectionObserver(entries=>{
+  const best=entries.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+  if(!best||best.intersectionRatio<.65||!videoAutoplayArmed||!videoFocusMode)return;
+  const card=best.target,item=videoItems.find(x=>x.id===card.dataset.videoId);
+  if(item)playAutoVideo(item,card);
+ },{root:feed,threshold:[.35,.65,.85]});
+ feed.querySelectorAll('.short-card').forEach(card=>videoFocusObserver.observe(card));
+}
 function renderAutoVideoCards(){
  const box=$('video-feed');if(!box)return;box.innerHTML='';
  if(!videoItems.length){box.innerHTML='<div class="video-empty"><strong>Пока пусто</strong><p>В этой теме ещё нет доступных коротких роликов.</p></div>';return;}
  videoItems.forEach((item,index)=>{
   const card=document.createElement('article');card.className='short-card';card.dataset.videoId=item.id;
   const poster=document.createElement('img');poster.className='short-poster';poster.alt='';poster.loading=index<2?'eager':'lazy';poster.src=item.thumbnail||'';if(!item.thumbnail)poster.style.display='none';card.appendChild(poster);
-  const play=document.createElement('button');play.className='short-play';play.type='button';play.textContent='▶';play.setAttribute('aria-label','Смотреть видео');play.onclick=()=>playAutoVideo(item,card);card.appendChild(play);
+  const play=document.createElement('button');play.className='short-play';play.type='button';play.textContent='▶';play.setAttribute('aria-label','Смотреть видео');play.onclick=()=>{if(!videoFocusMode)enterVideoFocus(item);else{videoAutoplayArmed=true;playAutoVideo(item,card);}};card.appendChild(play);
   const overlay=document.createElement('div');overlay.className='short-overlay';
   const title=document.createElement('strong');title.textContent=item.title;const meta=document.createElement('div');meta.className='short-meta';meta.textContent=item.author+(item.duration?' · '+Math.floor(item.duration/60)+':'+String(item.duration%60).padStart(2,'0'):'');
   const actions=document.createElement('div');actions.className='short-actions';const save=document.createElement('button');save.textContent=isAutoVideoSaved(item.id)?'♥ В избранном':'♡ В избранное';save.onclick=()=>toggleAutoVideoSaved(item,save);const open=document.createElement('button');open.textContent='Открыть ↗';open.onclick=()=>window.open(item.url,'_blank','noopener,noreferrer');actions.append(save,open);overlay.append(title,meta,actions);card.appendChild(overlay);box.appendChild(card);
  });
+ if(videoFocusMode)setupVideoFocusObserver();
 }
 function playAutoVideo(item,card){
- document.querySelectorAll('.short-card iframe').forEach(frame=>{const parent=frame.closest('.short-card');if(parent&&parent!==card){const poster=parent.querySelector('.short-poster');if(poster)poster.style.display='';frame.remove();const btn=parent.querySelector('.short-play');if(btn)btn.style.display='grid';}});
- const old=card.querySelector('iframe');if(old)return;
+ document.querySelectorAll('.short-card iframe').forEach(frame=>{const parent=frame.closest('.short-card');if(parent&&parent!==card)frame.remove();});
+ if(card.querySelector('iframe'))return;
  const frame=document.createElement('iframe');frame.src=item.embed+'?autoplay=true';frame.title=item.title;frame.allow='autoplay; encrypted-media; fullscreen; picture-in-picture';frame.allowFullscreen=true;frame.loading='eager';frame.referrerPolicy='strict-origin-when-cross-origin';frame.style.position='absolute';frame.style.inset='0';card.insertBefore(frame,card.firstChild);
  const poster=card.querySelector('.short-poster');if(poster)poster.style.display='none';const play=card.querySelector('.short-play');if(play)play.style.display='none';
 }
@@ -613,7 +652,7 @@ function toggleAutoVideoSaved(item,button){let saved=getSavedAutoVideos();if(sav
 function showSavedAutoVideos(button){if(videoLoading)return;document.querySelectorAll('#video-discovery-tabs button').forEach(x=>x.classList.toggle('active',x===button));videoItems=getSavedAutoVideos();renderAutoVideoCards();if($('video-feed-status'))$('video-feed-status').textContent='Избранное хранится только на этом устройстве.';if($('video-more-btn'))$('video-more-btn').classList.add('hidden');}
 
 
-function showPage(page){if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}const target=$('page-'+page);if(!target){toast('Раздел пока готовится.');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));target.classList.remove('hidden');document.body.dataset.page=page;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));const map={home:'nav-home',video:'nav-video',helpers:'nav-tools',chef:'nav-tools',mechanic:'nav-tools',invoice:'nav-tools',community:'nav-community',tasks:'nav-tasks',settings:'nav-settings',admin:'nav-settings'};const nav=$(map[page]||'nav-tools');if(nav)nav.classList.add('active');if(page==='tasks')renderTasks();if(page==='home')renderToday();if(page==='video'){videoItems=[];videoTopicPage=1;loadAutoVideoFeed(true);}window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
+function showPage(page){if(videoFocusMode&&page!=='video')closeVideoFocus();if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}const target=$('page-'+page);if(!target){toast('Раздел пока готовится.');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));target.classList.remove('hidden');document.body.dataset.page=page;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));const map={home:'nav-home',video:'nav-video',helpers:'nav-tools',chef:'nav-tools',mechanic:'nav-tools',invoice:'nav-tools',community:'nav-community',tasks:'nav-tasks',settings:'nav-settings',admin:'nav-settings'};const nav=$(map[page]||'nav-tools');if(nav)nav.classList.add('active');if(page==='tasks')renderTasks();if(page==='home')renderToday();if(page==='video'){videoItems=[];videoTopicPage=1;loadAutoVideoFeed(true);}window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
 function dispatchHomeCommand(){const q=String($('home-command-input')?.value||'').trim().toLowerCase();if(!q){showPage('helpers');return;}if(/рецепт|еда|приготов|ужин|завтрак|шеф/.test(q)){showPage('chef');return;}if(/машин|авто|двигател|механик/.test(q)){showPage('mechanic');return;}if(/уч[её]т|товар|склад|остат|инвентар|наклад/.test(q)){showPage('invoice');return;}if(/задач|напом|дело|план/.test(q)){showPage('tasks');return;}if(/чат|сообщ|семь|друз|общен/.test(q)){showPage('community');return;}showPage('helpers');toast('Подходящий раздел пока не найден. Посмотри каталог помощников.');}
 function addTask(){const title=String($('task-title')?.value||'').trim();if(!title){toast('Напиши, что нужно сделать.','error');return;}appData.tasks=Array.isArray(appData.tasks)?appData.tasks:[];appData.tasks.unshift({id:crypto.randomUUID(),title:title.slice(0,160),due:$('task-due')?.value||'',done:false,createdAt:new Date().toISOString()});$('task-title').value='';$('task-due').value='';saveData();renderTasks();renderToday();toast('Задача добавлена.');}
 function toggleTask(id){const t=(appData.tasks||[]).find(x=>x.id===id);if(!t)return;t.done=!t.done;saveData();renderTasks();renderToday();}
