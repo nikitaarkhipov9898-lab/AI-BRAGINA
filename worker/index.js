@@ -641,7 +641,7 @@ async function handleFetch(request, env) {
         env.DB.prepare("DELETE FROM conversations WHERE user_id=?").bind(id),
         env.DB.prepare("DELETE FROM chat_messages WHERE thread_id IN (SELECT thread_id FROM chat_members WHERE user_id=?)").bind(id),
         env.DB.prepare("DELETE FROM chat_members WHERE user_id=?").bind(id),
-        env.DB.prepare("DELETE FROM chat_threads WHERE id NOT IN (SELECT DISTINCT thread_id FROM chat_members)").run(),
+        env.DB.prepare("DELETE FROM chat_threads WHERE id NOT IN (SELECT DISTINCT thread_id FROM chat_members)"),
         env.DB.prepare("DELETE FROM user_sessions WHERE user_id=?").bind(id),
         env.DB.prepare("DELETE FROM users WHERE id=?").bind(id)
       ]);
