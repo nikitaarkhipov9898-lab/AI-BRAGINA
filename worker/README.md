@@ -1,42 +1,45 @@
 # AI-БРАГИНА — Cloudflare Worker
 
-## Текущий Worker
+Worker source and Wrangler configuration for the existing API.
 
-- Cloudflare Worker name: `chef-api`
-- Public endpoint: `https://chef-api.bosstayson24.workers.dev`
-- Frontend origin: `https://nikitaarkhipov9898-lab.github.io`
-- Runtime secrets (must remain in Cloudflare, never commit them):
-  - `GROQ_API_KEY`
-  - `OWNER_SETUP_CODE`
-- D1 binding: `DB`
+## Existing service
 
-## Deployment safety
+- Worker name: `chef-api`
+- Endpoint: `https://chef-api.bosstayson24.workers.dev`
+- Allowed frontend origin: `https://nikitaarkhipov9898-lab.github.io`
+- D1 binding name: `DB`
+- Encrypted runtime secrets (keep in Cloudflare only): `GROQ_API_KEY`, `OWNER_SETUP_CODE`
 
-The repository's production branch is `main`. The development work for this setup is being prepared on `admin-panel`.
+## Source compatibility
 
-When connecting Cloudflare Workers Builds, keep `main` as the production branch and enable Preview builds for other branches. Do not select `admin-panel` as the production branch: pushes to that branch must create previews, not replace the live Worker.
-
-## Required Worker source
-
-The current deployed Worker source must be copied into this directory as `index.js) before enabling automatic deployment. The complete deployed source was not available in the connected GitHub repository during setup, so no replacement implementation is fabricated here.
-
-Preserve the existing routes and data contract:
+`index.js` is based on the current Worker source supplied by the project owner. It preserves the existing routes:
 - `GET /health`
 - `POST /auth/register`
 - `POST /auth/login`
 - `GET /auth/me`
 - `POST /auth/logout`
-- `POST /` (Groq proxy)
+- `POST /` (authenticated Groq proxy)
 
-Password hashing must remain at PBKDF2 100000 iterations (Cloudflare rejected 120000). Keep the existing D1 schema and authentication/session behavior intact.
+The password PBKDF2 iteration count is set to **100000**, matching the working Cloudflare deployment. The supplied pasted source contained 120000, but Cloudflare previously rejected that value in this project. Do not raise it without testing compatibility and planning a password-hash migration.
 
-## Before first deployment
+## Git and deployment safety
 
-1. Add the exact current Worker source as `worker/index.js`.
-2. Add `worker/wrangler.toml` with Worker name `chef-api`, entry point `index.js`, and the existing D1 database binding ID.
-3. Confirm the existing D1 database is bound as `DB`.
-4. Confirm `GROQ_API_KEY` and `OWNER_SETUP_CODE` exist as encrypted Worker secrets in Cloudflare.
-5. Connect Workers Builds to this repository with root directory `worker`, production branch `main`, and Preview builds enabled.
-6. Test a Preview deployment before allowing any production deployment.
+Development changes are being prepared on branch `admin-panel`. Keep `main` as the Cloudflare production branch. Enable Preview builds for non-production branches so `admin-panel` creates a Preview rather than changing the live Worker.
 
-Never put secret values, session tokens, password hashes, or private user data in Git.
+When connecting Workers Builds, use:
+- Repository: `nikitaarkhipov9898-lab/AI-BRAGINA`
+- Root directory: `worker`
+- Production branch: `main`
+- Deploy command: `npx wrangler deploy`
+- Preview builds: enabled
+
+## Cloudflare configuration still to verify
+
+Before connecting or deploying, confirm the existing Worker has:
+1. D1 database binding named `DB` pointing to the current production database.
+2. Encrypted secrets `GROQ_API_KEY` and `OWNER_SETUP_CODE`.
+3. The same production Worker name, `chef-api`.
+
+The Wrangler file intentionally does not contain a fabricated D1 database ID. The existing D1 binding must be represented in the final Wrangler configuration using the real database ID, which must be read from the Cloudflare account. Do not deploy until this is verified.
+
+Never commit secret values, session tokens, password hashes, or private user data.
