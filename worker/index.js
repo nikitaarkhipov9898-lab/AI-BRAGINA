@@ -305,7 +305,9 @@ async function ensureConversationSchema(env) {
 }
 
 
+let chatSchemaReady = false;
 async function ensureChatSchema(env) {
+  if (chatSchemaReady) return;
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_threads (
     id TEXT PRIMARY KEY, kind TEXT NOT NULL DEFAULT 'direct',
     created_at TEXT NOT NULL, updated_at TEXT NOT NULL
@@ -320,6 +322,7 @@ async function ensureChatSchema(env) {
   )`).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_chat_members_user ON chat_members(user_id,thread_id)").run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_chat_messages_thread_time ON chat_messages(thread_id,created_at DESC)").run();
+  chatSchemaReady = true;
 }
 async function chatMember(env, threadId, userId) {
   return env.DB.prepare("SELECT 1 AS ok FROM chat_members WHERE thread_id=? AND user_id=?")
@@ -372,10 +375,16 @@ async function chatGetMessages(request,env,user) {
   if(!await chatMember(env,threadId,user.id))return json({error:"Нет доступа к этому диалогу"},403);
   const limit=Math.min(50,Math.max(1,Number.parseInt(url.searchParams.get("limit")||"50",10)||50));
   const before=String(url.searchParams.get("before")||"");
-  const rows=before
-    ? await env.DB.prepare("SELECT id,sender_id,body,created_at FROM chat_messages WHERE thread_id=? AND created_at<? ORDER BY created_at DESC LIMIT ?").bind(threadId,before,limit).all()
-    : await env.DB.prepare("SELECT id,sender_id,body,created_at FROM chat_messages WHERE thread_id=? ORDER BY created_at DESC LIMIT ?").bind(threadId,limit).all();
-  const messages=(rows.results||[]).reverse();
+  const after=String(url.searchParams.get("after")||"");
+  let rows;
+  if(after){
+    rows=await env.DB.prepare("SELECT id,sender_id,body,created_at FROM chat_messages WHERE thread_id=? AND created_at>? ORDER BY created_at ASC LIMIT ?").bind(threadId,after,limit).all();
+  } else if(before){
+    rows=await env.DB.prepare("SELECT id,sender_id,body,created_at FROM chat_messages WHERE thread_id=? AND created_at<? ORDER BY created_at DESC LIMIT ?").bind(threadId,before,limit).all();
+  } else {
+    rows=await env.DB.prepare("SELECT id,sender_id,body,created_at FROM chat_messages WHERE thread_id=? ORDER BY created_at DESC LIMIT ?").bind(threadId,limit).all();
+  }
+  const messages=after?(rows.results||[]):(rows.results||[]).reverse();
   const peer=await env.DB.prepare(`SELECT u.id,u.username,u.display_name,u.avatar_url FROM chat_members m JOIN users u ON u.id=m.user_id WHERE m.thread_id=? AND m.user_id<>? LIMIT 1`).bind(threadId,user.id).first();
   return json({messages,peer,has_more:messages.length===limit});
 }
