@@ -251,7 +251,7 @@ async function syncConversations(request, env, user) {
     const kind = String(item?.kind || "chat").slice(0, 32);
     const title = String(item?.title || "Диалог").slice(0, 240);
     if (!id || !/^[a-zA-Z0-9_-]+$/.test(id)) continue;
-    const content = JSON.stringify(item?.content ?? {}).slice(0, 200000);
+    const content = JSON.stringify(item?.content ?? {});\n    if (content.length > 200000) continue;
     const created = String(item?.created_at || now).slice(0, 40);
     statements.push(env.DB.prepare(`
       INSERT INTO conversations (id,user_id,kind,title,content_json,created_at,updated_at)
