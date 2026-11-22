@@ -335,7 +335,7 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
  <div id="video-feed" class="video-feed"><div class="video-empty"><div class="video-empty-icon">▶</div><strong>Собираем ленту</strong><p>Загружаем открытые ролики. Видео не проходит через сервер СВОЁ.</p></div></div>
  <div id="video-feed-status" class="muted" style="text-align:center;padding:10px 4px"></div>
  <button id="video-more-btn" class="btn secondary hidden" onclick="loadMoreAutoVideos()">Показать ещё</button>
- <p class="video-footnote">Сейчас подборка формируется из открытых видео RUTUBE без входа в аккаунт. Плеер загружает ролик только по нажатию — это экономит память и трафик телефона.</p>
+ <p class="video-footnote">Лента собрана в СВОЁ из открытых роликов внешнего источника. Сейчас доступен RUTUBE; видео воспроизводится напрямую у источника и не хранится на наших серверах.</p>
 </section>
 
 <section id="page-settings" class="hidden page-settings">
@@ -550,7 +550,7 @@ function normalizeRutubeItem(v){
  const duration=typeof rawDuration==='string'&&rawDuration.includes(':')?rawDuration.split(':').reduce((n,part)=>n*60+Number(part||0),0):Number(rawDuration)||0;
  if(duration>150)return null;
  if(!duration&&!String(v.video_url||v.url||'').includes('/shorts/'))return null;
- return {id,embed:'https://rutube.ru/play/embed/'+id+'/',url:'https://rutube.ru/video/'+id+'/',title:String(v.title||v.name||'Короткое видео').slice(0,180),author:String(v.author?.name||v.author_name||v.channel_name||'RUTUBE'),duration,thumbnail:v.thumbnail_url||v.picture_url||v.poster_url||v.thumbnail||'',views:Number(v.hits||v.views_count||v.views||0)};
+ return {id,embed:'https://rutube.ru/play/embed/'+id+'/',url:'https://rutube.ru/video/'+id+'/',title:String(v.title||v.name||'Короткое видео').slice(0,180),author:String(v.author?.name||v.author_name||v.channel_name||'Автор не указан'),duration,thumbnail:v.thumbnail_url||v.picture_url||v.poster_url||v.thumbnail||'',views:Number(v.hits||v.views_count||v.views||0)};
 }
 function selectVideoTopic(topic,button){
  if(!VIDEO_TOPICS[topic]||videoLoading)return;
@@ -583,8 +583,8 @@ async function loadAutoVideoFeed(reset=false){
  }catch(error){
   if(!videoItems.length){
    const cached=readVideoCache();
-   if(cached.length){videoItems=cached;renderAutoVideoCards();if(status)status.textContent='Показана последняя сохранённая подборка. Для обновления нужен доступ к каталогу RUTUBE.';}
-   else{box.innerHTML='<div class="video-empty"><div class="video-empty-icon">!</div><strong>Не удалось загрузить ленту</strong><p>'+String(error.message||'Проверь подключение к интернету.')+'</p><p>СВОЁ не требует аккаунта VK. Сейчас автоматический каталог берётся из публичного поиска RUTUBE.</p><button class="mini-btn" onclick="loadAutoVideoFeed(true)">Повторить</button></div>';if(status)status.textContent='';}
+   if(cached.length){videoItems=cached;renderAutoVideoCards();if(status)status.textContent='Показана последняя сохранённая подборка. Для обновления ленты нужно подключение к источнику видео.';}
+   else{box.innerHTML='<div class="video-empty"><div class="video-empty-icon">!</div><strong>Не удалось загрузить ленту</strong><p>'+String(error.message||'Проверь подключение к интернету.')+'</p><p>СВОЁ не требует аккаунта на видеоплощадках. Попробуй ещё раз немного позже.</p><button class="mini-btn" onclick="loadAutoVideoFeed(true)">Повторить</button></div>';if(status)status.textContent='';}
   }else if(status)status.textContent='Не удалось обновить подборку. Уже загруженные ролики остались на экране.';
  }finally{videoLoading=false;}
 }
