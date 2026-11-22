@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#101521">
+<meta name="theme-color" content="#24563f">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="СВОЁ">
 <title>СВОЁ</title>
 <style>
 :root{color-scheme:dark;--bg:#0d1320;--bg2:#121b2b;--panel:#182337;--panel2:#202d43;--text:#f3f6fc;--muted:#9aa9bf;--line:#2b3a52;--accent:#8b9cff;--accent2:#6579ed;--good:#65d6a1;--warn:#f2bd69;--bad:#ff8585;--shadow:0 14px 38px #0005;--radius:20px;--space:16px}
@@ -46,7 +51,8 @@ body{background:radial-gradient(ellipse at 15% 8%,#b9d8a633,transparent 34%),rad
 <div id="auth-name-wrap" class="hidden"><label class="muted" for="auth-display">Как тебя показывать</label><input id="auth-display" maxlength="50" placeholder="Имя"></div>
 <label class="muted" for="auth-password">Пароль</label><input id="auth-password" type="password" autocomplete="current-password" minlength="8" maxlength="128" placeholder="Не менее 8 символов">
 <div id="auth-code-wrap" class="hidden"><label class="muted" for="auth-code">Код первого владельца</label><input id="auth-code" type="password" autocomplete="off" placeholder="Код, созданный в Cloudflare"><p>Нужен только при создании самого первого аккаунта. Не отправляй его никому.</p></div>
-<button id="auth-submit" class="btn" onclick="submitAuth()">Войти</button><button id="auth-toggle" class="auth-toggle" onclick="toggleAuthMode()">Присоединиться</button><div id="auth-status" class="status hidden"></div>
+<button id="auth-submit" class="btn" onclick="submitAuth()">Войти</button><button id="auth-toggle" class="auth-toggle" onclick="toggleAuthMode()">Присоединиться</button>
+<button id="install-app-btn" class="btn secondary" type="button" onclick="installSvoeApp()">Установить СВОЁ</button><div id="auth-status" class="status hidden"></div>
 </div></div>
 <div class="app">
 <header class="topbar"><div class="brand"><div class="brandmark">✦</div><div><h1>AI-БРАГИНА</h1><small>УМНЫЕ ПОМОЩНИКИ</small></div></div><button class="icon-btn" onclick="showPage('settings')" aria-label="Настройки">⚙</button></header>
@@ -391,6 +397,46 @@ function copyResult(id){const text=$(id).innerText;if(navigator.clipboard&&navig
 function fallbackCopy(text){const a=document.createElement('textarea');a.value=text;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('Текст скопирован');}catch(e){toast('Не удалось скопировать текст','error');}a.remove();}
 function exportData(){const blob=new Blob([JSON.stringify({version:3,exportedAt:new Date().toISOString(),history:appData.history,favorites:appData.favorites,kitchen:appData.kitchen,appData,settings},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='AI-BRAGINA-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function importData(event){const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const d=JSON.parse(reader.result);const source=d.appData||d;if(!Array.isArray(source.history))throw new Error('В файле не найдена история рецептов.');const seen=new Set(appData.history.map(x=>x.id));const imported=source.history.filter(x=>x&&typeof x.id==='string'&&typeof x.title==='string'&&x.recipe&&Array.isArray(x.recipe.ingredients)&&Array.isArray(x.recipe.steps)&&!seen.has(x.id));appData.history=[...imported,...appData.history].slice(0,100);if(Array.isArray(source.favorites))appData.favorites=[...new Set([...appData.favorites,...source.favorites])].filter(id=>appData.history.some(x=>x.id===id));if(source.kitchen&&Array.isArray(source.kitchen.staples))appData.kitchen=source.kitchen;if(Array.isArray(source.mechanicCases)){const caseIds=new Set(appData.mechanicCases.map(x=>x.id));const cases=source.mechanicCases.filter(x=>x&&typeof x.id==='string'&&x.vehicle&&typeof x.problem==='string'&&!caseIds.has(x.id)).map(x=>({...x,mode:x.mode==='quick'?'quick':'deep'}));appData.mechanicCases=[...cases,...appData.mechanicCases];}if(source.maintenance&&typeof source.maintenance==='object'){if(source.maintenance.vehicle&&typeof source.maintenance.vehicle==='object')appData.maintenance.vehicle=source.maintenance.vehicle;if(Array.isArray(source.maintenance.items)){const taskIds=new Set(appData.maintenance.items.map(x=>x.id));const tasks=source.maintenance.items.filter(x=>x&&typeof x.id==='string'&&typeof x.title==='string'&&!taskIds.has(x.id));appData.maintenance.items=[...tasks,...appData.maintenance.items];}}saveData();if(d.settings&&typeof d.settings==='object'){settings={...settings,...d.settings};localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));applySettings();}renderHistory();toast('Импортировано: рецептов '+imported.length+', неисправностей '+(Array.isArray(source.mechanicCases)?source.mechanicCases.length:0)+', напоминания ТО сохранены.');renderMechanicHistory();renderMaintenance();}catch(e){toast('Файл не удалось прочитать. Проверьте, что это резервная копия AI-БРАГИНА.','error');}event.target.value='';};reader.onerror=()=>{toast('Не удалось прочитать файл.','error');event.target.value='';};reader.readAsText(file);}
+
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', event => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  const button = $('install-app-btn');
+  if (button) button.textContent = 'Установить приложение';
+});
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  const button = $('install-app-btn');
+  if (button) {
+    button.textContent = 'Приложение установлено';
+    button.disabled = true;
+  }
+});
+async function installSvoeApp() {
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    if (choice && choice.outcome === 'accepted') {
+      const button = $('install-app-btn');
+      if (button) button.textContent = 'Устанавливаем…';
+    }
+    return;
+  }
+  const status = $('auth-status');
+  if (status) {
+    status.textContent = 'Если кнопка установки пока недоступна, открой меню Chrome (⋮) и выбери «Установить приложение» или «Добавить на главный экран».';
+    status.classList.remove('hidden', 'error', 'success');
+  }
+}
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', {scope: '/'})
+      .catch(error => console.warn('Не удалось подключить офлайн-режим:', error));
+  });
+}
+
 checkAuth();
 </script>
 </body>
