@@ -24,7 +24,7 @@ The password PBKDF2 iteration count is set to **100000**, matching the working C
 
 ## Git and deployment safety
 
-Development changes are being prepared on branch `admin-panel`. Keep `main` as the Cloudflare production branch. Enable Preview builds for non-production branches so `admin-panel` creates a Preview rather than changing the live Worker.
+Development changes are being prepared on branch `admin-panel`. A harmless documentation commit on this branch can be used to trigger and verify a Cloudflare Preview build. Keep `main` as the Cloudflare production branch. Enable Preview builds for non-production branches so `admin-panel` creates a Preview rather than changing the live Worker.
 
 When connecting Workers Builds, use:
 - Repository: `nikitaarkhipov9898-lab/AI-BRAGINA`
