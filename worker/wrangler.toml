@@ -1,0 +1,10 @@
+name = "chef-api"
+main = "index.js"
+compatibility_date = "2026-11-22"
+
+# Keep the existing D1 binding configured in the Cloudflare dashboard as:
+# Variable name: DB
+# Database: the existing production D1 database
+#
+# Keep GROQ_API_KEY and OWNER_SETUP_CODE as encrypted Worker secrets.
+# Never add secret values to this file or to Git.
