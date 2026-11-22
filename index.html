@@ -213,6 +213,10 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
 :root[data-theme="light"] body[data-page="community"]{background-image:radial-gradient(ellipse at 90% 4%,#e8b5c145,transparent 40%),radial-gradient(ellipse at 0% 60%,#e2c79b40,transparent 42%),linear-gradient(150deg,#fff0eb,#f5efe5 55%,#edf0e4)}
 :root[data-theme="light"] body[data-page="tasks"]{background-image:radial-gradient(ellipse at 8% 0%,#9bcdb03d,transparent 42%),linear-gradient(150deg,#e9f4eb,#f0f4e9 55%,#e5f0ea)}
 
+
+.chat-shell{display:grid;grid-template-columns:1fr;gap:12px}.chat-sidebar,.chat-room{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:13px;min-width:0}.chat-search{margin-bottom:14px}.chat-search input,.chat-compose textarea{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:12px;color:var(--text);padding:12px;font:inherit;resize:vertical}.chat-user-result,.chat-list-item{width:100%;display:flex;align-items:center;gap:10px;text-align:left;background:var(--bg2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:11px;margin:7px 0;cursor:pointer}.chat-user-result strong,.chat-list-item strong{display:block}.chat-user-result small,.chat-list-item small{display:block;color:var(--muted);margin-top:3px}.chat-list-item .chat-unread{margin-left:auto;background:var(--accent);color:white;border-radius:20px;padding:3px 8px;font-size:11px}.chat-room-head{display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}.chat-room-head>div{display:grid;gap:3px}.chat-room-head small{color:var(--muted)}.chat-messages{height:min(52vh,520px);min-height:260px;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:12px 2px}.chat-bubble{max-width:86%;padding:10px 12px;border-radius:15px;background:var(--bg2);align-self:flex-start;overflow-wrap:anywhere;white-space:pre-wrap}.chat-bubble.mine{align-self:flex-end;background:color-mix(in srgb,var(--accent) 22%,var(--panel));}.chat-bubble small{display:block;color:var(--muted);font-size:10px;margin-top:5px;text-align:right}.chat-compose{display:flex;gap:8px;align-items:end;border-top:1px solid var(--line);padding-top:10px}.chat-compose textarea{flex:1;min-width:0}.chat-compose .btn{width:auto;white-space:nowrap;padding:12px}.chat-empty{color:var(--muted);text-align:center;padding:24px 8px}
+@media(min-width:620px){.chat-shell{grid-template-columns:minmax(210px,.8fr) minmax(0,1.4fr)}.chat-room{display:flex;flex-direction:column}.chat-messages{flex:1;height:480px}}
+
 </style>
 </head>
 <body>
@@ -256,10 +260,20 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
  </div><div class="notice">Пометка «В планах» означает, что инструмент ещё не работает.</div>
 </section>
 <section id="page-community" class="hidden page-community">
- <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">Общение</h2><p class="page-sub">Социальная часть СВОЁ: личные чаты, группы и общие пространства.</p>
- <div class="community-space"><div class="community-orbit">⌂</div><div class="community-copy"><span class="eyebrow">МЕСТО ДЛЯ СВОИХ</span><h3>Пространства</h3><p class="muted">Семья, друзья, работа или своя команда. У каждого пространства будут участники, роли, общие дела и материалы.</p><span class="pill">ЗАКЛАДЫВАЕМ ОСНОВУ</span></div></div>
- <div class="community-chat"><div class="chat-bubbles"><span>Привет! 👋</span><span>Давай всё обсудим здесь</span></div><div class="community-copy"><h3>Личные и групповые чаты</h3><p class="muted">Сообщения, файлы и обмен результатами ИИ-помощников. С понятными настройками приватности и хранения данных.</p><span class="pill">В ПЛАНАХ</span></div></div>
- <div class="notice">Общение пока не подключено. Неработающие чаты не выдаём за готовую функцию.</div>
+ <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">Общение</h2><p class="page-sub">Личные сообщения между пользователями СВОЁ.</p>
+ <div class="chat-shell">
+  <div id="chat-sidebar" class="chat-sidebar">
+   <div class="chat-search"><input id="chat-user-search" maxlength="40" placeholder="Найти человека по логину" oninput="searchChatUsers()"><div id="chat-search-results"></div></div>
+   <div class="section-head"><h2>Мои чаты</h2><button class="mini-btn" onclick="loadChatList()">Обновить</button></div>
+   <div id="chat-list"><p class="muted">Загрузка диалогов…</p></div>
+  </div>
+  <div id="chat-room" class="chat-room hidden">
+   <div class="chat-room-head"><button class="mini-btn" onclick="closeChatRoom()">← Чаты</button><div><strong id="chat-peer-name">Диалог</strong><small id="chat-peer-login"></small></div></div>
+   <div id="chat-messages" class="chat-messages"><p class="muted">Выбери диалог.</p></div>
+   <form class="chat-compose" onsubmit="sendChatMessage(event)"><textarea id="chat-message-input" maxlength="4000" rows="2" placeholder="Написать сообщение…" required></textarea><button class="btn" type="submit">Отправить</button></form>
+  </div>
+ </div>
+ <div class="notice">История сообщений хранится на сервере. Доступ к ней имеют участники диалога и владелец платформы согласно правилам СВОЁ.</div>
 </section>
 <section id="page-tasks" class="hidden page-tasks">
  <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">Мои дела</h2><p class="page-sub">Личный список задач. Сейчас данные сохраняются на устройстве.</p>
@@ -339,6 +353,7 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
  <div class="panel"><div class="section-head"><h2>Управление пользователями</h2><button class="mini-btn" onclick="loadAdminUsers()">Обновить</button></div><input id="admin-user-search" class="field-input" placeholder="Поиск по логину или имени" oninput="filterAdminUsers()"><div id="admin-users"><p class="muted">Загрузка аккаунтов…</p></div></div>
  <div class="panel"><div class="section-head"><h2 id="admin-chat-title">Переписки пользователей</h2></div><div id="admin-conversations"><p class="muted">Выбери аккаунт, чтобы открыть его переписки.</p></div></div>
  <div class="panel hidden" id="admin-conversation-view"><div class="section-head"><h2 id="admin-view-title">Диалог</h2></div><pre id="admin-view-content" style="white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.55 monospace;color:var(--text);max-height:60vh;overflow:auto"></pre></div>
+ <div class="panel"><div class="section-head"><h2>Личные чаты пользователей</h2></div><p class="muted">История личных сообщений. Доступна только владельцу платформы.</p><div id="admin-chat-threads"><p class="muted">Выбери аккаунт в списке пользователей.</p></div><div id="admin-chat-message-view" class="hidden" style="max-height:55vh;overflow:auto;margin-top:12px"></div></div>
  <div class="panel"><div class="section-head"><h2>Журнал действий владельца</h2><button class="mini-btn" onclick="loadAdminAudit()">Обновить</button></div><div id="admin-audit"><p class="muted">Загрузка журнала…</p></div></div>
 </section>
 
@@ -448,7 +463,7 @@ async function adminFetch(path,options={}){const r=await fetch(WORKER_URL+path,{
 async function loadAdminOverview(){if(currentUser?.role!=='owner')return;const box=$('admin-overview');box.textContent='Загружаю…';try{const d=await adminFetch('/admin/overview');box.innerHTML='';[['Пользователи',d.users],['Активные',d.active_users],['Заблокированы',d.blocked_users],['Переписки',d.conversations]].forEach(([label,value])=>{const card=document.createElement('div');card.className='admin-stat';const strong=document.createElement('strong');strong.textContent=Number(value||0).toLocaleString('ru-RU');const small=document.createElement('small');small.textContent=label;card.append(strong,small);box.appendChild(card);});}catch(e){box.textContent=e.message;}}
 async function loadAdminUsers(){if(currentUser?.role!=='owner')return;const box=$('admin-users');box.textContent='Загружаю аккаунты…';try{const d=await adminFetch('/admin/users');adminUsersCache=d.users||[];renderAdminUsers();}catch(e){box.textContent=e.message;}}
 function filterAdminUsers(){renderAdminUsers();}
-function renderAdminUsers(){const box=$('admin-users');if(!box)return;const q=($('admin-user-search')?.value||'').trim().toLowerCase();const users=adminUsersCache.filter(u=>[u.username,u.display_name].some(v=>String(v||'').toLowerCase().includes(q)));box.innerHTML='';if(!users.length){box.textContent='Пользователи не найдены.';return;}users.forEach(u=>{const item=document.createElement('div');item.className='history-item';const title=document.createElement('strong');title.textContent=(u.display_name||u.username)+' (@'+u.username+')';item.appendChild(title);const meta=document.createElement('small');meta.textContent='Роль: '+u.role+' · Статус: '+u.status+' · Переписок: '+u.conversations_count+' · Создан: '+(u.created_at?new Date(u.created_at).toLocaleDateString('ru-RU'):'—');item.appendChild(meta);const actions=document.createElement('div');actions.className='case-actions';const chats=document.createElement('button');chats.textContent='Переписки';chats.onclick=()=>loadAdminConversations(u.id,u.username);actions.appendChild(chats);if(u.role!=='owner'){const toggle=document.createElement('button');toggle.textContent=u.status==='active'?'Заблокировать':'Разблокировать';toggle.onclick=()=>adminUserAction(u,u.status==='active'?'block':'unblock');actions.appendChild(toggle);const del=document.createElement('button');del.textContent='Удалить аккаунт';del.onclick=()=>adminUserAction(u,'delete');actions.appendChild(del);}item.appendChild(actions);box.appendChild(item);});}
+function renderAdminUsers(){const box=$('admin-users');if(!box)return;const q=($('admin-user-search')?.value||'').trim().toLowerCase();const users=adminUsersCache.filter(u=>[u.username,u.display_name].some(v=>String(v||'').toLowerCase().includes(q)));box.innerHTML='';if(!users.length){box.textContent='Пользователи не найдены.';return;}users.forEach(u=>{const item=document.createElement('div');item.className='history-item';const title=document.createElement('strong');title.textContent=(u.display_name||u.username)+' (@'+u.username+')';item.appendChild(title);const meta=document.createElement('small');meta.textContent='Роль: '+u.role+' · Статус: '+u.status+' · Переписок: '+u.conversations_count+' · Создан: '+(u.created_at?new Date(u.created_at).toLocaleDateString('ru-RU'):'—');item.appendChild(meta);const actions=document.createElement('div');actions.className='case-actions';const chats=document.createElement('button');chats.textContent='История ИИ';chats.onclick=()=>loadAdminConversations(u.id,u.username);actions.appendChild(chats);const personalChats=document.createElement('button');personalChats.textContent='Личные чаты';personalChats.onclick=()=>loadAdminChatThreads(u.id,u.username);actions.appendChild(personalChats);if(u.role!=='owner'){const toggle=document.createElement('button');toggle.textContent=u.status==='active'?'Заблокировать':'Разблокировать';toggle.onclick=()=>adminUserAction(u,u.status==='active'?'block':'unblock');actions.appendChild(toggle);const del=document.createElement('button');del.textContent='Удалить аккаунт';del.onclick=()=>adminUserAction(u,'delete');actions.appendChild(del);}item.appendChild(actions);box.appendChild(item);});}
 async function adminUserAction(u,action){const label=action==='block'?'заблокировать':action==='unblock'?'разблокировать':'безвозвратно удалить';const warning=action==='delete'?' Будут удалены аккаунт, его серверные переписки и активные сессии.': '';if(!confirm('Подтверждаешь: '+label+' @'+u.username+'?'+warning))return;try{await adminFetch('/admin/users/action',{method:'POST',body:JSON.stringify({user_id:u.id,action})});toast('Действие выполнено.');await Promise.all([loadAdminUsers(),loadAdminOverview(),loadAdminAudit()]);}catch(e){toast(e.message,'error');}}
 async function loadAdminAudit(){if(currentUser?.role!=='owner')return;const box=$('admin-audit');if(!box)return;box.textContent='Загружаю…';try{const d=await adminFetch('/admin/audit');box.innerHTML='';if(!d.items?.length){box.textContent='Записей пока нет.';return;}d.items.forEach(x=>{const row=document.createElement('div');row.className='history-item';const t=document.createElement('strong');t.textContent=x.action;const m=document.createElement('small');m.textContent=(x.actor_username||'Владелец')+' · '+(x.target_username||'—')+' · '+new Date(x.created_at).toLocaleString('ru-RU');row.append(t,m);box.appendChild(row);});}catch(e){box.textContent=e.message;}}
 async function loadAdminConversations(userId,username){
@@ -713,7 +728,89 @@ function toggleAutoVideoSaved(item,button){let saved=getSavedAutoVideos();if(sav
 function showSavedAutoVideos(button){if(videoLoading)return;document.querySelectorAll('#video-discovery-tabs button').forEach(x=>x.classList.toggle('active',x===button));videoItems=getSavedAutoVideos();renderAutoVideoCards();if($('video-feed-status'))$('video-feed-status').textContent='Избранное хранится только на этом устройстве.';if($('video-more-btn'))$('video-more-btn').classList.add('hidden');}
 
 
-function showPage(page){if(videoFocusMode&&page!=='video')closeVideoFocus();if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}const target=$('page-'+page);if(!target){toast('Раздел пока готовится.');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));target.classList.remove('hidden');document.body.dataset.page=page;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));const map={home:'nav-home',video:'nav-video',helpers:'nav-tools',chef:'nav-tools',mechanic:'nav-tools',invoice:'nav-tools',community:'nav-community',tasks:'nav-tasks',settings:'nav-settings',admin:'nav-settings'};const nav=$(map[page]||'nav-tools');if(nav)nav.classList.add('active');if(page==='tasks')renderTasks();if(page==='home')renderToday();if(page==='video'){videoItems=[];videoTopicPage=1;videoSessionSeed=Math.floor(Math.random()*5)+1;loadAutoVideoFeed(true);}try{localStorage.setItem('svoe_last_page',page);}catch(e){}window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
+
+let activeChatThread=null,activeChatPeer=null,chatPollTimer=null,chatSearchTimer=null,chatLastMessageId="";
+async function chatFetch(path,options={}){
+ const r=await fetch(WORKER_URL+path,{...options,headers:{Authorization:"Bearer "+authToken,"Content-Type":"application/json",...(options.headers||{})},cache:"no-store"});
+ const d=await r.json().catch(()=>({error:"Сервер вернул неверный ответ"}));
+ if(!r.ok)throw new Error(d.error||"Ошибка чата");return d;
+}
+async function loadChatList(){
+ if(!authToken)return;const box=$("chat-list");if(!box)return;
+ try{const d=await chatFetch("/chat/list");renderChatList(d.chats||[]);}catch(e){box.textContent=e.message;}
+}
+function renderChatList(items){
+ const box=$("chat-list");if(!box)return;box.innerHTML="";
+ if(!items.length){box.innerHTML='<div class="chat-empty">Пока нет переписок.<br>Найди человека по логину выше.</div>';return;}
+ items.forEach(c=>{
+  const b=document.createElement("button");b.className="chat-list-item";
+  const info=document.createElement("span");info.style.flex="1";
+  const title=document.createElement("strong");title.textContent=c.peer_display_name||c.peer_username||"Пользователь";
+  const meta=document.createElement("small");meta.textContent=(c.last_message||"Начните общение")+(c.last_message_at?" · "+new Date(c.last_message_at).toLocaleString("ru-RU"):"");
+  info.append(title,meta);b.appendChild(info);
+  if(Number(c.unread)>0){const n=document.createElement("span");n.className="chat-unread";n.textContent=String(c.unread);b.appendChild(n);}
+  b.onclick=()=>openChatRoom(c.id,{id:c.peer_id,username:c.peer_username,display_name:c.peer_display_name,avatar_url:c.peer_avatar});box.appendChild(b);
+ });
+}
+function searchChatUsers(){
+ clearTimeout(chatSearchTimer);const q=String($("chat-user-search")?.value||"").trim();const box=$("chat-search-results");if(!box)return;
+ if(q.length<2){box.innerHTML="";return;}
+ chatSearchTimer=setTimeout(async()=>{try{const d=await chatFetch("/chat/users?q="+encodeURIComponent(q));box.innerHTML="";
+  if(!d.users?.length){box.textContent="Никого не нашли.";return;}
+  d.users.forEach(u=>{const b=document.createElement("button");b.className="chat-user-result";const span=document.createElement("span");const strong=document.createElement("strong");strong.textContent=u.display_name||u.username;const small=document.createElement("small");small.textContent="@"+u.username;span.append(strong,small);b.appendChild(span);b.onclick=()=>createDirectChat(u.username);box.appendChild(b);});
+ }catch(e){box.textContent=e.message;}},350);
+}
+async function createDirectChat(username){
+ try{const d=await chatFetch("/chat/direct",{method:"POST",body:JSON.stringify({username})});$("chat-user-search").value="";$("chat-search-results").innerHTML="";await loadChatList();await openChatRoom(d.thread.id,d.thread.peer);}
+ catch(e){toast(e.message,"error");}
+}
+async function openChatRoom(threadId,peer){
+ activeChatThread=threadId;activeChatPeer=peer;chatLastMessageId="";
+ $("chat-sidebar").classList.add("hidden");$("chat-room").classList.remove("hidden");
+ $("chat-peer-name").textContent=peer?.display_name||peer?.username||"Диалог";
+ $("chat-peer-login").textContent=peer?.username?"@"+peer.username:"";
+ await loadChatMessages(true);
+ await chatFetch("/chat/read",{method:"POST",body:JSON.stringify({thread_id:threadId})}).catch(()=>{});
+ clearInterval(chatPollTimer);chatPollTimer=setInterval(()=>{if(activeChatThread&&document.visibilityState==="visible")loadChatMessages(false);},5000);
+}
+function closeChatRoom(){
+ clearInterval(chatPollTimer);chatPollTimer=null;activeChatThread=null;activeChatPeer=null;
+ $("chat-room").classList.add("hidden");$("chat-sidebar").classList.remove("hidden");loadChatList();
+}
+async function loadChatMessages(initial){
+ if(!activeChatThread)return;const box=$("chat-messages");if(initial)box.innerHTML='<div class="chat-empty">Загружаю сообщения…</div>';
+ try{const d=await chatFetch("/chat/messages?thread_id="+encodeURIComponent(activeChatThread)+"&limit=50");
+  if(!initial&&d.messages?.length&&d.messages[d.messages.length-1].id===chatLastMessageId)return;
+  const atBottom=box.scrollHeight-box.scrollTop-box.clientHeight<90;box.innerHTML="";
+  if(!d.messages?.length)box.innerHTML='<div class="chat-empty">Сообщений пока нет. Напиши первым 👋</div>';
+  (d.messages||[]).forEach(m=>{const b=document.createElement("div");b.className="chat-bubble"+(m.sender_id===currentUser?.id?" mine":"");const body=document.createElement("div");body.textContent=m.body;const meta=document.createElement("small");meta.textContent=new Date(m.created_at).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});b.append(body,meta);box.appendChild(b);});
+  if(d.messages?.length)chatLastMessageId=d.messages[d.messages.length-1].id;
+  if(initial||atBottom)box.scrollTop=box.scrollHeight;
+  if(initial)loadChatList();
+ }catch(e){if(initial)box.textContent=e.message;}
+}
+async function sendChatMessage(event){
+ event.preventDefault();const input=$("chat-message-input"),body=String(input.value||"").trim();if(!body||!activeChatThread)return;
+ const btn=event.submitter;if(btn)btn.disabled=true;
+ try{await chatFetch("/chat/messages",{method:"POST",body:JSON.stringify({thread_id:activeChatThread,body})});input.value="";await loadChatMessages(false);await loadChatList();}
+ catch(e){toast(e.message,"error");}finally{if(btn)btn.disabled=false;input.focus();}
+}
+async function loadAdminChatThreads(userId,username){
+ const box=$("admin-chat-threads"),view=$("admin-chat-message-view");view.classList.add("hidden");box.textContent="Загружаю личные чаты…";
+ try{const d=await adminFetch("/admin/chat/threads?user_id="+encodeURIComponent(userId));box.innerHTML="";
+  if(!d.chats?.length){box.textContent="Личных чатов пока нет.";return;}
+  d.chats.forEach(c=>{const item=document.createElement("div");item.className="history-item";const title=document.createElement("strong");title.textContent="Диалог · "+(c.last_message_at?new Date(c.last_message_at).toLocaleString("ru-RU"):"без сообщений");const meta=document.createElement("small");meta.textContent=c.last_message||"Сообщений пока нет";const btn=document.createElement("button");btn.textContent="Открыть сообщения";btn.onclick=()=>loadAdminChatMessages(c.id,username);item.append(title,meta,btn);box.appendChild(item);});
+ }catch(e){box.textContent=e.message;}
+}
+async function loadAdminChatMessages(threadId,username){
+ const box=$("admin-chat-message-view");box.classList.remove("hidden");box.textContent="Загружаю сообщения…";
+ try{const d=await adminFetch("/admin/chat/messages?thread_id="+encodeURIComponent(threadId));box.innerHTML="";
+  if(!d.messages?.length){box.textContent="Сообщений пока нет.";return;}
+  d.messages.forEach(m=>{const item=document.createElement("div");item.className="history-item";const who=document.createElement("strong");who.textContent=(m.display_name||m.username||"Пользователь")+" (@"+m.username+")";const body=document.createElement("p");body.style.whiteSpace="pre-wrap";body.style.overflowWrap="anywhere";body.textContent=m.body;const time=document.createElement("small");time.textContent=new Date(m.created_at).toLocaleString("ru-RU");item.append(who,body,time);box.appendChild(item);});
+ }catch(e){box.textContent=e.message;}
+}
+
+function showPage(page){if(videoFocusMode&&page!=='video')closeVideoFocus();if(page!=='community'){clearInterval(chatPollTimer);chatPollTimer=null;activeChatThread=null;}if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}const target=$('page-'+page);if(!target){toast('Раздел пока готовится.');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));target.classList.remove('hidden');document.body.dataset.page=page;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));const map={home:'nav-home',video:'nav-video',helpers:'nav-tools',chef:'nav-tools',mechanic:'nav-tools',invoice:'nav-tools',community:'nav-community',tasks:'nav-tasks',settings:'nav-settings',admin:'nav-settings'};const nav=$(map[page]||'nav-tools');if(nav)nav.classList.add('active');if(page==='community')loadChatList();if(page==='tasks')renderTasks();if(page==='home')renderToday();if(page==='video'){videoItems=[];videoTopicPage=1;videoSessionSeed=Math.floor(Math.random()*5)+1;loadAutoVideoFeed(true);}try{localStorage.setItem('svoe_last_page',page);}catch(e){}window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
 function dispatchHomeCommand(){const q=String($('home-command-input')?.value||'').trim().toLowerCase();if(!q){showPage('helpers');return;}if(/рецепт|еда|приготов|ужин|завтрак|шеф/.test(q)){showPage('chef');return;}if(/машин|авто|двигател|механик/.test(q)){showPage('mechanic');return;}if(/уч[её]т|товар|склад|остат|инвентар|наклад/.test(q)){showPage('invoice');return;}if(/задач|напом|дело|план/.test(q)){showPage('tasks');return;}if(/чат|сообщ|семь|друз|общен/.test(q)){showPage('community');return;}showPage('helpers');toast('Подходящий раздел пока не найден. Посмотри каталог помощников.');}
 function addTask(){const title=String($('task-title')?.value||'').trim();if(!title){toast('Напиши, что нужно сделать.','error');return;}appData.tasks=Array.isArray(appData.tasks)?appData.tasks:[];appData.tasks.unshift({id:crypto.randomUUID(),title:title.slice(0,160),due:$('task-due')?.value||'',done:false,createdAt:new Date().toISOString()});$('task-title').value='';$('task-due').value='';saveData();renderTasks();renderToday();toast('Задача добавлена.');}
 function toggleTask(id){const t=(appData.tasks||[]).find(x=>x.id===id);if(!t)return;t.done=!t.done;saveData();renderTasks();renderToday();}
