@@ -230,8 +230,35 @@ function showAdminConversation(c){
 }
 function authStatus(message,error=false){const el=$('auth-status');el.textContent=message;el.classList.remove('hidden','error','success');el.classList.add(error?'error':'success');}
 function toggleAuthMode(){authMode=authMode==='login'?'register':'login';$('auth-title').textContent=authMode==='login'?'Вход в приложение':'Создание аккаунта';$('auth-hint').textContent=authMode==='login'?'Войди, чтобы продолжить работу.':'Создай аккаунт. Первый аккаунт станет владельцем платформы.';$('auth-name-wrap').classList.toggle('hidden',authMode!=='register');$('auth-code-wrap').classList.toggle('hidden',authMode!=='register');$('auth-password').autocomplete=authMode==='login'?'current-password':'new-password';$('auth-submit').textContent=authMode==='login'?'Войти':'Зарегистрироваться';$('auth-toggle').textContent=authMode==='login'?'Создать аккаунт':'У меня уже есть аккаунт';$('auth-status').classList.add('hidden');}
-async function authRequest(path,body){const r=await fetch(WORKER_URL+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json().catch(()=>({error:'Сервер вернул неверный ответ'}));if(!r.ok){const raw=d.error??d.message??d;let msg=typeof raw==='string'?raw:(raw&&typeof raw==='object'?(raw.message||raw.error||JSON.stringify(raw)):String(raw));throw new Error(msg||('Ошибка авторизации ('+r.status+')'));}return d;}
-async function submitAuth(){const btn=$('auth-submit');btn.disabled=true;try{const username=$('auth-username').value.trim(),password=$('auth-password').value;if(!username||!password)throw new Error('Заполни логин и пароль.');let d;if(authMode==='register'){d=await authRequest('/auth/register',{username,password,display_name:$('auth-display').value.trim()||username,setup_code:$('auth-code').value});}else{d=await authRequest('/auth/login',{username,password});}authToken=d.token;currentUser=d.user;localStorage.setItem('ai_bragina_token',authToken);localStorage.setItem('ai_bragina_user',JSON.stringify(currentUser));activateUserStorage(currentUser);$('auth-screen').classList.add('hidden');toast('Вход выполнен.');}catch(e){authStatus(e.message,true);}finally{btn.disabled=false;}}
+async function authRequest(path,body){
+ const controller=new AbortController();
+ const timeout=setTimeout(()=>controller.abort(),12000);
+ try{
+  const r=await fetch(WORKER_URL+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal,cache:'no-store'});
+  const d=await r.json().catch(()=>({error:'Сервер вернул неверный ответ'}));
+  if(!r.ok){const raw=d.error??d.message??d;let msg=typeof raw==='string'?raw:(raw&&typeof raw==='object'?(raw.message||raw.error||JSON.stringify(raw)):String(raw));throw new Error(msg||('Ошибка авторизации ('+r.status+')'));}
+  return d;
+ }catch(e){
+  if(e.name==='AbortError')throw new Error('Сервер не ответил за 12 секунд. Проверь тестовый Worker.');
+  if(e instanceof TypeError)throw new Error('Не удалось связаться с тестовым сервером. Проверь подключение.');
+  throw e;
+ }finally{clearTimeout(timeout);}
+}
+async function submitAuth(){
+ const btn=$('auth-submit'),oldText=btn.textContent;
+ btn.disabled=true;btn.textContent='Проверяю…';authStatus('Связываюсь с тестовым сервером…');
+ try{
+  const username=$('auth-username').value.trim(),password=$('auth-password').value;
+  if(!username||!password)throw new Error('Заполни логин и пароль.');
+  let d;
+  if(authMode==='register')d=await authRequest('/auth/register',{username,password,display_name:$('auth-display').value.trim()||username,setup_code:$('auth-code').value});
+  else d=await authRequest('/auth/login',{username,password});
+  authToken=d.token;currentUser=d.user;
+  localStorage.setItem('ai_bragina_token',authToken);localStorage.setItem('ai_bragina_user',JSON.stringify(currentUser));
+  activateUserStorage(currentUser);$('auth-screen').classList.add('hidden');toast('Вход выполнен.');
+ }catch(e){authStatus(e.message||'Неизвестная ошибка авторизации',true);}
+ finally{btn.disabled=false;btn.textContent=oldText;}
+}
 async function checkAuth(){
  $('auth-screen').classList.remove('hidden');
  if(!authToken)return;
