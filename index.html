@@ -169,6 +169,10 @@ body.svoe-video-focus .short-card{width:100%;height:100%;height:100dvh;min-heigh
 body.svoe-video-focus .short-card iframe{position:absolute;inset:0;width:100%;height:100%;z-index:1}
 body.svoe-video-focus .short-poster{z-index:0}
 body.svoe-video-focus .short-overlay{z-index:2;padding:70px 18px max(26px,env(safe-area-inset-bottom))}
+body.svoe-video-focus .video-swipe-zone{position:absolute;z-index:5;left:0;right:0;top:0;height:22%;touch-action:pan-y;background:transparent}
+body.svoe-video-focus .short-overlay{z-index:6;pointer-events:none}
+body.svoe-video-focus .short-actions{pointer-events:auto}
+
 .video-focus-close{display:none}
 body.svoe-video-focus .video-focus-close{display:grid;position:fixed;z-index:1210;top:max(12px,env(safe-area-inset-top));left:14px;width:42px;height:42px;border:1px solid #ffffff55;border-radius:50%;background:#101510aa;color:white;font-size:23px;place-items:center;backdrop-filter:blur(8px)}
 
@@ -602,30 +606,72 @@ async function loadAutoVideoFeed(reset=false){
  }finally{videoLoading=false;}
 }
 function loadMoreAutoVideos(){if(!videoHasMore||videoLoading)return;videoTopicPage++;loadAutoVideoFeed(false);}
-let videoFocusObserver=null,videoAutoplayArmed=false,videoFocusMode=false;
+let videoFocusObserver=null,videoAutoplayArmed=false,videoFocusMode=false,videoActiveId='',videoSwipeStart=null,videoScrollTimer=null;
 function enterVideoFocus(firstItem){
  const feed=$('video-feed');if(!feed)return;
- videoFocusMode=true;videoAutoplayArmed=true;document.body.classList.add('svoe-video-focus');
- if(videoFocusObserver)videoFocusObserver.disconnect();
- if(firstItem){const card=[...feed.querySelectorAll('.short-card')].find(x=>x.dataset.videoId===firstItem.id);if(card){card.scrollIntoView({block:'start'});playAutoVideo(firstItem,card);}}
+ videoFocusMode=true;videoAutoplayArmed=true;videoActiveId='';
+ document.body.classList.add('svoe-video-focus');
+ if(firstItem){const card=[...feed.querySelectorAll('.short-card')].find(x=>x.dataset.videoId===firstItem.id);if(card){feed.scrollTop=card.offsetTop;activateFocusedVideo(card);}}
  setupVideoFocusObserver();
 }
 function closeVideoFocus(){
- videoFocusMode=false;videoAutoplayArmed=false;document.body.classList.remove('svoe-video-focus');
+ videoFocusMode=false;videoAutoplayArmed=false;videoActiveId='';document.body.classList.remove('svoe-video-focus');
  if(videoFocusObserver){videoFocusObserver.disconnect();videoFocusObserver=null;}
+ if(videoScrollTimer){clearTimeout(videoScrollTimer);videoScrollTimer=null;}
  document.querySelectorAll('.short-card iframe').forEach(x=>x.remove());
  document.querySelectorAll('.short-card').forEach(card=>{const p=card.querySelector('.short-poster');if(p)p.style.display='';const b=card.querySelector('.short-play');if(b)b.style.display='grid';});
 }
+function activateFocusedVideo(card){
+ if(!card||!videoFocusMode)return;
+ const item=videoItems.find(x=>x.id===card.dataset.videoId);if(!item||videoActiveId===item.id)return;
+ videoActiveId=item.id;
+ document.querySelectorAll('.short-card').forEach(other=>{
+  if(other===card)return;
+  const frame=other.querySelector('iframe');if(frame)frame.remove();
+  const p=other.querySelector('.short-poster');if(p)p.style.display='';
+  const b=other.querySelector('.short-play');if(b)b.style.display='grid';
+ });
+ playAutoVideo(item,card);
+}
+function getCenteredVideoCard(){
+ const feed=$('video-feed');if(!feed)return null;
+ const cards=[...feed.querySelectorAll('.short-card')];if(!cards.length)return null;
+ const center=feed.getBoundingClientRect().top+feed.clientHeight/2;
+ return cards.reduce((best,card)=>{
+  const r=card.getBoundingClientRect(),d=Math.abs((r.top+r.bottom)/2-center);
+  return !best||d<best.distance?{card,distance:d}:best;
+ },null)?.card||null;
+}
 function setupVideoFocusObserver(){
- const feed=$('video-feed');if(!feed||!('IntersectionObserver'in window))return;
+ const feed=$('video-feed');if(!feed)return;
  if(videoFocusObserver)videoFocusObserver.disconnect();
  videoFocusObserver=new IntersectionObserver(entries=>{
-  const best=entries.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
-  if(!best||best.intersectionRatio<.65||!videoAutoplayArmed||!videoFocusMode)return;
-  const card=best.target,item=videoItems.find(x=>x.id===card.dataset.videoId);
-  if(item)playAutoVideo(item,card);
- },{root:feed,threshold:[.35,.65,.85]});
+  if(!videoFocusMode||!videoAutoplayArmed)return;
+  const visible=entries.filter(e=>e.isIntersecting).sort((x,y)=>y.intersectionRatio-x.intersectionRatio)[0];
+  if(visible&&visible.intersectionRatio>=.7)activateFocusedVideo(getCenteredVideoCard()||visible.target);
+ },{root:feed,threshold:[.5,.7,.9]});
  feed.querySelectorAll('.short-card').forEach(card=>videoFocusObserver.observe(card));
+ feed.onscroll=()=>{
+  if(!videoFocusMode)return;
+  if(videoScrollTimer)clearTimeout(videoScrollTimer);
+  videoScrollTimer=setTimeout(()=>{const card=getCenteredVideoCard();if(card)activateFocusedVideo(card);},110);
+ };
+}
+function handleVideoSwipeStart(event){
+ if(!videoFocusMode||event.target.closest('.short-actions'))return;
+ const touch=event.touches?event.touches[0]:event;
+ videoSwipeStart={x:touch.clientX,y:touch.clientY,time:Date.now()};
+}
+function handleVideoSwipeEnd(event){
+ if(!videoFocusMode||!videoSwipeStart)return;
+ const touch=event.changedTouches?event.changedTouches[0]:event;
+ const dy=touch.clientY-videoSwipeStart.y,dx=touch.clientX-videoSwipeStart.x;
+ const elapsed=Date.now()-videoSwipeStart.time;videoSwipeStart=null;
+ if(Math.abs(dy)<38||Math.abs(dy)<Math.abs(dx)*1.15||elapsed>900)return;
+ const feed=$('video-feed'),cards=[...feed.querySelectorAll('.short-card')];const current=getCenteredVideoCard();let index=cards.indexOf(current);
+ if(index<0)index=0;
+ const next=cards[Math.max(0,Math.min(cards.length-1,index+(dy<0?1:-1)))];
+ if(next){feed.scrollTo({top:next.offsetTop,behavior:'smooth'});setTimeout(()=>activateFocusedVideo(getCenteredVideoCard()||next),260);}
 }
 function renderAutoVideoCards(){
  const box=$('video-feed');if(!box)return;box.innerHTML='';
@@ -633,10 +679,12 @@ function renderAutoVideoCards(){
  videoItems.forEach((item,index)=>{
   const card=document.createElement('article');card.className='short-card';card.dataset.videoId=item.id;
   const poster=document.createElement('img');poster.className='short-poster';poster.alt='';poster.loading=index<2?'eager':'lazy';poster.src=item.thumbnail||'';if(!item.thumbnail)poster.style.display='none';card.appendChild(poster);
-  const play=document.createElement('button');play.className='short-play';play.type='button';play.textContent='▶';play.setAttribute('aria-label','Смотреть видео');play.onclick=()=>{if(!videoFocusMode)enterVideoFocus(item);else{videoAutoplayArmed=true;playAutoVideo(item,card);}};card.appendChild(play);
+  const play=document.createElement('button');play.className='short-play';play.type='button';play.textContent='▶';play.setAttribute('aria-label','Смотреть видео');play.onclick=()=>{if(!videoFocusMode)enterVideoFocus(item);else{videoAutoplayArmed=true;activateFocusedVideo(card);}};card.appendChild(play);
   const overlay=document.createElement('div');overlay.className='short-overlay';
   const title=document.createElement('strong');title.textContent=item.title;const meta=document.createElement('div');meta.className='short-meta';meta.textContent=item.author+(item.duration?' · '+Math.floor(item.duration/60)+':'+String(item.duration%60).padStart(2,'0'):'');
-  const actions=document.createElement('div');actions.className='short-actions';const save=document.createElement('button');save.textContent=isAutoVideoSaved(item.id)?'♥ В избранном':'♡ В избранное';save.onclick=()=>toggleAutoVideoSaved(item,save);const open=document.createElement('button');open.textContent='Открыть ↗';open.onclick=()=>window.open(item.url,'_blank','noopener,noreferrer');actions.append(save,open);overlay.append(title,meta,actions);card.appendChild(overlay);box.appendChild(card);
+  const actions=document.createElement('div');actions.className='short-actions';const save=document.createElement('button');save.textContent=isAutoVideoSaved(item.id)?'♥ В избранном':'♡ В избранное';save.onclick=()=>toggleAutoVideoSaved(item,save);const open=document.createElement('button');open.textContent='Открыть ↗';open.onclick=()=>window.open(item.url,'_blank','noopener,noreferrer');actions.append(save,open);overlay.append(title,meta,actions);card.appendChild(overlay);
+  const swipe=document.createElement('div');swipe.className='video-swipe-zone';swipe.setAttribute('aria-hidden','true');swipe.addEventListener('touchstart',handleVideoSwipeStart,{passive:true});swipe.addEventListener('touchend',handleVideoSwipeEnd,{passive:true});swipe.addEventListener('pointerdown',handleVideoSwipeStart);swipe.addEventListener('pointerup',handleVideoSwipeEnd);card.appendChild(swipe);
+  box.appendChild(card);
  });
  if(videoFocusMode)setupVideoFocusObserver();
 }
