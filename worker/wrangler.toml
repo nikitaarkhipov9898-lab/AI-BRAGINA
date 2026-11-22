@@ -2,9 +2,12 @@ name = "chef-api"
 main = "index.js"
 compatibility_date = "2026-11-22"
 
-# Keep the existing D1 binding configured in the Cloudflare dashboard as:
-# Variable name: DB
-# Database: the existing production D1 database
-#
-# Keep GROQ_API_KEY and OWNER_SETUP_CODE as encrypted Worker secrets.
-# Never add secret values to this file or to Git.
+# Production D1 database. Keep this binding name in sync with env.DB in index.js.
+[[d1_databases]]
+binding = "DB"
+database_name = "ai-bragina-db"
+database_id = "8bb9c36e-a38a-4c79-86dc-cbaf92fce859"
+
+# Previews intentionally have no D1 binding yet.
+# Add a separate staging D1 database here before enabling database-backed Preview tests.
+[previews]
