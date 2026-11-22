@@ -217,6 +217,60 @@ async function login(request, env) {
 }
 
 
+async function ensureAuthSchema(env) {
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      username TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      display_name TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'user',
+      avatar_url TEXT,
+      status TEXT NOT NULL DEFAULT 'active',
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `).run();
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS user_sessions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      token_hash TEXT NOT NULL UNIQUE,
+      device_label TEXT NOT NULL DEFAULT 'Устройство',
+      expires_at TEXT NOT NULL,
+      revoked_at TEXT
+    )
+  `).run();
+
+  const userCols = await env.DB.prepare("PRAGMA table_info(users)").all();
+  const userNames = new Set((userCols.results || []).map(x => x.name));
+  const userAdds = [
+    ["password_hash", "TEXT"],
+    ["display_name", "TEXT"],
+    ["role", "TEXT NOT NULL DEFAULT 'user'"],
+    ["avatar_url", "TEXT"],
+    ["status", "TEXT NOT NULL DEFAULT 'active'"],
+    ["created_at", "TEXT"]
+  ];
+  for (const [name, type] of userAdds) {
+    if (!userNames.has(name)) await env.DB.prepare(`ALTER TABLE users ADD COLUMN ${name} ${type}`).run();
+  }
+
+  const sessionCols = await env.DB.prepare("PRAGMA table_info(user_sessions)").all();
+  const sessionNames = new Set((sessionCols.results || []).map(x => x.name));
+  const sessionAdds = [
+    ["user_id", "TEXT"],
+    ["token_hash", "TEXT"],
+    ["device_label", "TEXT"],
+    ["expires_at", "TEXT"],
+    ["revoked_at", "TEXT"]
+  ];
+  for (const [name, type] of sessionAdds) {
+    if (!sessionNames.has(name)) await env.DB.prepare(`ALTER TABLE user_sessions ADD COLUMN ${name} ${type}`).run();
+  }
+  await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username ON users(username)").run();
+  await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_user_sessions_token_hash ON user_sessions(token_hash)").run();
+}
+
 async function ensureConversationSchema(env) {
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS conversations (
@@ -269,6 +323,14 @@ async function syncConversations(request, env, user) {
 async function handleFetch(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
+
+  if (
+    path.startsWith("/auth/") ||
+    path.startsWith("/conversations") ||
+    path.startsWith("/admin/")
+  ) {
+    await ensureAuthSchema(env);
+  }
 
   if (path === "/app" && request.method === "GET") {
     const page = await fetch("https://raw.githubusercontent.com/nikitaarkhipov9898-lab/AI-BRAGINA/admin-panel/index.html", {
