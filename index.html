@@ -566,8 +566,8 @@ async function loadAutoVideoFeed(reset=false){
  if(status)status.textContent='Загружаем подборку…';
  const topic=VIDEO_TOPICS[activeVideoTopic]||VIDEO_TOPICS.trending;
  try{
-  const url='https://rutube.ru/api/search/video/?query='+encodeURIComponent(topic.query)+'&page='+videoTopicPage+'&format=json';
-  const response=await fetch(url,{method:'GET',mode:'cors',credentials:'omit',headers:{'Accept':'application/json'},cache:'no-store'});
+  const url='/video/feed?topic='+encodeURIComponent(activeVideoTopic)+'&page='+videoTopicPage;
+  const response=await fetch(url,{method:'GET',credentials:'same-origin',headers:{'Accept':'application/json'},cache:'no-store'});
   if(!response.ok)throw new Error('Видеоплощадка временно не отдаёт каталог ('+response.status+').');
   const data=await response.json(),rows=Array.isArray(data.results)?data.results:Array.isArray(data)?data:[];
   const normalized=rows.map(normalizeRutubeItem).filter(Boolean);
