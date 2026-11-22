@@ -304,6 +304,126 @@ async function ensureConversationSchema(env) {
   `).run();
 }
 
+
+async function ensureChatSchema(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_threads (
+    id TEXT PRIMARY KEY, kind TEXT NOT NULL DEFAULT 'direct',
+    created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_members (
+    thread_id TEXT NOT NULL, user_id TEXT NOT NULL, joined_at TEXT NOT NULL,
+    last_read_at TEXT, PRIMARY KEY(thread_id,user_id)
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_messages (
+    id TEXT PRIMARY KEY, thread_id TEXT NOT NULL, sender_id TEXT NOT NULL,
+    body TEXT NOT NULL, created_at TEXT NOT NULL
+  )`).run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_chat_members_user ON chat_members(user_id,thread_id)").run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_chat_messages_thread_time ON chat_messages(thread_id,created_at DESC)").run();
+}
+async function chatMember(env, threadId, userId) {
+  return env.DB.prepare("SELECT 1 AS ok FROM chat_members WHERE thread_id=? AND user_id=?")
+    .bind(threadId,userId).first();
+}
+async function chatSearchUsers(request, env, user) {
+  const q=String(new URL(request.url).searchParams.get("q")||"").trim().replace(/^@/,"").toLowerCase();
+  if(q.length<2)return json({users:[]});
+  const rows=await env.DB.prepare(`SELECT id,username,display_name,avatar_url FROM users
+    WHERE status='active' AND id<>? AND (username LIKE ? OR display_name LIKE ?)
+    ORDER BY username LIMIT 20`).bind(user.id,"%"+q+"%","%"+q+"%").all();
+  return json({users:rows.results||[]});
+}
+async function chatCreateDirect(request, env, user) {
+  const b=await request.json();
+  const targetName=username(b.username);
+  if(!/^[a-z0-9_]{3,24}$/.test(targetName))return json({error:"Укажи корректный логин пользователя"},400);
+  const target=await env.DB.prepare("SELECT id,username,display_name,avatar_url FROM users WHERE username=? AND status='active'").bind(targetName).first();
+  if(!target)return json({error:"Пользователь не найден"},404);
+  if(target.id===user.id)return json({error:"Нельзя создать чат с самим собой"},400);
+  await ensureChatSchema(env);
+  const pair=[user.id,target.id].sort();
+  const id="dm_"+(await sha256(pair.join(":"))).slice(0,32);
+  const now=new Date().toISOString();
+  await env.DB.prepare("INSERT OR IGNORE INTO chat_threads (id,kind,created_at,updated_at) VALUES (?,'direct',?,?)").bind(id,now,now).run();
+  await env.DB.batch([
+    env.DB.prepare("INSERT OR IGNORE INTO chat_members (thread_id,user_id,joined_at) VALUES (?,?,?)").bind(id,user.id,now),
+    env.DB.prepare("INSERT OR IGNORE INTO chat_members (thread_id,user_id,joined_at) VALUES (?,?,?)").bind(id,target.id,now)
+  ]);
+  return json({thread:{id,kind:"direct",created_at:now,updated_at:now,peer:target}});
+}
+async function chatList(env,user) {
+  await ensureChatSchema(env);
+  const rows=await env.DB.prepare(`SELECT t.id,t.kind,t.created_at,t.updated_at,
+    u.id AS peer_id,u.username AS peer_username,u.display_name AS peer_display_name,u.avatar_url AS peer_avatar,
+    (SELECT body FROM chat_messages m WHERE m.thread_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS last_message,
+    (SELECT created_at FROM chat_messages m WHERE m.thread_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS last_message_at,
+    (SELECT COUNT(*) FROM chat_messages m WHERE m.thread_id=t.id AND m.sender_id<>? AND m.created_at>COALESCE(me.last_read_at,'1970-01-01T00:00:00.000Z')) AS unread
+    FROM chat_members me JOIN chat_threads t ON t.id=me.thread_id
+    JOIN chat_members other ON other.thread_id=t.id AND other.user_id<>me.user_id
+    JOIN users u ON u.id=other.user_id
+    WHERE me.user_id=? ORDER BY COALESCE(last_message_at,t.updated_at) DESC LIMIT 100`)
+    .bind(user.id,user.id).all();
+  return json({chats:rows.results||[]});
+}
+async function chatGetMessages(request,env,user) {
+  const url=new URL(request.url),threadId=String(url.searchParams.get("thread_id")||"");
+  if(!threadId)return json({error:"Не указан диалог"},400);
+  await ensureChatSchema(env);
+  if(!await chatMember(env,threadId,user.id))return json({error:"Нет доступа к этому диалогу"},403);
+  const limit=Math.min(50,Math.max(1,Number.parseInt(url.searchParams.get("limit")||"50",10)||50));
+  const before=String(url.searchParams.get("before")||"");
+  const rows=before
+    ? await env.DB.prepare("SELECT id,sender_id,body,created_at FROM chat_messages WHERE thread_id=? AND created_at<? ORDER BY created_at DESC LIMIT ?").bind(threadId,before,limit).all()
+    : await env.DB.prepare("SELECT id,sender_id,body,created_at FROM chat_messages WHERE thread_id=? ORDER BY created_at DESC LIMIT ?").bind(threadId,limit).all();
+  const messages=(rows.results||[]).reverse();
+  const peer=await env.DB.prepare(`SELECT u.id,u.username,u.display_name,u.avatar_url FROM chat_members m JOIN users u ON u.id=m.user_id WHERE m.thread_id=? AND m.user_id<>? LIMIT 1`).bind(threadId,user.id).first();
+  return json({messages,peer,has_more:messages.length===limit});
+}
+async function chatSendMessage(request,env,user) {
+  let b;try{b=await request.json();}catch{return json({error:"Некорректное сообщение"},400);}
+  const threadId=String(b.thread_id||"");
+  const body=String(b.body||"").trim();
+  if(!threadId||!body)return json({error:"Сообщение пустое"},400);
+  if(body.length>4000)return json({error:"Максимальная длина сообщения — 4000 символов"},400);
+  await ensureChatSchema(env);
+  if(!await chatMember(env,threadId,user.id))return json({error:"Нет доступа к этому диалогу"},403);
+  const now=new Date().toISOString();
+  const recent=await env.DB.prepare("SELECT created_at FROM chat_messages WHERE thread_id=? AND sender_id=? ORDER BY created_at DESC LIMIT 1").bind(threadId,user.id).first();
+  if(recent&&Date.now()-Date.parse(recent.created_at)<350)return json({error:"Подожди немного перед следующим сообщением"},429);
+  const id=crypto.randomUUID();
+  await env.DB.batch([
+    env.DB.prepare("INSERT INTO chat_messages (id,thread_id,sender_id,body,created_at) VALUES (?,?,?,?,?)").bind(id,threadId,user.id,body,now),
+    env.DB.prepare("UPDATE chat_threads SET updated_at=? WHERE id=?").bind(now,threadId)
+  ]);
+  return json({message:{id,thread_id:threadId,sender_id:user.id,body,created_at:now}},201);
+}
+async function chatMarkRead(request,env,user) {
+  let b;try{b=await request.json();}catch{return json({error:"Некорректный запрос"},400);}
+  const threadId=String(b.thread_id||"");
+  await ensureChatSchema(env);
+  if(!threadId||!await chatMember(env,threadId,user.id))return json({error:"Нет доступа к этому диалогу"},403);
+  await env.DB.prepare("UPDATE chat_members SET last_read_at=? WHERE thread_id=? AND user_id=?").bind(new Date().toISOString(),threadId,user.id).run();
+  return json({success:true});
+}
+async function adminChatThreads(env,userId) {
+  await ensureChatSchema(env);
+  const rows=await env.DB.prepare(`SELECT t.id,t.kind,t.created_at,t.updated_at,
+    (SELECT body FROM chat_messages m WHERE m.thread_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS last_message,
+    (SELECT created_at FROM chat_messages m WHERE m.thread_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS last_message_at
+    FROM chat_members mine JOIN chat_threads t ON t.id=mine.thread_id
+    WHERE mine.user_id=? ORDER BY t.updated_at DESC LIMIT 100`).bind(userId).all();
+  return json({chats:rows.results||[]});
+}
+async function adminChatMessages(request,env) {
+  const url=new URL(request.url),threadId=String(url.searchParams.get("thread_id")||"");
+  if(!threadId)return json({error:"Не указан диалог"},400);
+  await ensureChatSchema(env);
+  const rows=await env.DB.prepare(`SELECT m.id,m.sender_id,u.username,u.display_name,m.body,m.created_at
+    FROM chat_messages m JOIN users u ON u.id=m.sender_id
+    WHERE m.thread_id=? ORDER BY m.created_at DESC LIMIT 200`).bind(threadId).all();
+  return json({messages:(rows.results||[]).reverse()});
+}
+
 async function adminOnly(request, env) {
   const user = await currentUser(request, env);
   if (!user) return { error: json({ error: "Необходим вход в аккаунт" }, 401) };
@@ -344,6 +464,7 @@ async function handleFetch(request, env) {
   if (
     path.startsWith("/auth/") ||
     path.startsWith("/conversations") ||
+    path.startsWith("/chat/") ||
     path.startsWith("/admin/")
   ) {
     await ensureAuthSchema(env);
@@ -454,6 +575,42 @@ async function handleFetch(request, env) {
       created_at:x.created_at,updated_at:x.updated_at
     })) });
   }
+
+  if (path === "/chat/users" && request.method === "GET") {
+    const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return chatSearchUsers(request,env,user);
+  }
+  if (path === "/chat/direct" && request.method === "POST") {
+    const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return chatCreateDirect(request,env,user);
+  }
+  if (path === "/chat/list" && request.method === "GET") {
+    const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return chatList(env,user);
+  }
+  if (path === "/chat/messages" && request.method === "GET") {
+    const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return chatGetMessages(request,env,user);
+  }
+  if (path === "/chat/messages" && request.method === "POST") {
+    const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return chatSendMessage(request,env,user);
+  }
+  if (path === "/chat/read" && request.method === "POST") {
+    const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return chatMarkRead(request,env,user);
+  }
+  if (path === "/admin/chat/threads" && request.method === "GET") {
+    const auth=await adminOnly(request,env);if(auth.error)return auth.error;
+    const userId=String(url.searchParams.get("user_id")||"");
+    if(!userId)return json({error:"Не указан аккаунт"},400);
+    return adminChatThreads(env,userId);
+  }
+  if (path === "/admin/chat/messages" && request.method === "GET") {
+    const auth=await adminOnly(request,env);if(auth.error)return auth.error;
+    return adminChatMessages(request,env);
+  }
+
   if (path === "/admin/overview" && request.method === "GET") {
     const auth = await adminOnly(request, env); if (auth.error) return auth.error;
     await ensureConversationSchema(env);
