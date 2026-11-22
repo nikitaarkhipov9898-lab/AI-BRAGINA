@@ -107,7 +107,8 @@
  <div class="panel"><div class="section-head"><h2 id="admin-chat-title">Переписки</h2></div><div id="admin-conversations"><p class="muted">Выбери аккаунт, чтобы открыть его переписки.</p></div></div>
  <div class="panel hidden" id="admin-conversation-view"><div class="section-head"><h2 id="admin-view-title">Диалог</h2></div><pre id="admin-view-content" style="white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.55 monospace;color:var(--text);max-height:60vh;overflow:auto"></pre></div>
 </section>
-\n<section id="page-settings" class="hidden">
+
+<section id="page-settings" class="hidden">
  <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">Настройки</h2><p class="page-sub">Настрой внешний вид и поведение приложения.</p>
  <div class="panel"><div class="section-head"><h2>Внешний вид</h2></div>
   <div class="setting-row"><div><strong>Тема оформления</strong><small>Выбери удобный вариант</small></div><select class="select-small" id="set-theme" onchange="updateSetting('theme',this.value)"><option value="dark">Тёмная</option><option value="light">Светлая</option><option value="system">Как на устройстве</option></select></div>
@@ -132,7 +133,8 @@
 ИИ-Шеф — экспериментальный режим
 ИИ-Механик — ранняя версия
 Приёмка товара — в разработке</div></div>
-<div class="panel hidden" id="admin-entry"><strong>Управление платформой</strong><p class="muted">Доступ владельца к аккаунтам и серверным перепискам.</p><button class="btn" onclick="showPage('admin');loadAdminUsers()">Открыть админ-панель</button></div>\n <div class="panel"><strong>Аккаунт</strong><p class="muted" id="account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div></section>
+<div class="panel hidden" id="admin-entry"><strong>Управление платформой</strong><p class="muted">Доступ владельца к аккаунтам и серверным перепискам.</p><button class="btn" onclick="showPage('admin');loadAdminUsers()">Открыть админ-панель</button></div>
+ <div class="panel"><strong>Аккаунт</strong><p class="muted" id="account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div></section>
 </main><div class="footer-note">AI-БРАГИНА · Умные инструменты на каждый день</div>
 </div>
 <nav class="bottom"><div class="bottom-inner"><button class="nav active" id="nav-home" onclick="showPage('home')"><span>⌂</span>Главная</button><button class="nav" id="nav-tools" onclick="showPage('chef')"><span>✦</span>Помощники</button><button class="nav" id="nav-settings" onclick="showPage('settings')"><span>⚙</span>Настройки</button></div></nav>
