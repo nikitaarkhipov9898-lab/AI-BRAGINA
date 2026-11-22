@@ -368,6 +368,11 @@ async function chatList(env,user) {
     .bind(user.id,user.id).all();
   return json({chats:rows.results||[]});
 }
+async function chatUnread(env,user) {
+  await ensureChatSchema(env);
+  const row=await env.DB.prepare(`SELECT COALESCE(SUM((SELECT COUNT(*) FROM chat_messages m WHERE m.thread_id=me.thread_id AND m.sender_id<>me.user_id AND m.created_at>COALESCE(me.last_read_at,'1970-01-01T00:00:00.000Z'))),0) AS unread FROM chat_members me WHERE me.user_id=?`).bind(user.id).first();
+  return json({unread:Number(row?.unread||0)});
+}
 async function chatGetMessages(request,env,user) {
   const url=new URL(request.url),threadId=String(url.searchParams.get("thread_id")||"");
   if(!threadId)return json({error:"Не указан диалог"},400);
@@ -592,6 +597,10 @@ async function handleFetch(request, env) {
   if (path === "/chat/direct" && request.method === "POST") {
     const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
     return chatCreateDirect(request,env,user);
+  }
+  if (path === "/chat/unread" && request.method === "GET") {
+    const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return chatUnread(env,user);
   }
   if (path === "/chat/list" && request.method === "GET") {
     const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
