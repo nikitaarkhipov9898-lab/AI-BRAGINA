@@ -729,7 +729,7 @@ function showSavedAutoVideos(button){if(videoLoading)return;document.querySelect
 
 
 
-let activeChatThread=null,activeChatPeer=null,chatPollTimer=null,chatSearchTimer=null,chatLastMessageId="";
+let activeChatThread=null,activeChatPeer=null,chatPollTimer=null,chatSearchTimer=null,chatLastMessageId="",chatLastMessageAt="";
 async function chatFetch(path,options={}){
  const r=await fetch(WORKER_URL+path,{...options,headers:{Authorization:"Bearer "+authToken,"Content-Type":"application/json",...(options.headers||{})},cache:"no-store"});
  const d=await r.json().catch(()=>({error:"Сервер вернул неверный ответ"}));
@@ -765,7 +765,7 @@ async function createDirectChat(username){
  catch(e){toast(e.message,"error");}
 }
 async function openChatRoom(threadId,peer){
- activeChatThread=threadId;activeChatPeer=peer;chatLastMessageId="";
+ activeChatThread=threadId;activeChatPeer=peer;chatLastMessageId="";chatLastMessageAt="";
  $("chat-sidebar").classList.add("hidden");$("chat-room").classList.remove("hidden");
  $("chat-peer-name").textContent=peer?.display_name||peer?.username||"Диалог";
  $("chat-peer-login").textContent=peer?.username?"@"+peer.username:"";
@@ -779,14 +779,20 @@ function closeChatRoom(){
 }
 async function loadChatMessages(initial){
  if(!activeChatThread)return;const box=$("chat-messages");if(initial)box.innerHTML='<div class="chat-empty">Загружаю сообщения…</div>';
- try{const d=await chatFetch("/chat/messages?thread_id="+encodeURIComponent(activeChatThread)+"&limit=50");
-  if(!initial&&d.messages?.length&&d.messages[d.messages.length-1].id===chatLastMessageId)return;
-  const atBottom=box.scrollHeight-box.scrollTop-box.clientHeight<90;box.innerHTML="";
-  if(!d.messages?.length)box.innerHTML='<div class="chat-empty">Сообщений пока нет. Напиши первым 👋</div>';
-  (d.messages||[]).forEach(m=>{const b=document.createElement("div");b.className="chat-bubble"+(m.sender_id===currentUser?.id?" mine":"");const body=document.createElement("div");body.textContent=m.body;const meta=document.createElement("small");meta.textContent=new Date(m.created_at).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});b.append(body,meta);box.appendChild(b);});
-  if(d.messages?.length)chatLastMessageId=d.messages[d.messages.length-1].id;
-  if(initial||atBottom)box.scrollTop=box.scrollHeight;
-  if(initial)loadChatList();
+ try{
+  const query="/chat/messages?thread_id="+encodeURIComponent(activeChatThread)+"&limit=50"+(!initial&&chatLastMessageAt?"&after="+encodeURIComponent(chatLastMessageAt):"");
+  const d=await chatFetch(query);
+  if(initial){
+   box.innerHTML="";
+   if(!d.messages?.length)box.innerHTML='<div class="chat-empty">Сообщений пока нет. Напиши первым 👋</div>';
+  }
+  (d.messages||[]).forEach(m=>{
+   const b=document.createElement("div");b.className="chat-bubble"+(m.sender_id===currentUser?.id?" mine":"");
+   const body=document.createElement("div");body.textContent=m.body;
+   const meta=document.createElement("small");meta.textContent=new Date(m.created_at).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+   b.append(body,meta);box.appendChild(b);chatLastMessageId=m.id;chatLastMessageAt=m.created_at;
+  });
+  if(d.messages?.length){box.querySelector(".chat-empty")?.remove();box.scrollTop=box.scrollHeight;await chatFetch("/chat/read",{method:"POST",body:JSON.stringify({thread_id:activeChatThread})}).catch(()=>{});loadChatList();}
  }catch(e){if(initial)box.textContent=e.message;}
 }
 async function sendChatMessage(event){
