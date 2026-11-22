@@ -421,7 +421,7 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
 <nav class="bottom"><div class="bottom-inner"><button class="nav active" id="nav-home" onclick="showPage('home')"><span>⌂</span>Главная</button><button class="nav" id="nav-tools" onclick="showPage('helpers')"><span>✦</span>Помощники</button><button class="nav" id="nav-video" onclick="showPage('video')"><span>▶</span>Видео</button><button class="nav" id="nav-community" onclick="showPage('community')"><span>♡</span><i class="nav-badge hidden" id="chat-nav-badge">0</i>Общение</button><button class="nav" id="nav-tasks" onclick="showPage('tasks')"><span>✓</span>Дела</button><button class="nav" id="nav-settings" onclick="showPage('settings')"><span>⚙</span>Настройки</button></div></nav>
 <script>
 'use strict';
-const WORKER_URL='https://admin-panel-chef-api.bosstayson24.workers.dev';
+const WORKER_URL=location.hostname.endsWith('.workers.dev')?location.origin:'https://admin-panel-chef-api.bosstayson24.workers.dev';
 let APP_KEY='ai_bragina_data_v2';
 const SETTINGS_KEY='ai_bragina_settings_v1';
 let authMode='login',authToken=localStorage.getItem('ai_bragina_token')||'',currentUser=null;
