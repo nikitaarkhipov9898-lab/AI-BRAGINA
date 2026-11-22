@@ -270,6 +270,21 @@ async function handleFetch(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
 
+  if (path === "/app" && request.method === "GET") {
+    const page = await fetch("https://raw.githubusercontent.com/nikitaarkhipov9898-lab/AI-BRAGINA/admin-panel/index.html", {
+      headers: { "Accept": "text/html" },
+      cf: { cacheTtl: 60, cacheEverything: true }
+    });
+    if (!page.ok) return new Response("Не удалось загрузить тестовую страницу", { status: 502 });
+    return new Response(await page.text(), {
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow"
+      }
+    });
+  }
+
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders() });
   }
