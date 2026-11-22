@@ -271,6 +271,21 @@ async function ensureAuthSchema(env) {
   await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_user_sessions_token_hash ON user_sessions(token_hash)").run();
 }
 
+async function ensureAdminSchema(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS admin_audit (
+    id TEXT PRIMARY KEY, actor_user_id TEXT, actor_username TEXT,
+    action TEXT NOT NULL, target_user_id TEXT, target_username TEXT,
+    created_at TEXT NOT NULL
+  )`).run();
+}
+async function writeAdminAudit(env, actor, action, target) {
+  await ensureAdminSchema(env);
+  await env.DB.prepare(`INSERT INTO admin_audit
+    (id,actor_user_id,actor_username,action,target_user_id,target_username,created_at)
+    VALUES (?,?,?,?,?,?,?)`).bind(crypto.randomUUID(),actor.id,actor.username,action,
+    target?.id||null,target?.username||null,new Date().toISOString()).run();
+}
+
 async function ensureConversationSchema(env) {
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS conversations (
@@ -379,12 +394,53 @@ async function handleFetch(request, env) {
       created_at:x.created_at,updated_at:x.updated_at
     })) });
   }
+  if (path === "/admin/overview" && request.method === "GET") {
+    const auth = await adminOnly(request, env); if (auth.error) return auth.error;
+    await ensureConversationSchema(env);
+    const users = await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first();
+    const active = await env.DB.prepare("SELECT COUNT(*) AS n FROM users WHERE status='active'").first();
+    const blocked = await env.DB.prepare("SELECT COUNT(*) AS n FROM users WHERE status='blocked'").first();
+    const chats = await env.DB.prepare("SELECT COUNT(*) AS n FROM conversations").first();
+    return json({users:Number(users?.n||0),active_users:Number(active?.n||0),blocked_users:Number(blocked?.n||0),conversations:Number(chats?.n||0)});
+  }
+  if (path === "/admin/users/action" && request.method === "POST") {
+    const auth = await adminOnly(request, env); if (auth.error) return auth.error;
+    const body = await request.json(); const id=String(body.user_id||""); const action=String(body.action||"");
+    if (!id || !["block","unblock","delete"].includes(action)) return json({error:"Некорректное действие"},400);
+    const target=await env.DB.prepare("SELECT id,username,role,status FROM users WHERE id=?").bind(id).first();
+    if(!target)return json({error:"Пользователь не найден"},404);
+    if(target.role==="owner")return json({error:"Защищённый аккаунт владельца нельзя блокировать или удалять"},403);
+    if(action==="block"){
+      await env.DB.batch([
+        env.DB.prepare("UPDATE users SET status='blocked' WHERE id=?").bind(id),
+        env.DB.prepare("UPDATE user_sessions SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL").bind(new Date().toISOString(),id)
+      ]);
+    } else if(action==="unblock"){
+      await env.DB.prepare("UPDATE users SET status='active' WHERE id=?").bind(id).run();
+    } else {
+      await ensureConversationSchema(env);
+      await env.DB.batch([
+        env.DB.prepare("DELETE FROM conversations WHERE user_id=?").bind(id),
+        env.DB.prepare("DELETE FROM user_sessions WHERE user_id=?").bind(id),
+        env.DB.prepare("DELETE FROM users WHERE id=?").bind(id)
+      ]);
+    }
+    await writeAdminAudit(env,auth.user,action,target);
+    return json({success:true});
+  }
+  if (path === "/admin/audit" && request.method === "GET") {
+    const auth = await adminOnly(request, env); if (auth.error) return auth.error;
+    await ensureAdminSchema(env);
+    const rows=await env.DB.prepare("SELECT action,actor_username,target_username,created_at FROM admin_audit ORDER BY created_at DESC LIMIT 100").all();
+    return json({items:rows.results||[]});
+  }
+
   if (path === "/admin/users" && request.method === "GET") {
     const auth = await adminOnly(request, env);
     if (auth.error) return auth.error;
     await ensureConversationSchema(env);
     const rows = await env.DB.prepare(`
-      SELECT u.id,u.username,u.display_name,u.role,u.status,
+      SELECT u.id,u.username,u.display_name,u.role,u.status,u.created_at,
         (SELECT COUNT(*) FROM conversations c WHERE c.user_id=u.id) AS conversations_count
       FROM users u ORDER BY u.rowid DESC LIMIT 500
     `).all();
