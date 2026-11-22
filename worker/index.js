@@ -406,6 +406,12 @@ async function handleFetch(request, env) {
     })) });
   }
 
+  if (path === "/auth/setup-status" && request.method === "GET") {
+    await ensureAuthSchema(env);
+    const count = await env.DB.prepare("SELECT COUNT(*) AS total FROM users").first();
+    return json({ first_account: Number(count?.total || 0) === 0 });
+  }
+
   if (path === "/auth/register" && request.method === "POST") {
     return register(request, env);
   }
