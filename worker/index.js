@@ -401,11 +401,11 @@ async function handleFetch(request, env) {
   // Public video discovery: proxy metadata only, never video streams. Cache upstream responses at the edge.
   if (path === "/video/feed" && request.method === "GET") {
     const topics = {
-      trending: "короткие видео популярное",
-      fun: "приколы юмор короткие видео",
-      animals: "животные смешные короткие видео",
-      auto: "автомобили авто короткие видео",
-      useful: "лайфхаки полезные советы короткие видео"
+      trending: "популярные клипы тренды лучшие короткие видео",
+      fun: "смешные приколы юмор скетчи смешные ситуации",
+      animals: "кошки собаки животные питомцы смешные видео",
+      auto: "автомобили машины тюнинг дрифт тест драйв",
+      useful: "лайфхаки полезные советы обучение как сделать самому"
     };
     const topic = url.searchParams.get("topic") || "trending";
     const page = Math.min(5, Math.max(1, Number.parseInt(url.searchParams.get("page") || "1", 10) || 1));
