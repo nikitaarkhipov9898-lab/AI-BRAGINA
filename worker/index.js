@@ -396,6 +396,33 @@ async function handleFetch(request, env) {
     return new Response(null, { status: 204, headers: corsHeaders() });
   }
 
+  // Public video discovery: proxy metadata only, never video streams. Cache upstream responses at the edge.
+  if (path === "/video/feed" && request.method === "GET") {
+    const topics = {
+      trending: "короткие видео популярное",
+      fun: "приколы юмор короткие видео",
+      animals: "животные смешные короткие видео",
+      auto: "автомобили авто короткие видео",
+      useful: "лайфхаки полезные советы короткие видео"
+    };
+    const topic = url.searchParams.get("topic") || "trending";
+    const page = Math.min(5, Math.max(1, Number.parseInt(url.searchParams.get("page") || "1", 10) || 1));
+    if (!topics[topic]) return json({ error: "Неизвестная тема" }, 400);
+    const upstreamUrl = "https://rutube.ru/api/search/video/?query=" +
+      encodeURIComponent(topics[topic]) + "&page=" + page + "&format=json";
+    const upstream = await fetch(upstreamUrl, {
+      headers: {
+        "Accept": "application/json",
+        "Referer": "https://rutube.ru/",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 Chrome/131.0.0.0 Mobile Safari/537.36"
+      },
+      cf: { cacheTtl: 300, cacheEverything: true }
+    });
+    if (!upstream.ok) return json({ error: "Каталог RUTUBE временно недоступен", upstream_status: upstream.status }, 502);
+    const data = await upstream.json();
+    return json(data);
+  }
+
   if (path === "/health" && request.method === "GET") {
     try {
       await env.DB.prepare("SELECT 1").first();
