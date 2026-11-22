@@ -217,6 +217,21 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
 .chat-shell{display:grid;grid-template-columns:1fr;gap:12px}.chat-sidebar,.chat-room{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:13px;min-width:0}.chat-search{margin-bottom:14px}.chat-search input,.chat-compose textarea{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:12px;color:var(--text);padding:12px;font:inherit;resize:vertical}.chat-user-result,.chat-list-item{width:100%;display:flex;align-items:center;gap:10px;text-align:left;background:var(--bg2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:11px;margin:7px 0;cursor:pointer}.chat-user-result strong,.chat-list-item strong{display:block}.chat-user-result small,.chat-list-item small{display:block;color:var(--muted);margin-top:3px}.chat-list-item .chat-unread{margin-left:auto;background:var(--accent);color:white;border-radius:20px;padding:3px 8px;font-size:11px}.chat-room-head{display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}.chat-room-head>div{display:grid;gap:3px}.chat-room-head small{color:var(--muted)}.chat-messages{height:min(52vh,520px);min-height:260px;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:12px 2px}.chat-bubble{max-width:86%;padding:10px 12px;border-radius:15px;background:var(--bg2);align-self:flex-start;overflow-wrap:anywhere;white-space:pre-wrap}.chat-bubble.mine{align-self:flex-end;background:color-mix(in srgb,var(--accent) 22%,var(--panel));}.chat-bubble small{display:block;color:var(--muted);font-size:10px;margin-top:5px;text-align:right}.chat-compose{display:flex;gap:8px;align-items:end;border-top:1px solid var(--line);padding-top:10px}.chat-compose textarea{flex:1;min-width:0}.chat-compose .btn{width:auto;white-space:nowrap;padding:12px}.chat-empty{color:var(--muted);text-align:center;padding:24px 8px}
 @media(min-width:620px){.chat-shell{grid-template-columns:minmax(210px,.8fr) minmax(0,1.4fr)}.chat-room{display:flex;flex-direction:column}.chat-messages{flex:1;height:480px}}
 
+
+/* Чат на телефоне занимает экран целиком: клавиатура не сдвигает страницу */
+#chat-room{display:flex;flex-direction:column;min-height:0}
+#chat-room.hidden{display:none!important}
+#chat-room .chat-messages{flex:1;min-height:0;height:auto;max-height:none}
+#chat-room .chat-compose{flex:none;padding-bottom:env(safe-area-inset-bottom)}
+#chat-peer-login.chat-typing{color:var(--accent);font-weight:800}
+@media(max-width:619px){
+ body.svoe-chat-open{overflow:hidden}
+ #chat-room:not(.hidden){position:fixed;inset:0;z-index:45;width:100%;height:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0;padding:calc(12px + env(safe-area-inset-top)) 12px calc(10px + env(safe-area-inset-bottom));overflow:hidden;background:var(--bg)}
+ #chat-room .chat-room-head{flex:none}
+ #chat-room .chat-messages{flex:1;min-height:0;height:auto;overflow-y:auto;overscroll-behavior:contain}
+ #chat-room .chat-compose{flex:none;background:var(--bg);padding-bottom:env(safe-area-inset-bottom)}
+ #chat-room .chat-compose textarea{max-height:120px;resize:none}
+}
 </style>
 </head>
 <body>
@@ -270,7 +285,7 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
   <div id="chat-room" class="chat-room hidden">
    <div class="chat-room-head"><button class="mini-btn" onclick="closeChatRoom()">← Чаты</button><div><strong id="chat-peer-name">Диалог</strong><small id="chat-peer-login"></small></div></div>
    <div id="chat-messages" class="chat-messages"><p class="muted">Выбери диалог.</p></div>
-   <form class="chat-compose" onsubmit="sendChatMessage(event)"><textarea id="chat-message-input" maxlength="4000" rows="2" placeholder="Написать сообщение…" required></textarea><button class="btn" type="submit">Отправить</button></form>
+   <form class="chat-compose" onsubmit="sendChatMessage(event)"><textarea id="chat-message-input" maxlength="4000" rows="2" placeholder="Написать сообщение…" oninput="chatTypingChanged()" onblur="stopChatTyping()" required></textarea><button class="btn" type="submit">Отправить</button></form>
   </div>
  </div>
 </section>
@@ -773,18 +788,42 @@ async function createDirectChat(username){
  try{const d=await chatFetch("/chat/direct",{method:"POST",body:JSON.stringify({username})});$("chat-user-search").value="";$("chat-search-results").innerHTML="";await loadChatList();await openChatRoom(d.thread.id,d.thread.peer);}
  catch(e){toast(e.message,"error");}
 }
+let chatTypingIdleTimer=null,chatTypingHeartbeat=null,chatTypingActive=false;
+function setPeerTypingIndicator(isTyping){
+ const el=$("chat-peer-login");if(!el)return;
+ el.classList.toggle("chat-typing",!!isTyping);
+ el.textContent=isTyping?"печатает…":(activeChatPeer?.username?"@"+activeChatPeer.username:"");
+}
+async function sendChatTypingState(isTyping){
+ if(!activeChatThread||!authToken)return;
+ try{await chatFetch("/chat/typing",{method:"POST",body:JSON.stringify({thread_id:activeChatThread,typing:!!isTyping})});}catch(e){}
+}
+function chatTypingChanged(){
+ if(!activeChatThread)return;
+ clearTimeout(chatTypingIdleTimer);
+ if(!chatTypingActive){chatTypingActive=true;sendChatTypingState(true);chatTypingHeartbeat=setInterval(()=>{if(chatTypingActive)sendChatTypingState(true);},4000);}
+ chatTypingIdleTimer=setTimeout(stopChatTyping,2000);
+}
+function stopChatTyping(){
+ clearTimeout(chatTypingIdleTimer);chatTypingIdleTimer=null;
+ if(chatTypingHeartbeat){clearInterval(chatTypingHeartbeat);chatTypingHeartbeat=null;}
+ if(chatTypingActive){chatTypingActive=false;sendChatTypingState(false);}
+}
 async function openChatRoom(threadId,peer){
  activeChatThread=threadId;activeChatPeer=peer;chatLastMessageId="";chatLastMessageAt="";
+ document.body.classList.add("svoe-chat-open");
  $("chat-sidebar").classList.add("hidden");$("chat-room").classList.remove("hidden");
  $("chat-peer-name").textContent=peer?.display_name||peer?.username||"Диалог";
  $("chat-peer-login").textContent=peer?.username?"@"+peer.username:"";
+ setPeerTypingIndicator(false);
  await loadChatMessages(true);
  await chatFetch("/chat/read",{method:"POST",body:JSON.stringify({thread_id:threadId})}).catch(()=>{});
  refreshChatUnread();loadChatList();
  clearInterval(chatPollTimer);chatPollTimer=setInterval(()=>{if(activeChatThread&&document.visibilityState==="visible")loadChatMessages(false);},5000);
 }
 function closeChatRoom(){
- clearInterval(chatPollTimer);chatPollTimer=null;activeChatThread=null;activeChatPeer=null;
+ stopChatTyping();clearInterval(chatPollTimer);chatPollTimer=null;activeChatThread=null;activeChatPeer=null;
+ document.body.classList.remove("svoe-chat-open");
  $("chat-room").classList.add("hidden");$("chat-sidebar").classList.remove("hidden");loadChatList();
 }
 async function loadChatMessages(initial){
@@ -796,6 +835,7 @@ async function loadChatMessages(initial){
    box.innerHTML="";
    if(!d.messages?.length)box.innerHTML='<div class="chat-empty">Сообщений пока нет. Напиши первым 👋</div>';
   }
+  setPeerTypingIndicator(!!d.peer_typing);
   (d.messages||[]).forEach(m=>{
    const b=document.createElement("div");b.className="chat-bubble"+(m.sender_id===currentUser?.id?" mine":"");
    const body=document.createElement("div");body.textContent=m.body;
@@ -806,7 +846,7 @@ async function loadChatMessages(initial){
  }catch(e){if(initial)box.textContent=e.message;}
 }
 async function sendChatMessage(event){
- event.preventDefault();const input=$("chat-message-input"),body=String(input.value||"").trim();if(!body||!activeChatThread)return;
+ event.preventDefault();const input=$("chat-message-input"),body=String(input.value||"").trim();if(!body||!activeChatThread)return;stopChatTyping();
  const btn=event.submitter;if(btn)btn.disabled=true;
  try{await chatFetch("/chat/messages",{method:"POST",body:JSON.stringify({thread_id:activeChatThread,body})});input.value="";await loadChatMessages(false);await loadChatList();}
  catch(e){toast(e.message,"error");}finally{if(btn)btn.disabled=false;input.focus();}
@@ -826,7 +866,7 @@ async function loadAdminChatMessages(threadId,username){
  }catch(e){box.textContent=e.message;}
 }
 
-function showPage(page){if(videoFocusMode&&page!=='video')closeVideoFocus();if(page!=='community'){clearInterval(chatPollTimer);chatPollTimer=null;activeChatThread=null;}if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}const target=$('page-'+page);if(!target){toast('Раздел пока готовится.');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));target.classList.remove('hidden');document.body.dataset.page=page;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));const map={home:'nav-home',video:'nav-video',helpers:'nav-tools',chef:'nav-tools',mechanic:'nav-tools',invoice:'nav-tools',community:'nav-community',tasks:'nav-tasks',settings:'nav-settings',admin:'nav-settings'};const nav=$(map[page]||'nav-tools');if(nav)nav.classList.add('active');if(page==='community')loadChatList();if(page==='tasks')renderTasks();if(page==='home')renderToday();if(page==='video'){videoItems=[];videoTopicPage=1;videoSessionSeed=Math.floor(Math.random()*5)+1;loadAutoVideoFeed(true);}try{localStorage.setItem('svoe_last_page',page);}catch(e){}window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
+function showPage(page){if(videoFocusMode&&page!=='video')closeVideoFocus();if(page!=='community'){stopChatTyping();document.body.classList.remove("svoe-chat-open");clearInterval(chatPollTimer);chatPollTimer=null;activeChatThread=null;}if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}const target=$('page-'+page);if(!target){toast('Раздел пока готовится.');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));target.classList.remove('hidden');document.body.dataset.page=page;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));const map={home:'nav-home',video:'nav-video',helpers:'nav-tools',chef:'nav-tools',mechanic:'nav-tools',invoice:'nav-tools',community:'nav-community',tasks:'nav-tasks',settings:'nav-settings',admin:'nav-settings'};const nav=$(map[page]||'nav-tools');if(nav)nav.classList.add('active');if(page==='community')loadChatList();if(page==='tasks')renderTasks();if(page==='home')renderToday();if(page==='video'){videoItems=[];videoTopicPage=1;videoSessionSeed=Math.floor(Math.random()*5)+1;loadAutoVideoFeed(true);}try{localStorage.setItem('svoe_last_page',page);}catch(e){}window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
 function dispatchHomeCommand(){const q=String($('home-command-input')?.value||'').trim().toLowerCase();if(!q){showPage('helpers');return;}if(/рецепт|еда|приготов|ужин|завтрак|шеф/.test(q)){showPage('chef');return;}if(/машин|авто|двигател|механик/.test(q)){showPage('mechanic');return;}if(/уч[её]т|товар|склад|остат|инвентар|наклад/.test(q)){showPage('invoice');return;}if(/задач|напом|дело|план/.test(q)){showPage('tasks');return;}if(/чат|сообщ|семь|друз|общен/.test(q)){showPage('community');return;}showPage('helpers');toast('Подходящий раздел пока не найден. Посмотри каталог помощников.');}
 function addTask(){const title=String($('task-title')?.value||'').trim();if(!title){toast('Напиши, что нужно сделать.','error');return;}appData.tasks=Array.isArray(appData.tasks)?appData.tasks:[];appData.tasks.unshift({id:crypto.randomUUID(),title:title.slice(0,160),due:$('task-due')?.value||'',done:false,createdAt:new Date().toISOString()});$('task-title').value='';$('task-due').value='';saveData();renderTasks();renderToday();toast('Задача добавлена.');}
 function toggleTask(id){const t=(appData.tasks||[]).find(x=>x.id===id);if(!t)return;t.done=!t.done;saveData();renderTasks();renderToday();}
