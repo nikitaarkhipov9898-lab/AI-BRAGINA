@@ -314,8 +314,9 @@ async function ensureChatSchema(env) {
   )`).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_members (
     thread_id TEXT NOT NULL, user_id TEXT NOT NULL, joined_at TEXT NOT NULL,
-    last_read_at TEXT, PRIMARY KEY(thread_id,user_id)
+    last_read_at TEXT, typing_until TEXT, PRIMARY KEY(thread_id,user_id)
   )`).run();
+  try { await env.DB.prepare("ALTER TABLE chat_members ADD COLUMN typing_until TEXT").run(); } catch (e) { /* column already exists */ }
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_messages (
     id TEXT PRIMARY KEY, thread_id TEXT NOT NULL, sender_id TEXT NOT NULL,
     body TEXT NOT NULL, created_at TEXT NOT NULL
@@ -390,8 +391,9 @@ async function chatGetMessages(request,env,user) {
     rows=await env.DB.prepare("SELECT id,sender_id,body,created_at FROM chat_messages WHERE thread_id=? ORDER BY created_at DESC LIMIT ?").bind(threadId,limit).all();
   }
   const messages=after?(rows.results||[]):(rows.results||[]).reverse();
-  const peer=await env.DB.prepare(`SELECT u.id,u.username,u.display_name,u.avatar_url FROM chat_members m JOIN users u ON u.id=m.user_id WHERE m.thread_id=? AND m.user_id<>? LIMIT 1`).bind(threadId,user.id).first();
-  return json({messages,peer,has_more:messages.length===limit});
+  const peer=await env.DB.prepare(`SELECT u.id,u.username,u.display_name,u.avatar_url,m.typing_until FROM chat_members m JOIN users u ON u.id=m.user_id WHERE m.thread_id=? AND m.user_id<>? LIMIT 1`).bind(threadId,user.id).first();
+  const peerTyping=!!(peer?.typing_until && Date.parse(peer.typing_until)>Date.now());
+  return json({messages,peer,peer_typing:peerTyping,has_more:messages.length===limit});
 }
 async function chatSendMessage(request,env,user) {
   let b;try{b=await request.json();}catch{return json({error:"Некорректное сообщение"},400);}
@@ -410,6 +412,15 @@ async function chatSendMessage(request,env,user) {
     env.DB.prepare("UPDATE chat_threads SET updated_at=? WHERE id=?").bind(now,threadId)
   ]);
   return json({message:{id,thread_id:threadId,sender_id:user.id,body,created_at:now}},201);
+}
+async function chatSetTyping(request,env,user) {
+  let b;try{b=await request.json();}catch{return json({error:"Некорректный запрос"},400);}
+  const threadId=String(b.thread_id||"");
+  await ensureChatSchema(env);
+  if(!threadId||!await chatMember(env,threadId,user.id))return json({error:"Нет доступа к этому диалогу"},403);
+  const until=b.typing?new Date(Date.now()+7000).toISOString():null;
+  await env.DB.prepare("UPDATE chat_members SET typing_until=? WHERE thread_id=? AND user_id=?").bind(until,threadId,user.id).run();
+  return json({success:true});
 }
 async function chatMarkRead(request,env,user) {
   let b;try{b=await request.json();}catch{return json({error:"Некорректный запрос"},400);}
@@ -605,6 +616,10 @@ async function handleFetch(request, env) {
   if (path === "/chat/list" && request.method === "GET") {
     const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
     return chatList(env,user);
+  }
+  if (path === "/chat/typing" && request.method === "POST") {
+    const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return chatSetTyping(request,env,user);
   }
   if (path === "/chat/messages" && request.method === "GET") {
     const user=await currentUser(request,env); if(!user)return json({error:"Необходим вход в аккаунт"},401);
