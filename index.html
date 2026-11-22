@@ -169,7 +169,7 @@ body.svoe-video-focus .short-card{width:100%;height:100%;height:100dvh;min-heigh
 body.svoe-video-focus .short-card iframe{position:absolute;inset:0;width:100%;height:100%;z-index:1}
 body.svoe-video-focus .short-poster{z-index:0}
 body.svoe-video-focus .short-overlay{z-index:2;padding:70px 18px max(26px,env(safe-area-inset-bottom))}
-body.svoe-video-focus .video-swipe-zone{position:absolute;z-index:5;left:0;right:0;top:0;height:22%;touch-action:pan-y;background:transparent}
+body.svoe-video-focus .video-swipe-zone{position:absolute;z-index:5;left:0;right:0;top:0;height:22%;touch-action:pan-y;background:transparent}.video-swipe-rail{display:none}body.svoe-video-focus .video-swipe-rail{display:block;position:absolute;z-index:5;top:22%;bottom:0;width:12%;touch-action:pan-y;background:transparent}body.svoe-video-focus .video-swipe-rail.left{left:0}body.svoe-video-focus .video-swipe-rail.right{right:0}
 body.svoe-video-focus .short-overlay{z-index:6;pointer-events:none}
 body.svoe-video-focus .short-actions{pointer-events:auto}
 
@@ -683,7 +683,7 @@ function renderAutoVideoCards(){
   const overlay=document.createElement('div');overlay.className='short-overlay';
   const title=document.createElement('strong');title.textContent=item.title;const meta=document.createElement('div');meta.className='short-meta';meta.textContent=item.author+(item.duration?' · '+Math.floor(item.duration/60)+':'+String(item.duration%60).padStart(2,'0'):'');
   const actions=document.createElement('div');actions.className='short-actions';const save=document.createElement('button');save.textContent=isAutoVideoSaved(item.id)?'♥ В избранном':'♡ В избранное';save.onclick=()=>toggleAutoVideoSaved(item,save);const open=document.createElement('button');open.textContent='Открыть ↗';open.onclick=()=>window.open(item.url,'_blank','noopener,noreferrer');actions.append(save,open);overlay.append(title,meta,actions);card.appendChild(overlay);
-  const swipe=document.createElement('div');swipe.className='video-swipe-zone';swipe.setAttribute('aria-hidden','true');swipe.addEventListener('touchstart',handleVideoSwipeStart,{passive:true});swipe.addEventListener('touchend',handleVideoSwipeEnd,{passive:true});swipe.addEventListener('pointerdown',handleVideoSwipeStart);swipe.addEventListener('pointerup',handleVideoSwipeEnd);card.appendChild(swipe);
+  const swipe=document.createElement('div');swipe.className='video-swipe-zone';swipe.setAttribute('aria-hidden','true');swipe.addEventListener('touchstart',handleVideoSwipeStart,{passive:true});swipe.addEventListener('touchend',handleVideoSwipeEnd,{passive:true});swipe.addEventListener('pointerdown',handleVideoSwipeStart);swipe.addEventListener('pointerup',handleVideoSwipeEnd);card.appendChild(swipe);['left','right'].forEach(side=>{const rail=document.createElement('div');rail.className='video-swipe-rail '+side;rail.setAttribute('aria-hidden','true');rail.addEventListener('touchstart',handleVideoSwipeStart,{passive:true});rail.addEventListener('touchend',handleVideoSwipeEnd,{passive:true});rail.addEventListener('pointerdown',handleVideoSwipeStart);rail.addEventListener('pointerup',handleVideoSwipeEnd);card.appendChild(rail);});
   box.appendChild(card);
  });
  if(videoFocusMode)setupVideoFocusObserver();
