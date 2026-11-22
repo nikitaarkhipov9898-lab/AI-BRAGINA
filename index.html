@@ -593,7 +593,7 @@ async function loadAutoVideoFeed(reset=false){
  if(status)status.textContent='Загружаем подборку…';
  const topic=VIDEO_TOPICS[activeVideoTopic]||VIDEO_TOPICS.trending;
  try{
-  const requestPage=reset?videoSessionSeed:Math.min(5,videoSessionSeed+videoTopicPage-1);
+  const requestPage=((videoSessionSeed+videoTopicPage-2)%5)+1;
   const url='/video/feed?topic='+encodeURIComponent(activeVideoTopic)+'&page='+requestPage+'&fresh='+Date.now();
   const response=await fetch(url,{method:'GET',credentials:'same-origin',headers:{'Accept':'application/json'},cache:'no-store'});
   if(!response.ok)throw new Error('Видеоплощадка временно не отдаёт каталог ('+response.status+').');
