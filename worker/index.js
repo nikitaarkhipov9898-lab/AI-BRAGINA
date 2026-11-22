@@ -304,6 +304,7 @@ async function handleFetch(request, env) {
   if (path === "/admin/users" && request.method === "GET") {
     const auth = await adminOnly(request, env);
     if (auth.error) return auth.error;
+    await ensureConversationSchema(env);
     const rows = await env.DB.prepare(`
       SELECT u.id,u.username,u.display_name,u.role,u.status,u.created_at,
         (SELECT COUNT(*) FROM conversations c WHERE c.user_id=u.id) AS conversations_count
