@@ -330,6 +330,7 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
   <button data-topic="animals" onclick="selectVideoTopic('animals',this)">Животные</button>
   <button data-topic="auto" onclick="selectVideoTopic('auto',this)">Авто</button>
   <button data-topic="useful" onclick="selectVideoTopic('useful',this)">Полезное</button>
+  <button data-topic="saved" onclick="showSavedAutoVideos(this)">Избранное</button>
  </div>
  <div id="video-feed" class="video-feed"><div class="video-empty"><div class="video-empty-icon">▶</div><strong>Собираем ленту</strong><p>Загружаем открытые ролики. Видео не проходит через сервер СВОЁ.</p></div></div>
  <div id="video-feed-status" class="muted" style="text-align:center;padding:10px 4px"></div>
@@ -545,7 +546,8 @@ function normalizeRutubeItem(v){
  let id='';
  for(const value of candidates){const m=String(value).match(/[a-f0-9]{32}/i);if(m){id=m[0];break;}}
  if(!id)return null;
- const duration=Number(v.duration||v.duration_seconds||0);
+ const rawDuration=v.duration||v.duration_seconds||0;
+ const duration=typeof rawDuration==='string'&&rawDuration.includes(':')?rawDuration.split(':').reduce((n,part)=>n*60+Number(part||0),0):Number(rawDuration)||0;
  if(duration>150)return null;
  if(!duration&&!String(v.video_url||v.url||'').includes('/shorts/'))return null;
  return {id,embed:'https://rutube.ru/play/embed/'+id+'/',url:'https://rutube.ru/video/'+id+'/',title:String(v.title||v.name||'Короткое видео').slice(0,180),author:String(v.author?.name||v.author_name||v.channel_name||'RUTUBE'),duration,thumbnail:v.thumbnail_url||v.picture_url||v.poster_url||v.thumbnail||'',views:Number(v.hits||v.views_count||v.views||0)};
@@ -564,7 +566,7 @@ async function loadAutoVideoFeed(reset=false){
  if(status)status.textContent='Загружаем подборку…';
  const topic=VIDEO_TOPICS[activeVideoTopic]||VIDEO_TOPICS.trending;
  try{
-  const url='https://rutube.ru/api/search/video/?query='+encodeURIComponent(topic.query)+'&page='+videoTopicPage;
+  const url='https://rutube.ru/api/search/video/?query='+encodeURIComponent(topic.query)+'&page='+videoTopicPage+'&format=json';
   const response=await fetch(url,{method:'GET',mode:'cors',credentials:'omit',headers:{'Accept':'application/json'},cache:'no-store'});
   if(!response.ok)throw new Error('Видеоплощадка временно не отдаёт каталог ('+response.status+').');
   const data=await response.json(),rows=Array.isArray(data.results)?data.results:Array.isArray(data)?data:[];
@@ -608,7 +610,7 @@ function playAutoVideo(item,card){
 function getSavedAutoVideos(){try{return JSON.parse(localStorage.getItem(VIDEO_KEY+'_saved')||'[]');}catch(e){return[];}}
 function isAutoVideoSaved(id){return getSavedAutoVideos().some(x=>x.id===id);}
 function toggleAutoVideoSaved(item,button){let saved=getSavedAutoVideos();if(saved.some(x=>x.id===item.id))saved=saved.filter(x=>x.id!==item.id);else saved.unshift(item);try{localStorage.setItem(VIDEO_KEY+'_saved',JSON.stringify(saved.slice(0,100)));}catch(e){}button.textContent=isAutoVideoSaved(item.id)?'♥ В избранном':'♡ В избранное';}
-function renderSavedAutoVideos(){const box=$('video-feed');if(!box)return;videoItems=getSavedAutoVideos();renderAutoVideoCards();if($('video-feed-status'))$('video-feed-status').textContent='Избранное хранится только на этом устройстве.';}
+function showSavedAutoVideos(button){if(videoLoading)return;document.querySelectorAll('#video-discovery-tabs button').forEach(x=>x.classList.toggle('active',x===button));videoItems=getSavedAutoVideos();renderAutoVideoCards();if($('video-feed-status'))$('video-feed-status').textContent='Избранное хранится только на этом устройстве.';if($('video-more-btn'))$('video-more-btn').classList.add('hidden');}
 
 
 function showPage(page){if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}const target=$('page-'+page);if(!target){toast('Раздел пока готовится.');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));target.classList.remove('hidden');document.body.dataset.page=page;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));const map={home:'nav-home',video:'nav-video',helpers:'nav-tools',chef:'nav-tools',mechanic:'nav-tools',invoice:'nav-tools',community:'nav-community',tasks:'nav-tasks',settings:'nav-settings',admin:'nav-settings'};const nav=$(map[page]||'nav-tools');if(nav)nav.classList.add('active');if(page==='tasks')renderTasks();if(page==='home')renderToday();if(page==='video'){videoItems=[];videoTopicPage=1;loadAutoVideoFeed(true);}window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
