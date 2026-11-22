@@ -529,8 +529,10 @@ function videoEmbed(source,raw){
   return 'https://vk.com/video_ext.php?oid='+encodeURIComponent(parts[1])+'&id='+encodeURIComponent(parts[2]);
  }
  if(!['rutube.ru','www.rutube.ru'].includes(u.hostname))throw new Error('Для RUTUBE нужна ссылка с rutube.ru.');
- const parts=u.pathname.match(/\/(?:video|play\/embed)\/([a-zA-Z0-9]+)/);if(!parts)throw new Error('Не удалось определить ID ролика RUTUBE.');
- return 'https://rutube.ru/play/embed/'+parts[1];
+ const parts=u.pathname.match(/^\/(?:shorts|video)\/(?:private\/)?([a-f0-9]{32})\/?$/i)||u.pathname.match(/^\/play\/embed\/([a-f0-9]{32})\/?$/i);
+ if(!parts)throw new Error('Не удалось определить ID ролика RUTUBE. Поддерживаются ссылки вида rutube.ru/shorts/ID, rutube.ru/video/ID и код плеера.');
+ const access=u.searchParams.get('p');
+ return 'https://rutube.ru/play/embed/'+parts[1]+(access?'/?p='+encodeURIComponent(access):'');
 }
 function addShortVideo(){
  const source=$('video-source').value,raw=$('video-url').value.trim();if(!raw){toast('Вставь ссылку на ролик.','error');return;}
