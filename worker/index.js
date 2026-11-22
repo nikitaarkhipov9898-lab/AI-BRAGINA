@@ -509,35 +509,32 @@ async function handleFetch(request, env) {
       type: "image/svg+xml"
     }
   };
+
+  // Static app files are bundled with this Worker as Cloudflare Assets.
+  // This avoids fetching the frontend from a public GitHub repository at runtime.
   if (pwaFiles[path] && request.method === "GET") {
+    if (!env.ASSETS) return new Response("Статические файлы приложения не настроены", { status: 503 });
     const asset = pwaFiles[path];
-    const response = await fetch(
-      "https://raw.githubusercontent.com/nikitaarkhipov9898-lab/AI-BRAGINA/admin-panel/" + asset.file,
-      { headers: { "Accept": "*/*" }, cf: { cacheTtl: path === "/sw.js" ? 0 : 300 } }
-    );
-    if (!response.ok) return new Response("Файл приложения не найден", { status: 502 });
-    const headers = {
-      "Content-Type": asset.type,
-      "Cache-Control": path === "/sw.js" ? "no-cache" : "public, max-age=300",
-      "X-Content-Type-Options": "nosniff"
-    };
-    if (path === "/sw.js") headers["Service-Worker-Allowed"] = "/";
+    const assetUrl = new URL("/" + asset.file, request.url);
+    const response = await env.ASSETS.fetch(new Request(assetUrl, { method: "GET" }));
+    if (!response.ok) return new Response("Файл приложения не найден", { status: 404 });
+    const headers = new Headers(response.headers);
+    headers.set("Content-Type", asset.type);
+    headers.set("Cache-Control", path === "/sw.js" ? "no-cache" : "public, max-age=300");
+    headers.set("X-Content-Type-Options", "nosniff");
+    if (path === "/sw.js") headers.set("Service-Worker-Allowed", "/");
     return new Response(response.body, { status: 200, headers });
   }
 
   if (path === "/app" && request.method === "GET") {
-    const page = await fetch("https://raw.githubusercontent.com/nikitaarkhipov9898-lab/AI-BRAGINA/admin-panel/index.html", {
-      headers: { "Accept": "text/html" },
-      cf: { cacheTtl: 60, cacheEverything: true }
-    });
-    if (!page.ok) return new Response("Не удалось загрузить тестовую страницу", { status: 502 });
-    return new Response(await page.text(), {
-      headers: {
-        "Content-Type": "text/html; charset=utf-8",
-        "Cache-Control": "no-store",
-        "X-Robots-Tag": "noindex, nofollow"
-      }
-    });
+    if (!env.ASSETS) return new Response("Статические файлы приложения не настроены", { status: 503 });
+    const response = await env.ASSETS.fetch(new Request(new URL("/index.html", request.url), { method: "GET" }));
+    if (!response.ok) return new Response("Не удалось загрузить приложение", { status: 404 });
+    const headers = new Headers(response.headers);
+    headers.set("Content-Type", "text/html; charset=utf-8");
+    headers.set("Cache-Control", "no-store");
+    headers.set("X-Robots-Tag", "noindex, nofollow");
+    return new Response(response.body, { status: 200, headers });
   }
 
   if (request.method === "OPTIONS") {
@@ -775,6 +772,11 @@ async function handleFetch(request, env) {
         "Cache-Control": "no-store"
       }
     });
+  }
+
+  // Let Cloudflare Assets serve any remaining static files after API routes.
+  if (env.ASSETS && request.method === "GET") {
+    return env.ASSETS.fetch(request);
   }
 
   return json({ error: "Not found" }, 404);
