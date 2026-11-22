@@ -346,7 +346,7 @@ async function submitAuth(){
   else d=await authRequest('/auth/login',{username,password});
   authToken=d.token;currentUser=d.user;
   localStorage.setItem('ai_bragina_token',authToken);localStorage.setItem('ai_bragina_user',JSON.stringify(currentUser));
-  activateUserStorage(currentUser);$('auth-screen').classList.add('hidden');toast('Вход выполнен.');
+  activateUserStorage(currentUser);loadData();renderTasks();renderToday();$('auth-screen').classList.add('hidden');toast('Вход выполнен.');
  }catch(e){authStatus(e.message||'Неизвестная ошибка авторизации',true);}
  finally{btn.disabled=false;btn.textContent=oldText;}
 }
@@ -359,6 +359,7 @@ async function checkAuth(){
   currentUser=d.user;
   localStorage.setItem('ai_bragina_user',JSON.stringify(currentUser));
   activateUserStorage(currentUser);
+  loadData();renderTasks();renderToday();
   $('auth-screen').classList.add('hidden');
  }catch(e){
   authToken='';currentUser=null;
