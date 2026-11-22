@@ -98,7 +98,16 @@
 
 Существующие данные и настройки приложения не затрагиваются.</div></div>
 </section>
-<section id="page-settings" class="hidden">
+
+<section id="page-admin" class="hidden">
+ <button class="back" onclick="showPage('settings')">← Настройки</button>
+ <h2 class="page-title">Панель владельца</h2>
+ <p class="page-sub">Аккаунты и сохранённые переписки тестовой платформы.</p>
+ <div class="panel"><div class="section-head"><h2>Аккаунты</h2><button class="mini-btn" onclick="loadAdminUsers()">Обновить</button></div><div id="admin-users"><p class="muted">Загрузка аккаунтов…</p></div></div>
+ <div class="panel"><div class="section-head"><h2 id="admin-chat-title">Переписки</h2></div><div id="admin-conversations"><p class="muted">Выбери аккаунт, чтобы открыть его переписки.</p></div></div>
+ <div class="panel hidden" id="admin-conversation-view"><div class="section-head"><h2 id="admin-view-title">Диалог</h2></div><pre id="admin-view-content" style="white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.55 monospace;color:var(--text);max-height:60vh;overflow:auto"></pre></div>
+</section>
+\n<section id="page-settings" class="hidden">
  <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">Настройки</h2><p class="page-sub">Настрой внешний вид и поведение приложения.</p>
  <div class="panel"><div class="section-head"><h2>Внешний вид</h2></div>
   <div class="setting-row"><div><strong>Тема оформления</strong><small>Выбери удобный вариант</small></div><select class="select-small" id="set-theme" onchange="updateSetting('theme',this.value)"><option value="dark">Тёмная</option><option value="light">Светлая</option><option value="system">Как на устройстве</option></select></div>
@@ -123,7 +132,7 @@
 ИИ-Шеф — экспериментальный режим
 ИИ-Механик — ранняя версия
 Приёмка товара — в разработке</div></div>
-<div class="panel"><strong>Аккаунт</strong><p class="muted" id="account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div></section>
+<div class="panel hidden" id="admin-entry"><strong>Управление платформой</strong><p class="muted">Доступ владельца к аккаунтам и серверным перепискам.</p><button class="btn" onclick="showPage('admin');loadAdminUsers()">Открыть админ-панель</button></div>\n <div class="panel"><strong>Аккаунт</strong><p class="muted" id="account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div></section>
 </main><div class="footer-note">AI-БРАГИНА · Умные инструменты на каждый день</div>
 </div>
 <nav class="bottom"><div class="bottom-inner"><button class="nav active" id="nav-home" onclick="showPage('home')"><span>⌂</span>Главная</button><button class="nav" id="nav-tools" onclick="showPage('chef')"><span>✦</span>Помощники</button><button class="nav" id="nav-settings" onclick="showPage('settings')"><span>⚙</span>Настройки</button></div></nav>
@@ -147,8 +156,77 @@ function activateUserStorage(user){
  renderMechanicHistory();
  renderMaintenance();
  if($('account-label'))$('account-label').textContent='Вы вошли как: '+(user.username||user.display_name||identity);
+ if($('admin-entry'))$('admin-entry').classList.toggle('hidden',user.role!=='owner');
+ syncConversations().catch(e=>console.warn('conversation sync',e));
 }
-function authStatus(message,error=false){const el=$('auth-status');el.textContent=message;el.classList.remove('hidden','error','success');el.classList.add(error?'error':'success');}
+
+let conversationSyncTimer=null;
+function conversationItems(){
+ const items=[];
+ for(const entry of (appData.history||[]))items.push({id:String(entry.id),kind:'recipe',title:String(entry.title||'Рецепт'),created_at:entry.date,content:{entry}});
+ for(const c of (appData.mechanicCases||[])){
+  const safe={...c,vehicle:{...(c.vehicle||{}),vin:''}};
+  items.push({id:String(c.id),kind:'mechanic',title:String(c.title||'Диагностика'),created_at:c.createdAt,content:{case:safe}});
+ }
+ return items;
+}
+async function syncConversations(){
+ if(!authToken||!currentUser)return;
+ const headers={'Content-Type':'application/json',Authorization:'Bearer '+authToken};
+ const r=await fetch(WORKER_URL+'/conversations/sync',{method:'POST',headers,body:JSON.stringify({items:conversationItems()})});
+ if(!r.ok)throw new Error('Не удалось сохранить переписки на сервере.');
+ const get=await fetch(WORKER_URL+'/conversations',{headers:{Authorization:'Bearer '+authToken}});
+ if(!get.ok)throw new Error('Не удалось загрузить серверную историю.');
+ const data=await get.json();let changed=false;
+ for(const row of (data.conversations||[])){
+  if(row.kind==='recipe'&&row.content?.entry&&!appData.history.some(x=>x.id===row.id)){appData.history.unshift(row.content.entry);changed=true;}
+  if(row.kind==='mechanic'&&row.content?.case&&!appData.mechanicCases.some(x=>x.id===row.id)){appData.mechanicCases.unshift(row.content.case);changed=true;}
+ }
+ if(changed){appData.history=appData.history.slice(0,100);appData.mechanicCases=appData.mechanicCases.slice(0,250);try{localStorage.setItem(APP_KEY,JSON.stringify(appData));}catch(e){}renderHistory();renderMechanicHistory();}
+}
+function queueConversationSync(){
+ if(!authToken||!currentUser)return;
+ clearTimeout(conversationSyncTimer);
+ conversationSyncTimer=setTimeout(()=>syncConversations().catch(e=>console.warn('conversation sync',e)),900);
+}
+async function loadAdminUsers(){
+ if(currentUser?.role!=='owner')return;
+ const box=$('admin-users');box.textContent='Загружаю аккаунты…';
+ try{
+  const r=await fetch(WORKER_URL+'/admin/users',{headers:{Authorization:'Bearer '+authToken}});
+  const d=await r.json();if(!r.ok)throw new Error(d.error||'Не удалось загрузить аккаунты');
+  box.innerHTML='';
+  if(!d.users?.length){box.textContent='Аккаунтов пока нет.';return;}
+  d.users.forEach(u=>{
+   const item=document.createElement('div');item.className='history-item';
+   const title=document.createElement('strong');title.textContent=(u.display_name||u.username)+' (@'+u.username+')';item.appendChild(title);
+   const meta=document.createElement('small');meta.textContent='Роль: '+u.role+' · Статус: '+u.status+' · Переписок: '+u.conversations_count;item.appendChild(meta);
+   const btn=document.createElement('button');btn.textContent='Открыть переписки';btn.onclick=()=>loadAdminConversations(u.id,u.username);item.appendChild(btn);box.appendChild(item);
+  });
+ }catch(e){box.textContent=e.message;}
+}
+async function loadAdminConversations(userId,username){
+ const box=$('admin-conversations');$('admin-chat-title').textContent='Переписки: @'+username;$('admin-conversation-view').classList.add('hidden');box.textContent='Загружаю…';
+ try{
+  const r=await fetch(WORKER_URL+'/admin/conversations?user_id='+encodeURIComponent(userId),{headers:{Authorization:'Bearer '+authToken}});
+  const d=await r.json();if(!r.ok)throw new Error(d.error||'Не удалось загрузить переписки');
+  box.innerHTML='';
+  if(!d.conversations?.length){box.textContent='Сохранённых переписок пока нет.';return;}
+  d.conversations.forEach(c=>{
+   const item=document.createElement('div');item.className='history-item';
+   const title=document.createElement('strong');title.textContent=c.title||'Диалог';item.appendChild(title);
+   const meta=document.createElement('small');meta.textContent=(c.kind==='recipe'?'ИИ-Шеф':c.kind==='mechanic'?'ИИ-Механик':'Диалог')+' · '+new Date(c.updated_at).toLocaleString('ru-RU');item.appendChild(meta);
+   const btn=document.createElement('button');btn.textContent='Просмотреть';btn.onclick=()=>showAdminConversation(c);item.appendChild(btn);box.appendChild(item);
+  });
+ }catch(e){box.textContent=e.message;}
+}
+function showAdminConversation(c){
+ $('admin-view-title').textContent=c.title||'Диалог';
+ const value=c.content?.case||c.content?.entry||c.content;
+ $('admin-view-content').textContent=JSON.stringify(value,null,2);
+ $('admin-conversation-view').classList.remove('hidden');
+}
+\nfunction authStatus(message,error=false){const el=$('auth-status');el.textContent=message;el.classList.remove('hidden','error','success');el.classList.add(error?'error':'success');}
 function toggleAuthMode(){authMode=authMode==='login'?'register':'login';$('auth-title').textContent=authMode==='login'?'Вход в приложение':'Создание аккаунта';$('auth-hint').textContent=authMode==='login'?'Войди, чтобы продолжить работу.':'Создай аккаунт. Первый аккаунт станет владельцем платформы.';$('auth-name-wrap').classList.toggle('hidden',authMode!=='register');$('auth-code-wrap').classList.toggle('hidden',authMode!=='register');$('auth-password').autocomplete=authMode==='login'?'current-password':'new-password';$('auth-submit').textContent=authMode==='login'?'Войти':'Зарегистрироваться';$('auth-toggle').textContent=authMode==='login'?'Создать аккаунт':'У меня уже есть аккаунт';$('auth-status').classList.add('hidden');}
 async function authRequest(path,body){const r=await fetch(WORKER_URL+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json().catch(()=>({error:'Сервер вернул неверный ответ'}));if(!r.ok){const raw=d.error??d.message??d;let msg=typeof raw==='string'?raw:(raw&&typeof raw==='object'?(raw.message||raw.error||JSON.stringify(raw)):String(raw));throw new Error(msg||('Ошибка авторизации ('+r.status+')'));}return d;}
 async function submitAuth(){const btn=$('auth-submit');btn.disabled=true;try{const username=$('auth-username').value.trim(),password=$('auth-password').value;if(!username||!password)throw new Error('Заполни логин и пароль.');let d;if(authMode==='register'){d=await authRequest('/auth/register',{username,password,display_name:$('auth-display').value.trim()||username,setup_code:$('auth-code').value});}else{d=await authRequest('/auth/login',{username,password});}authToken=d.token;currentUser=d.user;localStorage.setItem('ai_bragina_token',authToken);localStorage.setItem('ai_bragina_user',JSON.stringify(currentUser));activateUserStorage(currentUser);$('auth-screen').classList.add('hidden');toast('Вход выполнен.');}catch(e){authStatus(e.message,true);}finally{btn.disabled=false;}}
@@ -182,10 +260,10 @@ let chefMode='pantry',currentRecipe=null,variantTitles=[],isBusy=false;
 let settings={theme:'dark',compact:false,animations:true,reduced:false,tap:false,start:false,done:false,error:false,volume:25,warnings:true,history:true,confirm:true};
 let appData={version:3,history:[],favorites:[],mechanicCases:[],maintenance:{vehicle:{name:'',odometer:''},items:[]},kitchen:{staples:['соль','чёрный перец','сахар','растительное масло','вода'],custom:''}};
 function $(id){return document.getElementById(id)}
-function showPage(page){document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));$('page-'+page).classList.remove('hidden');document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));if(page==='home')$('nav-home').classList.add('active');else if(page==='settings')$('nav-settings').classList.add('active');else $('nav-tools').classList.add('active');window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
+function showPage(page){if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));$('page-'+page).classList.remove('hidden');document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));if(page==='home')$('nav-home').classList.add('active');else if(page==='settings')$('nav-settings').classList.add('active');else $('nav-tools').classList.add('active');window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
 function renderChefMode(){ $('chef-pantry').classList.toggle('hidden',chefMode!=='pantry');$('chef-specific').classList.toggle('hidden',chefMode!=='specific');$('tab-pantry').classList.toggle('active',chefMode==='pantry');$('tab-specific').classList.toggle('active',chefMode==='specific');}
 function loadData(){try{const d=JSON.parse(localStorage.getItem(APP_KEY)||'null');if(d&&(d.version===2||d.version===3)){appData.history=Array.isArray(d.history)?d.history:[];appData.favorites=Array.isArray(d.favorites)?d.favorites:[];appData.kitchen=d.kitchen||appData.kitchen;appData.mechanicCases=Array.isArray(d.mechanicCases)?d.mechanicCases.map(x=>({...x,mode:x.mode==='quick'?'quick':'deep'})):[];appData.maintenance=d.maintenance&&typeof d.maintenance==='object'?{vehicle:d.maintenance.vehicle||{name:'',odometer:''},items:Array.isArray(d.maintenance.items)?d.maintenance.items:[]}:appData.maintenance;}}catch(e){console.warn(e)}try{const s=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');if(s)settings={...settings,...s};}catch(e){console.warn(e)}applySettings();renderHistory();}
-function saveData(){try{localStorage.setItem(APP_KEY,JSON.stringify(appData));}catch(e){toast('Не удалось сохранить данные. Возможно, память браузера заполнена.','error');}}
+function saveData(){try{localStorage.setItem(APP_KEY,JSON.stringify(appData));queueConversationSync();}catch(e){toast('Не удалось сохранить данные. Возможно, память браузера заполнена.','error');}}
 function applySettings(){const root=document.documentElement;let theme=settings.theme;if(theme==='system')theme=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';root.dataset.theme=theme;document.body.classList.toggle('compact',!!settings.compact);document.body.classList.toggle('no-anim',!settings.animations||settings.reduced);if($('general-warning'))$('general-warning').classList.toggle('hidden',!settings.warnings);Object.keys(settings).forEach(k=>{const el=$('set-'+k);if(el){if(el.type==='checkbox')el.checked=!!settings[k];else el.value=settings[k];}});}
 function updateSetting(key,value){settings[key]=value;localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));applySettings();if(key==='tap'&&value)playTone('tap');}
 function resetSettings(){if(settings.confirm&&!confirm('Вернуть настройки приложения к исходным?'))return;settings={theme:'dark',compact:false,animations:true,reduced:false,tap:false,start:false,done:false,error:false,volume:25,warnings:true,history:true,confirm:true};localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));applySettings();toast('Настройки восстановлены');}
