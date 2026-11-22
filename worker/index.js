@@ -216,6 +216,55 @@ async function login(request, env) {
   });
 }
 
+
+async function ensureConversationSchema(env) {
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS conversations (
+      id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      kind TEXT NOT NULL,
+      title TEXT NOT NULL DEFAULT '',
+      content_json TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      PRIMARY KEY (user_id, id),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `).run();
+}
+
+async function adminOnly(request, env) {
+  const user = await currentUser(request, env);
+  if (!user) return { error: json({ error: "Необходим вход в аккаунт" }, 401) };
+  if (user.role !== "owner") return { error: json({ error: "Недостаточно прав" }, 403) };
+  return { user };
+}
+
+async function syncConversations(request, env, user) {
+  const body = await request.json();
+  const items = Array.isArray(body.items) ? body.items.slice(0, 250) : [];
+  await ensureConversationSchema(env);
+  const now = new Date().toISOString();
+  const statements = [];
+  for (const item of items) {
+    const id = String(item?.id || "").slice(0, 120);
+    const kind = String(item?.kind || "chat").slice(0, 32);
+    const title = String(item?.title || "Диалог").slice(0, 240);
+    if (!id || !/^[a-zA-Z0-9_-]+$/.test(id)) continue;
+    const content = JSON.stringify(item?.content ?? {}).slice(0, 200000);
+    const created = String(item?.created_at || now).slice(0, 40);
+    statements.push(env.DB.prepare(`
+      INSERT INTO conversations (id,user_id,kind,title,content_json,created_at,updated_at)
+      VALUES (?,?,?,?,?,?,?)
+      ON CONFLICT(user_id,id) DO UPDATE SET
+        kind=excluded.kind,title=excluded.title,
+        content_json=excluded.content_json,updated_at=excluded.updated_at
+    `).bind(id, user.id, kind, title, content, created, now));
+  }
+  if (statements.length) await env.DB.batch(statements);
+  return json({ success: true, saved: statements.length });
+}
+
 async function handleFetch(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
@@ -231,6 +280,51 @@ async function handleFetch(request, env) {
     } catch (e) {
       return json({ worker: "ok", database: "error" }, 500);
     }
+  }
+
+
+  if (path === "/conversations/sync" && request.method === "POST") {
+    const user = await currentUser(request, env);
+    if (!user) return json({ error: "Необходим вход в аккаунт" }, 401);
+    return syncConversations(request, env, user);
+  }
+  if (path === "/conversations" && request.method === "GET") {
+    const user = await currentUser(request, env);
+    if (!user) return json({ error: "Необходим вход в аккаунт" }, 401);
+    await ensureConversationSchema(env);
+    const rows = await env.DB.prepare(`
+      SELECT id,kind,title,content_json,created_at,updated_at
+      FROM conversations WHERE user_id=? ORDER BY updated_at DESC LIMIT 250
+    `).bind(user.id).all();
+    return json({ conversations: (rows.results || []).map(x => ({
+      id:x.id,kind:x.kind,title:x.title,content:JSON.parse(x.content_json || "{}"),
+      created_at:x.created_at,updated_at:x.updated_at
+    })) });
+  }
+  if (path === "/admin/users" && request.method === "GET") {
+    const auth = await adminOnly(request, env);
+    if (auth.error) return auth.error;
+    const rows = await env.DB.prepare(`
+      SELECT u.id,u.username,u.display_name,u.role,u.status,u.created_at,
+        (SELECT COUNT(*) FROM conversations c WHERE c.user_id=u.id) AS conversations_count
+      FROM users u ORDER BY u.created_at DESC LIMIT 500
+    `).all();
+    return json({ users: rows.results || [] });
+  }
+  if (path === "/admin/conversations" && request.method === "GET") {
+    const auth = await adminOnly(request, env);
+    if (auth.error) return auth.error;
+    const userId = String(url.searchParams.get("user_id") || "");
+    if (!userId) return json({ error: "Не указан аккаунт" }, 400);
+    await ensureConversationSchema(env);
+    const rows = await env.DB.prepare(`
+      SELECT id,kind,title,content_json,created_at,updated_at
+      FROM conversations WHERE user_id=? ORDER BY updated_at DESC LIMIT 250
+    `).bind(userId).all();
+    return json({ conversations: (rows.results || []).map(x => ({
+      id:x.id,kind:x.kind,title:x.title,content:JSON.parse(x.content_json || "{}"),
+      created_at:x.created_at,updated_at:x.updated_at
+    })) });
   }
 
   if (path === "/auth/register" && request.method === "POST") {
