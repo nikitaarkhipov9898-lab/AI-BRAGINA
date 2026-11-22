@@ -229,7 +229,25 @@ function showAdminConversation(c){
  $('admin-conversation-view').classList.remove('hidden');
 }
 function authStatus(message,error=false){const el=$('auth-status');el.textContent=message;el.classList.remove('hidden','error','success');el.classList.add(error?'error':'success');}
-function toggleAuthMode(){authMode=authMode==='login'?'register':'login';$('auth-title').textContent=authMode==='login'?'Вход в приложение':'Создание аккаунта';$('auth-hint').textContent=authMode==='login'?'Войди, чтобы продолжить работу.':'Создай аккаунт. Первый аккаунт станет владельцем платформы.';$('auth-name-wrap').classList.toggle('hidden',authMode!=='register');$('auth-code-wrap').classList.toggle('hidden',authMode!=='register');$('auth-password').autocomplete=authMode==='login'?'current-password':'new-password';$('auth-submit').textContent=authMode==='login'?'Войти':'Зарегистрироваться';$('auth-toggle').textContent=authMode==='login'?'Создать аккаунт':'У меня уже есть аккаунт';$('auth-status').classList.add('hidden');}
+async function toggleAuthMode(){
+ authMode=authMode==='login'?'register':'login';
+ let firstAccount=false;
+ if(authMode==='register'){
+  try{
+   const r=await fetch(WORKER_URL+'/auth/setup-status',{cache:'no-store'});
+   if(!r.ok)throw new Error('status');
+   const d=await r.json();firstAccount=!!d.first_account;
+  }catch(e){firstAccount=true;}
+ }
+ $('auth-title').textContent=authMode==='login'?'Вход в приложение':'Создание аккаунта';
+ $('auth-hint').textContent=authMode==='login'?'Войди, чтобы продолжить работу.':(firstAccount?'Создай первый аккаунт владельца платформы.':'Создай аккаунт.');
+ $('auth-name-wrap').classList.toggle('hidden',authMode!=='register');
+ $('auth-code-wrap').classList.toggle('hidden',authMode!=='register'||!firstAccount);
+ $('auth-password').autocomplete=authMode==='login'?'current-password':'new-password';
+ $('auth-submit').textContent=authMode==='login'?'Войти':'Зарегистрироваться';
+ $('auth-toggle').textContent=authMode==='login'?'Создать аккаунт':'У меня уже есть аккаунт';
+ $('auth-status').classList.add('hidden');
+}
 async function authRequest(path,body){
  const controller=new AbortController();
  const timeout=setTimeout(()=>controller.abort(),12000);
