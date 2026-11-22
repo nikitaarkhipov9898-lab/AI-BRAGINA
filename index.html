@@ -101,11 +101,13 @@
 
 <section id="page-admin" class="hidden">
  <button class="back" onclick="showPage('settings')">← Настройки</button>
- <h2 class="page-title">Панель владельца</h2>
- <p class="page-sub">Аккаунты и сохранённые переписки тестовой платформы.</p>
- <div class="panel"><div class="section-head"><h2>Аккаунты</h2><button class="mini-btn" onclick="loadAdminUsers()">Обновить</button></div><div id="admin-users"><p class="muted">Загрузка аккаунтов…</p></div></div>
- <div class="panel"><div class="section-head"><h2 id="admin-chat-title">Переписки</h2></div><div id="admin-conversations"><p class="muted">Выбери аккаунт, чтобы открыть его переписки.</p></div></div>
+ <h2 class="page-title">Центр управления</h2>
+ <p class="page-sub">Полный контроль владельца над платформой AI-БРАГИНА.</p>
+ <div class="panel"><div class="section-head"><h2>Обзор платформы</h2><button class="mini-btn" onclick="loadAdminOverview()">Обновить</button></div><div id="admin-overview" class="admin-stats"><p class="muted">Загрузка статистики…</p></div></div>
+ <div class="panel"><div class="section-head"><h2>Управление пользователями</h2><button class="mini-btn" onclick="loadAdminUsers()">Обновить</button></div><input id="admin-user-search" class="field-input" placeholder="Поиск по логину или имени" oninput="filterAdminUsers()"><div id="admin-users"><p class="muted">Загрузка аккаунтов…</p></div></div>
+ <div class="panel"><div class="section-head"><h2 id="admin-chat-title">Переписки пользователей</h2></div><div id="admin-conversations"><p class="muted">Выбери аккаунт, чтобы открыть его переписки.</p></div></div>
  <div class="panel hidden" id="admin-conversation-view"><div class="section-head"><h2 id="admin-view-title">Диалог</h2></div><pre id="admin-view-content" style="white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.55 monospace;color:var(--text);max-height:60vh;overflow:auto"></pre></div>
+ <div class="panel"><div class="section-head"><h2>Журнал действий владельца</h2><button class="mini-btn" onclick="loadAdminAudit()">Обновить</button></div><div id="admin-audit"><p class="muted">Загрузка журнала…</p></div></div>
 </section>
 
 <section id="page-settings" class="hidden">
@@ -133,7 +135,7 @@
 ИИ-Шеф — экспериментальный режим
 ИИ-Механик — ранняя версия
 Приёмка товара — в разработке</div></div>
-<div class="panel hidden" id="admin-entry"><strong>Управление платформой</strong><p class="muted">Доступ владельца к аккаунтам и серверным перепискам.</p><button class="btn" onclick="showPage('admin');loadAdminUsers()">Открыть админ-панель</button></div>
+<div class="panel hidden" id="admin-entry"><strong>Управление платформой</strong><p class="muted">Доступ владельца к аккаунтам и серверным перепискам.</p><button class="btn" onclick="showPage('admin');loadAdminOverview();loadAdminUsers();loadAdminAudit()">Открыть админ-панель</button></div>
  <div class="panel"><strong>Аккаунт</strong><p class="muted" id="account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div></section>
 </main><div class="footer-note">AI-БРАГИНА · Умные инструменты на каждый день</div>
 </div>
@@ -191,22 +193,14 @@ function queueConversationSync(){
  clearTimeout(conversationSyncTimer);
  conversationSyncTimer=setTimeout(()=>syncConversations().catch(e=>console.warn('conversation sync',e)),900);
 }
-async function loadAdminUsers(){
- if(currentUser?.role!=='owner')return;
- const box=$('admin-users');box.textContent='Загружаю аккаунты…';
- try{
-  const r=await fetch(WORKER_URL+'/admin/users',{headers:{Authorization:'Bearer '+authToken}});
-  const d=await r.json();if(!r.ok)throw new Error(d.error||'Не удалось загрузить аккаунты');
-  box.innerHTML='';
-  if(!d.users?.length){box.textContent='Аккаунтов пока нет.';return;}
-  d.users.forEach(u=>{
-   const item=document.createElement('div');item.className='history-item';
-   const title=document.createElement('strong');title.textContent=(u.display_name||u.username)+' (@'+u.username+')';item.appendChild(title);
-   const meta=document.createElement('small');meta.textContent='Роль: '+u.role+' · Статус: '+u.status+' · Переписок: '+u.conversations_count;item.appendChild(meta);
-   const btn=document.createElement('button');btn.textContent='Открыть переписки';btn.onclick=()=>loadAdminConversations(u.id,u.username);item.appendChild(btn);box.appendChild(item);
-  });
- }catch(e){box.textContent=e.message;}
-}
+let adminUsersCache=[];
+async function adminFetch(path,options={}){const r=await fetch(WORKER_URL+path,{...options,headers:{Authorization:'Bearer '+authToken,'Content-Type':'application/json',...(options.headers||{})}});const d=await r.json();if(!r.ok)throw new Error(d.error||'Ошибка запроса');return d;}
+async function loadAdminOverview(){if(currentUser?.role!=='owner')return;const box=$('admin-overview');box.textContent='Загружаю…';try{const d=await adminFetch('/admin/overview');box.innerHTML='';[['Пользователи',d.users],['Активные',d.active_users],['Заблокированы',d.blocked_users],['Переписки',d.conversations]].forEach(([label,value])=>{const card=document.createElement('div');card.className='admin-stat';const strong=document.createElement('strong');strong.textContent=Number(value||0).toLocaleString('ru-RU');const small=document.createElement('small');small.textContent=label;card.append(strong,small);box.appendChild(card);});}catch(e){box.textContent=e.message;}}
+async function loadAdminUsers(){if(currentUser?.role!=='owner')return;const box=$('admin-users');box.textContent='Загружаю аккаунты…';try{const d=await adminFetch('/admin/users');adminUsersCache=d.users||[];renderAdminUsers();}catch(e){box.textContent=e.message;}}
+function filterAdminUsers(){renderAdminUsers();}
+function renderAdminUsers(){const box=$('admin-users');if(!box)return;const q=($('admin-user-search')?.value||'').trim().toLowerCase();const users=adminUsersCache.filter(u=>[u.username,u.display_name].some(v=>String(v||'').toLowerCase().includes(q)));box.innerHTML='';if(!users.length){box.textContent='Пользователи не найдены.';return;}users.forEach(u=>{const item=document.createElement('div');item.className='history-item';const title=document.createElement('strong');title.textContent=(u.display_name||u.username)+' (@'+u.username+')';item.appendChild(title);const meta=document.createElement('small');meta.textContent='Роль: '+u.role+' · Статус: '+u.status+' · Переписок: '+u.conversations_count+' · Создан: '+(u.created_at?new Date(u.created_at).toLocaleDateString('ru-RU'):'—');item.appendChild(meta);const actions=document.createElement('div');actions.className='case-actions';const chats=document.createElement('button');chats.textContent='Переписки';chats.onclick=()=>loadAdminConversations(u.id,u.username);actions.appendChild(chats);if(u.role!=='owner'){const toggle=document.createElement('button');toggle.textContent=u.status==='active'?'Заблокировать':'Разблокировать';toggle.onclick=()=>adminUserAction(u,u.status==='active'?'block':'unblock');actions.appendChild(toggle);const del=document.createElement('button');del.textContent='Удалить аккаунт';del.onclick=()=>adminUserAction(u,'delete');actions.appendChild(del);}item.appendChild(actions);box.appendChild(item);});}
+async function adminUserAction(u,action){const label=action==='block'?'заблокировать':action==='unblock'?'разблокировать':'безвозвратно удалить';const warning=action==='delete'?' Будут удалены аккаунт, его серверные переписки и активные сессии.': '';if(!confirm('Подтверждаешь: '+label+' @'+u.username+'?'+warning))return;try{await adminFetch('/admin/users/action',{method:'POST',body:JSON.stringify({user_id:u.id,action})});toast('Действие выполнено.');await Promise.all([loadAdminUsers(),loadAdminOverview(),loadAdminAudit()]);}catch(e){toast(e.message,'error');}}
+async function loadAdminAudit(){if(currentUser?.role!=='owner')return;const box=$('admin-audit');if(!box)return;box.textContent='Загружаю…';try{const d=await adminFetch('/admin/audit');box.innerHTML='';if(!d.items?.length){box.textContent='Записей пока нет.';return;}d.items.forEach(x=>{const row=document.createElement('div');row.className='history-item';const t=document.createElement('strong');t.textContent=x.action;const m=document.createElement('small');m.textContent=(x.actor_username||'Владелец')+' · '+(x.target_username||'—')+' · '+new Date(x.created_at).toLocaleString('ru-RU');row.append(t,m);box.appendChild(row);});}catch(e){box.textContent=e.message;}}
 async function loadAdminConversations(userId,username){
  const box=$('admin-conversations');$('admin-chat-title').textContent='Переписки: @'+username;$('admin-conversation-view').classList.add('hidden');box.textContent='Загружаю…';
  try{
