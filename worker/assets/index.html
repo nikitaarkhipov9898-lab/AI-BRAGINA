@@ -1026,6 +1026,7 @@ async function generateChefEventRecipes(id){
   const result=await callAI(payload),data=JSON.parse(cleanJson(result.content));
   addChefEventUsage(e,result.usage,'recipes');
   if(!Array.isArray(data.recipes))throw new Error('ИИ не вернул список рецептур. Повтори расчёт.');
+  const previousRecipes=new Map(menu.map(d=>[d.id,d.recipe]));
   let saved=0;
   data.recipes.forEach(r=>{
    const dish=menu.find(x=>x.id===String(r.menuId));
@@ -1036,7 +1037,7 @@ async function generateChefEventRecipes(id){
    saved++;
   });
   if(!saved)throw new Error('Не удалось сохранить рецептуры. Проверьте ответ и повторите запрос.');
-  const quality=chefEventRecipeValidation(menu,guestUnits);if(!quality.ok){if(out)out.textContent=quality.message;toast('Слишком большой расчёт. Рецептуры не сохранены.','error');return;}
+  const quality=chefEventRecipeValidation(menu,guestUnits);if(!quality.ok){menu.forEach(dish=>{dish.recipe=previousRecipes.get(dish.id);});if(out)out.textContent=quality.message;toast('Слишком большой расчёт. Рецептуры не сохранены.','error');return;}
   e.recipeBaseGuestUnits=guestUnits;e.recipeBaseAdults=adults;e.recipeBaseChildren=children;e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);toast('Сохранено рецептур: '+saved+'. Ориентир: '+Math.round(quality.perGuest)+' г/мл на гостя.');
  }catch(err){if(out)out.textContent=err.message||'Не удалось рассчитать рецептуры.';toast(err.message||'Не удалось рассчитать рецептуры.','error');}
  finally{isBusy=false;if(btn&&btn.isConnected){btn.disabled=false;btn.textContent='Рассчитать рецепты и продукты';}}
