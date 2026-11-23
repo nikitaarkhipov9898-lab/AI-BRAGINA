@@ -1,3 +1,4 @@
+// Preview build trigger: verifies the React shell can be deployed independently of production.
 const ALLOWED_ORIGIN = "https://nikitaarkhipov9898-lab.github.io";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
