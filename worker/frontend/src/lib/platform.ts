@@ -53,3 +53,9 @@ export const soyuzQueryClient = new QueryClient({
     mutations: { retry: 0 },
   },
 });
+
+export const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
+export function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  const target = typeof input === "string" && input.startsWith("/") ? apiBaseUrl + input : input;
+  return fetch(target, init);
+}
