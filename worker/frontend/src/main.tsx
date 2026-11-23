@@ -1,260 +1,123 @@
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion } from "motion/react";
-import { Drawer } from "vaul";
-import { Button as KonstaButton, KonstaProvider } from "konsta/react";
-import { useDrag } from "@use-gesture/react";
-import { registerSW } from "virtual:pwa-register";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { create } from "zustand";
-import Dexie, { type Table } from "dexie";
-import { Capacitor } from "@capacitor/core";
-import { Haptics, ImpactStyle } from "@capacitor/haptics";
-import { Keyboard } from "@capacitor/keyboard";
 import {
-  Bell, Search, Home, Newspaper, Users, MessageCircle, Video, Bookmark,
-  Settings, Image as ImageIcon, Smile, Send, Heart, MessageSquare,
-  Share2, MoreHorizontal, ChevronLeft, ChevronRight, Paperclip, Camera,
-  Music2, CalendarDays, Sparkles, LogOut, CheckCheck, Phone, Info,
-  Flame, UserRound, X, WandSparkles, Zap, CirclePlay
+  Activity, ArrowRight, Bell, BookOpen, BriefcaseBusiness, CalendarDays, Check,
+  ChefHat, ChevronRight, CircleHelp, ClipboardList, Compass, Crown, FileText,
+  Gauge, Globe2, Hammer, HeartPulse, Home, LockKeyhole, MessageCircle, Package,
+  Play, Plus, Search, Send, Settings, ShieldCheck, ShoppingBasket, Sparkles,
+  Star, Stethoscope, Store, Users, Video, Wrench, X, Zap
 } from "lucide-react";
 import "./styles.css";
-const RiveAccent = React.lazy(() => import("./components/RiveAccent"));
-import { connectSvoeRealtime, enableSvoePush, type RealtimeStatus } from "./lib/mobile-services";
 
-type Tab = "home" | "feed" | "friends" | "messages" | "video" | "services" | "saved" | "settings";
-type ChatMessage = { id: number; chatId: number; mine: boolean; text: string; time: string };
-type ChatPerson = { id: number; name: string; avatar: string; color: string; online: boolean; preview: string; time: string; unread?: number };
-type Post = { id: number; name: string; avatar: string; time: string; text: string; image?: string; likes: number; comments: number; liked?: boolean; verified?: boolean };
+type Helper = { id:string; name:string; role:string; desc:string; status:"open"|"soon"; icon:string; color:string; skills:string[]; sample:string };
+const helpers:Helper[] = [
+ {id:"chef",name:"ИИ-ШЕФ",role:"Кухня и питание",desc:"Придумает меню, рассчитает продукты и поможет готовить вкусно каждый день.",status:"open",icon:"chef",color:"tomato",skills:["Рецепты из того, что есть дома","Меню на неделю и список покупок","ПП, калории и баланс БЖУ","Пошаговое сопровождение готовки"],sample:"У меня есть курица, картофель и сметана. Что приготовить на ужин?"},
+ {id:"mechanic",name:"ИИ-МЕХАНИК",role:"Авто и техника",desc:"Поможет разобраться с неисправностью, обслуживанием и ремонтом.",status:"open",icon:"mechanic",color:"blue",skills:["Диагностика по симптомам","Расшифровка ошибок и кодов","План ремонта и инструменты","Регламент обслуживания"],sample:"Машина плохо заводится на холодную. С чего начать проверку?"},
+ {id:"lawyer",name:"ИИ-ЮРИСТ",role:"Документы и право",desc:"Разберёт ситуацию, объяснит нормы и поможет подготовить документы.",status:"soon",icon:"law",color:"gold",skills:["Разбор правовой ситуации","Подготовка заявлений и обращений","Проверка договоров","План действий и сроки"],sample:"Помоги составить обращение по моей ситуации."},
+ {id:"builder",name:"ИИ-СТРОИТЕЛЬ",role:"Ремонт и строительство",desc:"Подскажет технологию работ, материалы, объёмы и последовательность.",status:"soon",icon:"builder",color:"green",skills:["Расчёт материалов","Технология строительных работ","Сметы и планирование","Поиск причин дефектов"],sample:"Хочу утеплить комнату 18 квадратных метров. Что понадобится?"},
+ {id:"store",name:"ИИ-УПРАВЛЯЮЩИЙ",role:"Магазин и торговля",desc:"Каталог, остатки, закупки, приёмка, цены и аналитика в одном рабочем центре.",status:"soon",icon:"store",color:"violet",skills:["Учёт товаров и остатков","Продажи и списания","Заказы поставщикам","Интеграции с кассой и 1С"],sample:"Покажи товары, которые скоро закончатся."},
+ {id:"doctor",name:"ИИ-НАВИГАТОР",role:"Здоровье и самочувствие",desc:"Поможет подготовиться к врачу и разобраться в медицинской информации.",status:"soon",icon:"health",color:"mint",skills:["Подготовка к приёму","Понятное объяснение анализов","Дневник самочувствия","Вопросы врачу"],sample:"Помоги подготовить список вопросов для врача."},
+];
 
-class SvoeDatabase extends Dexie {
-  messages!: Table<ChatMessage, number>;
-  constructor() {
-    super("svoe-mobile-preview");
-    this.version(1).stores({ messages: "id, chatId, time" });
-  }
+function Mascot({kind,size="large"}:{kind:string;size?:string}) {
+ if(kind==="chef") return <div className={"mascot "+size+" chef-mascot" }><div className="chef-hat"><i/><i/><i/></div><div className="chef-face"><span className="eye left"/><span className="eye right"/><span className="smile"/></div><div className="chef-body"><span className="scarf"/> <span className="button-dot one"/><span className="button-dot two"/></div><div className="mascot-tool">✦</div></div>;
+ if(kind==="mechanic") return <div className={"mascot "+size+" mech-mascot"}><div className="mech-cap"/><div className="mech-face"><span className="eye left"/><span className="eye right"/><span className="smile"/></div><div className="mech-body"><span className="overall-mark">С</span></div><Wrench className="mascot-wrench"/></div>;
+ const glyph:Record<string,string>={law:"§",builder:"⌂",store:"▦",health:"✚"};
+ return <div className={"mascot "+size+" generic-mascot "+kind}><div className="generic-head">{glyph[kind]||"✦"}</div><div className="generic-body"/></div>;
 }
-const db = new SvoeDatabase();
-const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, retry: 1, refetchOnWindowFocus: false } } });
-registerSW({ immediate: true });
-
-type AppState = { tab: Tab; setTab: (tab: Tab) => void };
-const useAppStore = create<AppState>((set) => ({ tab: "home", setTab: (tab) => set({ tab }) }));
-
-const people: ChatPerson[] = [
-  { id: 1, name: "Александр Петров", avatar: "АП", color: "blue", online: true, preview: "Посмотрел, давай обсудим!", time: "12:42", unread: 2 },
-  { id: 2, name: "Команда СВОЁ", avatar: "С", color: "violet", online: true, preview: "Мария: отправила файлы", time: "11:18", unread: 4 },
-  { id: 3, name: "Мария Иванова", avatar: "МИ", color: "pink", online: false, preview: "Спасибо! Тогда на связи", time: "Вчера" },
-  { id: 4, name: "Илья Смирнов", avatar: "ИС", color: "green", online: false, preview: "Голосовое сообщение · 0:18", time: "Вчера" },
-  { id: 5, name: "Избранное", avatar: "★", color: "gold", online: false, preview: "Ваши заметки и сохранённое", time: "Пн" },
-  { id: 6, name: "Анна", avatar: "А", color: "orange", online: true, preview: "Отличная идея ✨", time: "Вс" },
-];
-const seedMessages: ChatMessage[] = [
-  { id: 101, chatId: 1, mine: false, text: "Привет! Посмотрел новую концепцию. Очень интересно выглядит.", time: "12:35" },
-  { id: 102, chatId: 1, mine: true, text: "Здорово! Хочу сначала проверить главную и сообщения, а потом перенести сюда наши функции.", time: "12:37" },
-  { id: 103, chatId: 1, mine: false, text: "Отличный план. Я собрал несколько мыслей по навигации, могу прислать.", time: "12:42" },
-];
-const initialPosts: Post[] = [
-  { id: 1, name: "Команда СВОЁ", avatar: "С", time: "15 минут назад", text: "Знакомьтесь с новым пространством для своих идей, общения и полезных дел. Мы строим платформу, где нужные инструменты всегда под рукой. 💙", image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&auto=format&fit=crop&q=80", likes: 128, comments: 24, verified: true },
-  { id: 2, name: "Александр Петров", avatar: "АП", time: "1 час назад", text: "Иногда лучший способ продвинуться — просто начать. Маленькие шаги каждый день дают большой результат.", likes: 36, comments: 8 },
-  { id: 3, name: "Мария Иванова", avatar: "МИ", time: "Вчера", text: "Собрала подборку полезных идей на неделю. Сохраняйте, чтобы не потерять ✨", image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&auto=format&fit=crop&q=80", likes: 74, comments: 13 },
-];
-const stories = [
-  { name: "Добавить", avatar: "+", color: "add" }, { name: "Александр", avatar: "АП", color: "blue" },
-  { name: "Мария", avatar: "МИ", color: "pink" }, { name: "Команда", avatar: "С", color: "violet" },
-  { name: "Анна", avatar: "А", color: "orange" }, { name: "Илья", avatar: "ИС", color: "green" },
-];
-const nav = [
-  { id: "home" as Tab, label: "Моя страница", icon: UserRound },
-  { id: "feed" as Tab, label: "Новости", icon: Newspaper },
-  { id: "messages" as Tab, label: "Мессенджер", icon: MessageCircle, count: 6 },
-  { id: "friends" as Tab, label: "Друзья", icon: Users },
-  { id: "video" as Tab, label: "Видео", icon: Video },
-  { id: "services" as Tab, label: "Сервисы", icon: Sparkles },
-  { id: "saved" as Tab, label: "Закладки", icon: Bookmark },
-  { id: "settings" as Tab, label: "Настройки", icon: Settings },
-];
-
-function haptic() {
-  if (Capacitor.isNativePlatform()) void Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
-}
-function transitionTo(action: () => void) {
-  const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
-  if (doc.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) doc.startViewTransition(action);
-  else action();
-}
-function Avatar({ label, color = "blue", online = false, size = "" }: { label: string; color?: string; online?: boolean; size?: string }) {
-  return <span className={`avatar ${color} ${online ? "online" : ""} ${size}`}>{label}</span>;
-}
-function App() {
-  const tab = useAppStore((s) => s.tab);
-  const setTab = useAppStore((s) => s.setTab);
-  const [posts, setPosts] = useState(initialPosts);
-  const [selectedChat, setSelectedChat] = useState(1);
-  const [mobileChatOpen, setMobileChatOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>(seedMessages);
-  const [draft, setDraft] = useState("");
-  const [chatSearch, setChatSearch] = useState("");
-  const [globalSearch, setGlobalSearch] = useState("");
-  const [searchResultIds, setSearchResultIds] = useState<number[] | null>(null);
-  const searchWorker = useRef<Worker | null>(null);
-  const [postDraft, setPostDraft] = useState("");
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [toast, setToast] = useState("");
-  const [likedComments, setLikedComments] = useState<number[]>([]);
-  const [realtimeStatus, setRealtimeStatus] = useState<RealtimeStatus>("disabled");
-  const messageParent = useRef<HTMLDivElement>(null);
-  const activePerson = people.find((p) => p.id === selectedChat) ?? people[0];
-  const filteredPeople = useMemo(() => people.filter((p) => (p.name + " " + p.preview).toLowerCase().includes(chatSearch.toLowerCase())), [chatSearch]);
-  const chatVirtualizer = useVirtualizer({ count: filteredPeople.length, getScrollElement: () => messageParent.current, estimateSize: () => 66, overscan: 6 });
-
-  useEffect(() => {
-    void db.messages.bulkPut(seedMessages).catch(() => {});
-    void db.messages.toArray().then((stored) => {
-      if (stored.length) setMessages(stored);
-    }).catch(() => {});
-  }, []);
-  useEffect(() => {
-    if (messages.length) void db.messages.bulkPut(messages).catch(() => {});
-  }, [messages]);
-  useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
-    const listener = Keyboard.addListener("keyboardWillShow", () => document.body.classList.add("keyboard-open"));
-    const hide = Keyboard.addListener("keyboardWillHide", () => document.body.classList.remove("keyboard-open"));
-    return () => { void listener.then((l) => l.remove()); void hide.then((l) => l.remove()); };
-  }, []);
-  useEffect(() => {
-    const worker = new Worker(new URL("./workers/search.worker.ts", import.meta.url), { type: "module" });
-    worker.onmessage = (event: MessageEvent<{ ids: number[] }>) => setSearchResultIds(event.data.ids);
-    searchWorker.current = worker;
-    return () => { worker.terminate(); searchWorker.current = null; };
-  }, []);
-  useEffect(() => {
-    if (!globalSearch.trim()) { setSearchResultIds(null); return; }
-    searchWorker.current?.postMessage({ query: globalSearch, items: posts.map((post) => ({ id: post.id, title: post.name, text: post.text })) });
-  }, [globalSearch, posts]);
-  useEffect(() => connectSvoeRealtime(setRealtimeStatus), []);
-  useEffect(() => {
-    if (!toast) return;
-    const timer = window.setTimeout(() => setToast(""), 2500);
-    return () => window.clearTimeout(timer);
-  }, [toast]);
-
-  const swipeBind = useDrag(({ swipe: [sx] }) => {
-    if (sx === -1 && tab === "home") setTab("feed");
-    if (sx === 1 && tab === "feed") setTab("home");
-  }, { axis: "x", filterTaps: true });
-
-  function go(next: Tab) { haptic(); transitionTo(() => setTab(next)); }
-  function sendMessage(e: React.FormEvent) {
-    e.preventDefault();
-    if (!draft.trim()) return;
-    haptic();
-    const message = { id: Date.now(), chatId: selectedChat, mine: true, text: draft.trim(), time: new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit" }).format(new Date()) };
-    setMessages((old) => [...old, message]);
-    setDraft("");
-  }
-  function publishPost() {
-    if (!postDraft.trim()) return;
-    setPosts((old) => [{ id: Date.now(), name: "Моя страница", avatar: "С", time: "только что", text: postDraft.trim(), likes: 0, comments: 0 }, ...old]);
-    setPostDraft(""); setDrawerOpen(false); setToast("Запись добавлена в тестовую ленту"); haptic();
-  }
-  function likePost(id: number) {
-    setPosts((old) => old.map((p) => p.id === id ? { ...p, liked: !p.liked, likes: p.likes + (p.liked ? -1 : 1) } : p));
-    haptic();
-  }
-
-  return <div className="app-shell" {...swipeBind()}>
-    <header className="topbar"><div className="topbar-inner">
-      <button className="brand" onClick={() => go("home")}><span className="brand-mark">с</span> СВОЁ</button>
-      <label className="global-search"><Search size={17}/><input value={globalSearch} onChange={(e) => setGlobalSearch(e.target.value)} placeholder="Поиск по СВОЁ"/></label>
-      <div className="topbar-actions">
-        <button className="icon-btn" onClick={async () => { try { const permission = await Notification.requestPermission(); if (permission !== "granted") { setToast("Разрешение на уведомления не выдано"); return; } const token = await enableSvoePush(); setToast(token ? "Устройство зарегистрировано для push. Осталось подключить серверную отправку." : "Push не настроен"); } catch (error) { setToast(error instanceof Error ? error.message : "Не удалось включить уведомления"); } }} aria-label="Включить уведомления"><Bell size={19}/></button>
-        <button className="icon-btn" onClick={() => go("messages")} aria-label="Сообщения"><MessageCircle size={19}/></button><span title={realtimeStatus === "connected" ? "Realtime подключён" : "Realtime не настроен"} style={{ width: 7, height: 7, borderRadius: "50%", background: realtimeStatus === "connected" ? "#4bb34b" : "#c5ccd3" }}/>
-        <button className="user-mini" onClick={() => go("home")}><Avatar label="Н" size="small"/> <span>Моя страница</span></button>
+function App(){
+ const [tab,setTab]=useState("home");
+ const [active,setActive]=useState<Helper|null>(null);
+ const [query,setQuery]=useState("");
+ const [chat,setChat]=useState("");
+ const [sent,setSent]=useState<string[]>([]);
+ const [toast,setToast]=useState("");
+ const [showAll,setShowAll]=useState(false);
+ const notify=(s:string)=>{setToast(s);window.setTimeout(()=>setToast(""),2400)};
+ const go=(t:string)=>{setTab(t);setActive(null);window.scrollTo({top:0,behavior:"smooth"});};
+ const openHelper=(h:Helper)=>{setActive(h);setChat("");setSent([]);};
+ const visibleHelpers=helpers.filter(h=>(h.name+" "+h.role+" "+h.desc).toLowerCase().includes(query.toLowerCase()));
+ const nav=[{id:"home",label:"ШТАБ",icon:Home},{id:"helpers",label:"ПОМОЩНИКИ",icon:Sparkles},{id:"community",label:"СООБЩЕСТВО",icon:Users},{id:"messages",label:"СВЯЗЬ",icon:MessageCircle},{id:"work",label:"ДЕЛА",icon:ClipboardList}];
+ const send=()=>{if(!chat.trim())return;setSent(v=>[...v,chat.trim()]);setChat("");};
+ return <div className="union-app">
+  <div className="grain"/>
+  <header className="union-header">
+   <button className="seal" onClick={()=>go("home")} aria-label="На главную"><span className="seal-star">✦</span><span className="seal-orbit"/></button>
+   <div className="brand-lockup"><div className="brand-name">СОЮЗ<span>®</span></div><div className="brand-sub">ЕДИНАЯ ЦИФРОВАЯ СИСТЕМА</div></div>
+   <div className="header-center"><span className="live-dot"/> СИСТЕМА АКТИВНА <b>·</b> 23 НОЯБРЯ 2026</div>
+   <div className="header-actions"><button className="round-icon" onClick={()=>notify("Новых оповещений пока нет")}><Bell size={18}/><i/></button><button className="profile-chip" onClick={()=>notify("Личный кабинет демонстрационный")}><span className="profile-avatar">Н</span><span>ГРАЖДАНИН</span></button></div>
+  </header>
+  <div className="mobile-status"><span className="live-dot"/> СИСТЕМА АКТИВНА <span>·</span> 23.11.2026</div>
+  <div className="union-layout">
+   <aside className="side-rail">
+    <div className="rail-label">ГЛАВНОЕ УПРАВЛЕНИЕ</div>
+    {nav.map(n=><button key={n.id} className={"rail-link "+(tab===n.id&&!active?"selected":"")} onClick={()=>go(n.id)}><n.icon size={18}/><span>{n.label}</span>{n.id==="messages"&&<i className="rail-count">2</i>}</button>)}
+    <div className="rail-rule"/>
+    <div className="rail-label">СЛУЖБЫ И ОТДЕЛЫ</div>
+    <button className="rail-link" onClick={()=>go("helpers")}><ChefHat size={18}/><span>БЮРО ПОМОЩНИКОВ</span></button>
+    <button className="rail-link" onClick={()=>go("work")}><CalendarDays size={18}/><span>ПЛАНОВЫЙ ОТДЕЛ</span></button>
+    <button className="rail-link" onClick={()=>notify("Архив будет доступен в следующем этапе")}><BookOpen size={18}/><span>АРХИВ</span><LockKeyhole size={12} className="rail-lock"/></button>
+    <div className="rail-bottom"><div className="rail-stamp">С</div><div><b>СОЮЗ / 01</b><small>ВЕРСИЯ 0.1 · ПРЕДПРОСМОТР</small></div></div>
+   </aside>
+   <main className="main-stage">
+    <AnimatePresence mode="wait">
+    {active ? <motion.section key="detail" className="helper-detail" initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} exit={{opacity:0,y:8}}>
+      <button className="back-link" onClick={()=>setActive(null)}>← К БЮРО ПОМОЩНИКОВ</button>
+      <div className="detail-hero">
+       <div className="detail-copy"><div className="eyebrow"><span className="live-dot"/> ПЕРСОНАЛЬНЫЙ ЦИФРОВОЙ СПЕЦИАЛИСТ</div><h1>{active.name}</h1><p>{active.desc}</p><div className="detail-status"><span className={active.status==="open"?"status-open":"status-locked"}>{active.status==="open"?"● ДОСТУПЕН ДЛЯ РАБОТЫ":"▣ ГОТОВИТСЯ К ЗАПУСКУ"}</span><span>ОТДЕЛ: {active.role.toUpperCase()}</span></div></div>
+       <div className={"detail-mascot-panel "+active.color}><div className="orbit orbit-a"/><div className="orbit orbit-b"/><Mascot kind={active.icon}/><div className="mascot-caption">ЦИФРОВОЙ СОТРУДНИК №{String(helpers.indexOf(active)+1).padStart(2,"0")}</div></div>
       </div>
-    </div></header>
-
-    <div className="layout">
-      <aside className="left-nav">
-        {nav.map(({ id, label, icon: Icon, count }) => <button key={id} className={`nav-link ${tab === id ? "active" : ""}`} onClick={() => go(id)}><Icon size={19}/><span>{label}</span>{count && <span className="count">{count}</span>}</button>)}
-        <div className="nav-divider"/>
-        <button className="nav-link" onClick={() => setToast("Профиль демо-режима")}><LogOut size={18}/><span>Профиль</span></button>
-      </aside>
-
-      <main className="center-column">
-        <AnimatePresence mode="wait">
-          {tab === "messages" ? <motion.section key="messages" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className={`surface chat-layout ${mobileChatOpen ? "mobile-chat-open" : ""}`}>
-            <div className="chat-list">
-              <div className="chat-search"><input value={chatSearch} onChange={(e) => setChatSearch(e.target.value)} placeholder="Поиск сообщений"/></div>
-              <div ref={messageParent} style={{ height: 530, overflow: "auto" }}>
-                <div style={{ height: chatVirtualizer.getTotalSize(), position: "relative" }}>
-                  {chatVirtualizer.getVirtualItems().map((item) => {
-                    const p = filteredPeople[item.index];
-                    return <button key={p.id} className={`chat-person ${selectedChat === p.id ? "active" : ""}`} onClick={() => { setSelectedChat(p.id); setMobileChatOpen(true); haptic(); }} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: item.size, transform: `translateY(${item.start}px)` }}>
-                      <Avatar label={p.avatar} color={p.color} online={p.online}/><span className="chat-person-copy"><b>{p.name}</b><small>{p.preview}</small></span>
-                      {p.unread ? <span className="count">{p.unread}</span> : null}
-                    </button>;
-                  })}
-                </div>
-              </div>
-            </div>
-            <div className="chat-window">
-              <div className="chat-head"><button className="chat-back" onClick={() => setMobileChatOpen(false)}><ChevronLeft size={19}/></button><Avatar label={activePerson.avatar} color={activePerson.color} online={activePerson.online}/><div><strong>{activePerson.name}</strong><div className="muted" style={{ fontSize: 11, marginTop: 3 }}>{activePerson.online ? "в сети" : "был(а) недавно"}</div></div><div style={{ marginLeft: "auto", display: "flex", gap: 5 }}><button className="icon-btn" onClick={() => setToast("Звонки подключим через серверный модуль")}><Phone size={18}/></button><button className="icon-btn" onClick={() => setToast("Информация о диалоге")}><Info size={18}/></button></div></div>
-              <div className="chat-messages"><div className="chat-day">СЕГОДНЯ</div>
-                {messages.filter((m) => m.chatId === selectedChat).map((m) => <div key={m.id} className={`msg ${m.mine ? "mine" : ""}`}>{m.text}<time>{m.time} {m.mine ? <CheckCheck size={11} style={{ verticalAlign: "middle" }}/> : null}</time></div>)}
-              </div>
-              <form className="chat-send" onSubmit={sendMessage}><button type="button" className="icon-btn" onClick={() => setToast("Вложения подключим к файловому хранилищу")}><Paperclip size={18}/></button><input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="Напишите сообщение..."/><button type="submit" aria-label="Отправить"><Send size={17}/></button></form>
-            </div>
-          </motion.section> :
-          tab === "home" || tab === "feed" ? <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="feed-page">
-            {tab === "home" && <section className="surface profile-card"><div className="profile-cover"><Suspense fallback={null}><RiveAccent/></Suspense></div><div className="profile-summary"><div className="profile-avatar-row"><div className="profile-avatar">Н</div><button className="primary-btn" onClick={() => setToast("Редактирование профиля подключим к вашему аккаунту")}>Редактировать</button></div><h1 className="profile-name">Моя страница</h1><div className="profile-status">Добро пожаловать в своё пространство ✨</div></div></section>}
-            {tab === "feed" && <h1 className="section-heading">Новости</h1>}
-            <section className="surface stories">{stories.map((s) => <button key={s.name} className={`story ${s.color === "add" ? "add" : ""}`} onClick={() => { setToast(s.name === "Добавить" ? "Создание истории доступно в следующем этапе" : `История: ${s.name}`); }}><span className="story-ring"><span>{s.avatar}</span></span><span>{s.name}</span></button>)}</section>
-            <section className="surface feed-composer"><div className="composer-top"><Avatar label="Н"/><button className="soft-action" style={{ flex: 1, justifyContent: "flex-start", background: "#f0f2f5", borderRadius: 22, padding: "11px 15px" }} onClick={() => setDrawerOpen(true)}>Что у вас нового?</button></div><div className="composer-actions"><button className="soft-action" onClick={() => setDrawerOpen(true)}><ImageIcon size={17} color="#4bb34b"/> Фото</button><button className="soft-action" onClick={() => setToast("Видео добавим вместе с медиахранилищем")}><CirclePlay size={17} color="#e64646"/> Видео</button><button className="soft-action" onClick={() => setToast("Музыка появится в медиаразделе")}><Music2 size={17} color="#9b6ad6"/> Музыка</button><button className="soft-action" onClick={() => setToast("Создание события")}><CalendarDays size={17} color="#e3a33a"/> Событие</button></div></section>
-            {posts.filter((post) => searchResultIds === null || searchResultIds.includes(post.id)).map((post) => <article className="surface post" key={post.id}>
-              <div className="post-head"><Avatar label={post.avatar} color={post.avatar === "МИ" ? "pink" : post.avatar === "С" ? "violet" : "blue"}/><div><div className="post-author">{post.name} {post.verified && <span style={{ color: "#2787f5" }}>✓</span>}</div><div className="post-meta">{post.time} · <span>🌐</span></div></div><button className="icon-btn post-more" onClick={() => setToast("Действия с публикацией")}><MoreHorizontal size={19}/></button></div>
-              <div className="post-copy">{post.text}</div>
-              {post.image && <img className="post-image" src={post.image} loading="lazy" alt="Иллюстрация к публикации"/>}
-              <div className="post-footer"><div className="post-actions"><button className={`post-action ${post.liked ? "liked" : ""}`} onClick={() => likePost(post.id)}><Heart size={18} fill={post.liked ? "currentColor" : "none"}/>{post.likes}</button><button className="post-action" onClick={() => setToast("Комментарии появятся после подключения обсуждений")}><MessageSquare size={17}/>{post.comments}</button><button className="post-action" onClick={() => setToast("Ссылка на запись скопирована в тестовом режиме")}><Share2 size={17}/></button></div><button className="post-action" onClick={() => setLikedComments((v) => v.includes(post.id) ? v.filter((x) => x !== post.id) : [...v, post.id])}><Bookmark size={17} fill={likedComments.includes(post.id) ? "currentColor" : "none"}/></button></div>
-            </article>)}
-          </motion.div> :
-          <motion.section key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="surface widget">
-            <h1 className="section-heading">{nav.find((n) => n.id === tab)?.label ?? "Раздел"}</h1>
-            {tab === "friends" ? people.map((p) => <div className="contact-row" key={p.id}><Avatar label={p.avatar} color={p.color} online={p.online}/><div><strong>{p.name}</strong><span>{p.online ? "Сейчас в сети" : "Недавно был(а) в сети"}</span></div><button className="primary-btn" style={{ marginLeft: "auto" }} onClick={() => { setSelectedChat(p.id); go("messages"); }}>Написать</button></div>) :
-            tab === "services" ? <div className="empty-state"><Sparkles size={30}/><p>Помощники, инструменты и сервисы СВОЁ появятся здесь.</p></div> :
-            tab === "video" ? <div className="empty-state"><Video size={30}/><p>Видеораздел готовится к подключению медиасервиса.</p></div> :
-            tab === "saved" ? <div className="empty-state"><Bookmark size={30}/><p>Сохраняйте публикации, чтобы вернуться к ним позже.</p></div> :
-            <div className="empty-state"><Settings size={30}/><p>Настройки аккаунта и приложения останутся связанными с действующей системой.</p></div>}
-          </motion.section>}
-        </AnimatePresence>
-      </main>
-
-      <aside className="right-column">
-        <section className="surface widget"><h3 className="widget-title">Друзья онлайн <span className="muted">· 3</span></h3>{people.filter((p) => p.online).slice(0, 4).map((p) => <div className="contact-row" key={p.id}><Avatar label={p.avatar} color={p.color} online/><div><strong>{p.name}</strong><span>Сейчас в сети</span></div></div>)}<button className="soft-action" onClick={() => go("friends")}>Показать всех <ChevronRight size={14}/></button></section>
-        <section className="surface widget"><h3 className="widget-title">Популярное сегодня</h3><div className="trend-row"><b><Flame size={13} style={{ display: "inline" }}/> #своёпространство</b><small>2,4 тыс. публикаций</small></div><div className="trend-row"><b>#идеи</b><small>1,8 тыс. публикаций</small></div><div className="trend-row"><b>#вдохновение</b><small>980 публикаций</small></div></section>
-        <section className="surface widget"><h3 className="widget-title">Сервисы СВОЁ</h3><div className="contact-row"><span className="avatar violet"><WandSparkles size={18}/></span><div><strong>ИИ-помощники</strong><span>Помогают решать задачи</span></div></div><div className="contact-row"><span className="avatar green"><Zap size={18}/></span><div><strong>Мои инструменты</strong><span>Всё нужное рядом</span></div></div><button className="soft-action" onClick={() => go("services")}>Открыть сервисы <ChevronRight size={14}/></button></section>
-      </aside>
-    </div>
-
-    <nav className="mobile-bottom">{[{ id: "home" as Tab, label: "Главная", icon: Home }, { id: "feed" as Tab, label: "Новости", icon: Newspaper }, { id: "messages" as Tab, label: "Чаты", icon: MessageCircle }, { id: "friends" as Tab, label: "Друзья", icon: Users }, { id: "services" as Tab, label: "Сервисы", icon: Sparkles }].map(({ id, label, icon: Icon }) => <button key={id} className={tab === id ? "active" : ""} onClick={() => go(id)}><Icon size={20}/><span>{label}</span></button>)}</nav>
-
-    <Drawer.Root open={drawerOpen} onOpenChange={setDrawerOpen}>
-      <Drawer.Portal><Drawer.Overlay style={{ position: "fixed", inset: 0, background: "#11182766", zIndex: 50 }}/>
-        <Drawer.Content style={{ position: "fixed", zIndex: 51, bottom: 0, left: 0, right: 0, background: "#fff", borderRadius: "18px 18px 0 0", padding: "12px 18px calc(20px + env(safe-area-inset-bottom))", maxWidth: 720, margin: "0 auto" }}>
-          <div style={{ width: 38, height: 4, borderRadius: 5, background: "#d9dfe6", margin: "0 auto 17px" }}/>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><Drawer.Title style={{ fontSize: 18, fontWeight: 750 }}>Новая запись</Drawer.Title><button className="icon-btn" onClick={() => setDrawerOpen(false)}><X size={18}/></button></div>
-          <textarea value={postDraft} onChange={(e) => setPostDraft(e.target.value)} placeholder="Расскажите, что у вас нового..." style={{ width: "100%", minHeight: 130, border: 0, resize: "vertical", outline: 0, padding: "16px 0", font: "inherit", fontSize: 15 }}/>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><div style={{ display: "flex", gap: 12, color: "#818c99" }}><ImageIcon size={19}/><Camera size={19}/><Smile size={19}/></div><KonstaButton onClick={publishPost}>Опубликовать</KonstaButton></div>
-        </Drawer.Content>
-      </Drawer.Portal>
-    </Drawer.Root>
-    <AnimatePresence>{toast && <motion.div className="toast" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}>{toast}</motion.div>}</AnimatePresence>
-  </div>;
+      <div className="detail-grid">
+       <section className="paper-panel"><div className="panel-kicker">01 / КОМПЕТЕНЦИИ</div><h2>Чем поможет специалист</h2><div className="skill-list">{active.skills.map((s,i)=><div className="skill-row"><span>{String(i+1).padStart(2,"0")}</span><b>{s}</b><Check size={16}/></div>)}</div></section>
+       <section className="paper-panel usage-panel"><div className="panel-kicker">02 / РАБОЧЕЕ МЕСТО</div><h2>Поставить задачу</h2>{active.status==="open"?<><div className="chat-intro">Опишите ситуацию обычными словами. Специалист уточнит детали и предложит план действий.</div><div className="sample-prompt" onClick={()=>setChat(active.sample)}><Sparkles size={15}/><span>{active.sample}</span><ArrowRight size={15}/></div><div className="mini-chat">{sent.map((s,i)=><div className="mini-bubble mine" key={i}>{s}</div>)}{sent.length>0&&<div className="mini-bubble bot">Задача принята в демонстрационном режиме. Для полноценной работы подключим интеллектуальный сервис.</div>}</div><div className="task-input"><input value={chat} onChange={e=>setChat(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} placeholder="Напишите задачу..."/><button onClick={send}><Send size={17}/></button></div><small className="demo-note">ДЕМО-РЕЖИМ · ЗАПРОСЫ ПОКА НЕ ОТПРАВЛЯЮТСЯ В ИИ</small></>:<div className="locked-detail"><div className="lock-emblem"><LockKeyhole size={25}/></div><h3>Специалист проходит подготовку</h3><p>Мы разрабатываем инструменты, проверяем качество рекомендаций и готовим подключение к рабочим данным.</p><button className="notify-btn" onClick={()=>notify("Отметили интерес к помощнику "+active.name)}>Сообщить о запуске <Bell size={15}/></button></div>}</section>
+      </div>
+    </motion.section> :
+    tab==="home" ? <motion.div key="home" className="home-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:8}}>
+     <div className="hero-banner">
+      <div className="hero-grid"/>
+      <div className="hero-content"><div className="eyebrow"><span className="live-dot"/> ЕДИНАЯ ЦИФРОВАЯ СИСТЕМА · 2026</div><h1>ОДНА СИСТЕМА.<br/><em>ТЫСЯЧИ ВОЗМОЖНОСТЕЙ.</em></h1><p>Общение, знания, работа и интеллектуальные помощники — в едином цифровом пространстве.</p><button className="hero-button" onClick={()=>go("helpers")}>ОТКРЫТЬ БЮРО ПОМОЩНИКОВ <ArrowRight size={16}/></button></div>
+      <div className="hero-art"><div className="hero-sun"/><div className="hero-ring r1"/><div className="hero-ring r2"/><div className="hero-monument"><div className="monument-star">✦</div><div className="monument-pillar p1"/><div className="monument-pillar p2"/><div className="monument-pillar p3"/><div className="monument-base"/></div><div className="hero-art-label">ПРОЕКТ<br/>БУДУЩЕГО</div></div>
+      <div className="hero-index">СОЮЗ / 001</div>
+     </div>
+     <div className="ticker"><span>✦</span> ЗНАНИЯ <i/> ВОЗМОЖНОСТИ <i/> ВЗАИМОПОМОЩЬ <i/> СОЗИДАНИЕ <i/> БУДУЩЕЕ <i/> <span>✦</span> ЗНАНИЯ <i/> ВОЗМОЖНОСТИ</div>
+     <div className="section-head"><div><div className="eyebrow">ЦЕНТР УПРАВЛЕНИЯ</div><h2>ВАШЕ ПРОСТРАНСТВО</h2></div><button className="text-link" onClick={()=>go("helpers")}>ВСЕ СЛУЖБЫ <ArrowRight size={15}/></button></div>
+     <div className="dashboard-grid">
+      <button className="dash-card dispatch" onClick={()=>go("work")}><div className="dash-icon"><CalendarDays/></div><div><small>ПЛАНОВЫЙ ОТДЕЛ</small><h3>Мои задачи</h3><p>Планируйте день и держите важное под контролем.</p></div><span className="dash-arrow"><ArrowRight/></span><b className="card-index">01</b></button>
+      <button className="dash-card comms" onClick={()=>go("messages")}><div className="dash-icon"><MessageCircle/></div><div><small>ЛИНИЯ СВЯЗИ</small><h3>Сообщения</h3><p>Личные диалоги и коллективные каналы.</p></div><span className="dash-arrow"><ArrowRight/></span><b className="card-index">02</b></button>
+      <button className="dash-card people-card" onClick={()=>go("community")}><div className="dash-icon"><Users/></div><div><small>ОБЩЕСТВЕННЫЙ ЦЕНТР</small><h3>Сообщество</h3><p>Лента событий, люди и общие интересы.</p></div><span className="dash-arrow"><ArrowRight/></span><b className="card-index">03</b></button>
+     </div>
+     <div className="section-head helper-section-head"><div><div className="eyebrow">ИНТЕЛЛЕКТУАЛЬНЫЕ СЛУЖБЫ</div><h2>ВАШИ ПОМОЩНИКИ</h2></div><button className="text-link" onClick={()=>go("helpers")}>ВЕСЬ СОСТАВ <ArrowRight size={15}/></button></div>
+     <div className="helper-grid">{helpers.slice(0,3).map(h=><HelperCard key={h.id} h={h} onClick={()=>openHelper(h)}/>)}</div>
+     <div className="bottom-motto"><span>✦</span><div>СОЗДАНО ДЛЯ ЛЮДЕЙ.<br/><b>РАБОТАЕТ ДЛЯ БУДУЩЕГО.</b></div><small>СОЮЗ · ЦИФРОВАЯ ЭКОСИСТЕМА</small></div>
+    </motion.div> :
+    tab==="helpers" ? <motion.div key="helpers" className="catalog-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:8}}>
+      <div className="page-title-row"><div><div className="eyebrow">КАДРОВЫЙ СОСТАВ · 06 СПЕЦИАЛИСТОВ</div><h1>БЮРО ПОМОЩНИКОВ</h1><p>Каждый специалист — отдельный инструмент для конкретной задачи.</p></div><div className="catalog-seal">С<span>✦</span></div></div>
+      <label className="catalog-search"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Найти специалиста или направление..."/></label>
+      <div className="helper-grid catalog-grid">{visibleHelpers.map(h=><HelperCard key={h.id} h={h} onClick={()=>openHelper(h)}/>)}</div>
+      <div className="catalog-foot"><ShieldCheck size={18}/> Состав бюро расширяется. Новые специалисты проходят проверку перед запуском.</div>
+    </motion.div> :
+    tab==="community" ? <motion.div key="community" className="generic-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}><div className="eyebrow">ОБЩЕСТВЕННЫЙ ЦЕНТР</div><h1>СООБЩЕСТВО</h1><p className="lead">Пространство людей, идей и полезных открытий.</p><div className="community-compose"><div className="profile-avatar">Н</div><input placeholder="Поделитесь новостью или идеей..."/><button onClick={()=>notify("Публикации появятся после подключения ленты")}><Plus size={18}/> СОЗДАТЬ</button></div><div className="feed-post"><div className="post-top"><div className="post-emblem">С</div><div><b>РЕДАКЦИЯ СОЮЗА</b><small>Центральная лента · 15 минут назад</small></div><span className="verified">✓</span></div><h3>Открываем новое цифровое пространство</h3><p>СОЮЗ объединяет инструменты для повседневных задач, общение и специализированных интеллектуальных помощников. Это только начало большого пути.</p><div className="post-image-graphic"><div className="post-sun"/><div className="post-graphic-text">БУДУЩЕЕ<br/>СОЗДАЁТСЯ<br/><b>ВМЕСТЕ</b></div><div className="post-graphic-star">✦</div></div><div className="post-actions"><button onClick={()=>notify("Отметка добавлена")}>♡ 128</button><button onClick={()=>notify("Комментарии скоро появятся")}>◯ 24 ОТВЕТА</button><button onClick={()=>notify("Ссылка скопирована")}>↗ ПОДЕЛИТЬСЯ</button></div></div></motion.div> :
+    tab==="messages" ? <motion.div key="messages" className="generic-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}><div className="eyebrow">ЛИНИЯ СВЯЗИ</div><h1>СООБЩЕНИЯ</h1><p className="lead">Ваш центр личной и коллективной связи.</p><div className="message-placeholder"><div className="signal-icon"><MessageCircle size={32}/></div><h2>КАНАЛ СВЯЗИ ГОТОВИТСЯ</h2><p>В этой концепции предусмотрены личные чаты, групповые каналы, звонки и обмен файлами. Подключение к действующей системе сообщений будет отдельным этапом.</p><button className="outline-btn" onClick={()=>notify("Раздел связи добавлен в список интересов")}>СЛЕДИТЬ ЗА ЗАПУСКОМ <Bell size={15}/></button></div></motion.div> :
+    <motion.div key="work" className="generic-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}><div className="eyebrow">ПЛАНОВЫЙ ОТДЕЛ</div><h1>МОИ ДЕЛА</h1><p className="lead">Задачи, напоминания и рабочие процессы в одном месте.</p><div className="work-grid"><div className="work-card"><CalendarDays/><small>СЕГОДНЯ</small><h2>План дня</h2><p>Соберите важные дела в одном расписании.</p><button onClick={()=>notify("Планировщик будет подключён отдельным модулем")}>ОТКРЫТЬ <ArrowRight size={14}/></button></div><div className="work-card"><Package/><small>УЧЁТ И РЕСУРСЫ</small><h2>Рабочие инструменты</h2><p>Учёт, документы, списки и контроль процессов.</p><button onClick={()=>notify("Рабочие инструменты готовятся")}>ОТКРЫТЬ <ArrowRight size={14}/></button></div></div></motion.div>}
+    </AnimatePresence>
+   </main>
+   <aside className="right-brief">
+    <div className="brief-card"><div className="brief-top"><span>СВОДКА СИСТЕМЫ</span><Activity size={17}/></div><div className="brief-status"><span className="live-dot"/> ВСЕ СЛУЖБЫ НА СВЯЗИ</div><div className="brief-stat"><b>06</b><span>ЦИФРОВЫХ СПЕЦИАЛИСТОВ</span></div><div className="brief-stat"><b>02</b><span>ГОТОВЫ К РАБОТЕ</span></div><div className="brief-stat"><b>04</b><span>В РАЗРАБОТКЕ</span></div><div className="brief-progress"><span/><span/><span/><span/><span/><span/></div><small>РАСШИРЕНИЕ ЭКОСИСТЕМЫ</small></div>
+    <div className="quote-card"><div className="quote-mark">“</div><p>Большие возможности начинаются с простых полезных дел.</p><span>ПРИНЦИП СОЮЗА</span></div>
+    <div className="brief-help"><CircleHelp size={18}/><div><b>Нужна помощь?</b><small>Центр поддержки пользователей</small><button onClick={()=>notify("Центр поддержки будет подключён позже")}>ОТКРЫТЬ <ArrowRight size={12}/></button></div></div>
+   </aside>
+  </div>
+  <nav className="mobile-nav">{nav.map(n=><button key={n.id} className={tab===n.id&&!active?"active":""} onClick={()=>go(n.id)}><n.icon size={19}/><span>{n.label==="СООБЩЕСТВО"?"ЛЮДИ":n.label==="ПОМОЩНИКИ"?"ИИ":n.label==="ШТАБ"?"ГЛАВНАЯ":n.label==="СВЯЗЬ"?"ЧАТЫ":"ДЕЛА"}</span></button>)}</nav>
+  <footer className="union-footer"><span>СОЮЗ © 2026</span><span>ЕДИНСТВО · ЗНАНИЯ · ВОЗМОЖНОСТИ</span><span>ДЕМО-КОНЦЕПЦИЯ</span></footer>
+  <AnimatePresence>{toast&&<motion.div className="union-toast" initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} exit={{opacity:0,y:8}}>{toast}</motion.div>}</AnimatePresence>
+ </div>;
 }
-
-function Root() {
-  return <QueryClientProvider client={queryClient}><KonstaProvider theme="material"><div className="k-material"><App/></div></KonstaProvider></QueryClientProvider>;
+function HelperCard({h,onClick}:{h:Helper;onClick:()=>void}){
+ return <motion.button whileHover={{y:-4}} whileTap={{scale:.985}} className={"helper-card "+h.color} onClick={onClick}>
+  <div className="helper-card-top"><span className="helper-number">СПЕЦИАЛИСТ / {String(helpers.indexOf(h)+1).padStart(2,"0")}</span><span className={h.status==="open"?"card-status open":"card-status locked"}>{h.status==="open"?"ДОСТУПЕН":"СКОРО"}</span></div>
+  <div className="helper-illustration"><div className="illustration-grid"/><div className="illustration-orbit"/><Mascot kind={h.icon}/>{h.status==="soon"&&<div className="lock-overlay"><LockKeyhole size={17}/></div>}</div>
+  <div className="helper-card-copy"><div className="helper-role">{h.role.toUpperCase()}</div><h3>{h.name}</h3><p>{h.desc}</p><div className="helper-card-bottom"><span>{h.status==="open"?"ПОСТАВИТЬ ЗАДАЧУ":"ПОДРОБНЕЕ"}</span><span className="card-arrow"><ArrowRight size={16}/></span></div></div>
+ </motion.button>;
 }
-createRoot(document.getElementById("root")!).render(<React.StrictMode><Root/></React.StrictMode>);
+createRoot(document.getElementById("root")!).render(<React.StrictMode><App/></React.StrictMode>);
