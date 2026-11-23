@@ -2,10 +2,9 @@ import React, { useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  ArrowUpRight, Bell, CalendarDays, Check, ChevronDown, ChevronLeft, CircleHelp,
-  Command, FileText, Home, Inbox, LayoutGrid, MessageCircle, MoreHorizontal,
-  Paperclip, Plus, Search, Send, Settings, Smile, Sparkles, Video, X, Zap,
-  Image, Mic, Pin, Star, Users, Clock3, Hash
+  ArrowUpRight, Bell, CalendarDays, Check, ChevronDown, ChevronLeft,
+  Command, Home, MessageCircle, MoreHorizontal, Paperclip, Plus, Search,
+  Send, Settings, Smile, Sparkles, Video, Zap, Image, Pin
 } from "lucide-react";
 import "./styles.css";
 
@@ -41,6 +40,7 @@ function App(){
   const [query,setQuery]=useState("");
   const [chatSearch,setChatSearch]=useState("");
   const [selected,setSelected]=useState(1);
+  const [chatMobileOpen,setChatMobileOpen]=useState(false);
   const [draft,setDraft]=useState("");
   const [messages,setMessages]=useState(initialMessages);
   const [done,setDone]=useState<number[]>([0]);
@@ -64,15 +64,15 @@ function App(){
       <AnimatePresence mode="wait">
       {active==="messages"?<motion.main key="messages" className="page messages-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:.24}}>
         <div className="page-heading messages-heading"><div><div className="overline">ВАШИ КОНТАКТЫ И ДИАЛОГИ</div><h1>Сообщения<span className="heading-dot">.</span></h1><p>Все разговоры — в одном пространстве.</p></div><button className="primary-button" onClick={()=>toast("Создание нового чата подключим к существующим сообщениям")}><Plus size={17}/> Новый диалог</button></div>
-        <div className="chat-workspace">
+        <div className={"chat-workspace"+(chatMobileOpen?" show-chat":"")}>
           <section className="chat-list-panel">
             <div className="chat-list-top"><div className="chat-filter"><Search size={17}/><input value={chatSearch} onChange={e=>setChatSearch(e.target.value)} placeholder="Поиск диалогов"/></div><button className="subtle-icon" onClick={()=>toast("Фильтры диалогов")}><MoreHorizontal size={19}/></button></div>
             <div className="chat-tabs"><button className="active">Все <b>5</b></button><button onClick={()=>toast("Фильтр непрочитанных")}>Непрочитанные</button><button onClick={()=>toast("Избранное")}>Избранное</button></div>
-            <div className="people-list">{filteredPeople.map(p=><button key={p.id} className={"person-row "+(selected===p.id?"current":"")} onClick={()=>setSelected(p.id)}><span className={"person-avatar "+p.color}>{p.letter}{p.online&&<i/>}</span><span className="person-copy"><strong>{p.name}</strong><small>{p.message}</small></span><span className="person-meta"><time>{p.time}</time>{p.unread>0&&<b>{p.unread}</b>}</span></button>)}</div>
+            <div className="people-list">{filteredPeople.map(p=><button key={p.id} className={"person-row "+(selected===p.id?"current":"")} onClick={()=>{setSelected(p.id);setChatMobileOpen(true)}}><span className={"person-avatar "+p.color}>{p.letter}{p.online&&<i/>}</span><span className="person-copy"><strong>{p.name}</strong><small>{p.message}</small></span><span className="person-meta"><time>{p.time}</time>{p.unread>0&&<b>{p.unread}</b>}</span></button>)}</div>
             <div className="list-foot"><span><span className="online-dot"/> 2 человека онлайн</span><button onClick={()=>toast("Управление контактами")}>Контакты <ArrowUpRight size={13}/></button></div>
           </section>
           <section className="conversation">
-            <div className="conversation-head"><div className={"person-avatar "+selectedPerson.color}>{selectedPerson.letter}{selectedPerson.online&&<i/>}</div><div className="conversation-name"><strong>{selectedPerson.name}</strong><small>{selectedPerson.online?"В сети":"Был(а) недавно"}</small></div><div className="conversation-tools"><button className="subtle-icon" onClick={()=>toast("Поиск по переписке")}><Search size={18}/></button><button className="subtle-icon" onClick={()=>toast("Дополнительные действия")}><MoreHorizontal size={19}/></button></div></div>
+            <div className="conversation-head"><button className="chat-back" onClick={()=>setChatMobileOpen(false)} aria-label="Назад"><ChevronLeft size={19}/></button><div className={"person-avatar "+selectedPerson.color}>{selectedPerson.letter}{selectedPerson.online&&<i/>}</div><div className="conversation-name"><strong>{selectedPerson.name}</strong><small>{selectedPerson.online?"В сети":"Был(а) недавно"}</small></div><div className="conversation-tools"><button className="subtle-icon" onClick={()=>toast("Поиск по переписке")}><Search size={18}/></button><button className="subtle-icon" onClick={()=>toast("Дополнительные действия")}><MoreHorizontal size={19}/></button></div></div>
             <div className="pinned-note"><Pin size={14}/><span>Закреплённое сообщение</span><b>План обсуждения проекта</b><ChevronDown size={14}/></div>
             <div className="message-stream"><div className="day-separator"><span>СЕГОДНЯ</span></div>{messages.map(m=><motion.div layout key={m.id} className={"bubble-wrap "+(m.mine?"mine":"")}><div className={"bubble "+(m.mine?"outgoing":"incoming")}>{m.text}<time>{m.time}{m.mine&&<Check size={12}/>}</time></div></motion.div>)}</div>
             <form className="composer" onSubmit={sendMessage}><div className="composer-tools"><button type="button" onClick={()=>toast("Прикрепление файлов подключим к хранилищу")}><Paperclip size={18}/></button><button type="button" onClick={()=>toast("Выбор изображения")}><Image size={18}/></button></div><input value={draft} onChange={e=>setDraft(e.target.value)} placeholder="Напишите сообщение..." aria-label="Сообщение"/><button type="button" className="emoji-button" onClick={()=>setDraft(v=>v+" 🙂")}><Smile size={19}/></button><button className="send-message" type="submit" aria-label="Отправить"><Send size={17}/></button></form>
