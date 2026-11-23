@@ -230,3 +230,25 @@ button{ -webkit-tap-highlight-color:transparent;touch-action:manipulation}
 @media(max-width:370px){.helper-grid,.catalog-grid{grid-template-columns:1fr}.helper-illustration{height:155px}.mobile-nav button{font-size:7px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 @media(hover:none){.dash-card:hover,.helper-card:hover,.rail-link:hover{transform:none}}
+
+
+.task-create{display:flex;gap:10px;max-width:760px;margin:22px 0 16px;padding:8px;border:1px solid var(--stroke);border-radius:18px;background:rgba(255,255,255,.035)}
+.task-create input{flex:1;min-width:0;padding:0 12px;border:0;outline:0;background:transparent;color:var(--text-main);font-size:14px}
+.task-create input::placeholder{color:#84968a}
+.task-create .hero-button{white-space:nowrap}
+.task-board{max-width:760px;border:1px solid var(--stroke);border-radius:20px;background:rgba(255,255,255,.035);overflow:hidden}
+.task-board-head{display:flex;justify-content:space-between;align-items:center;padding:17px 19px;border-bottom:1px solid var(--stroke);font-size:11px;letter-spacing:.8px}
+.task-board-head span{color:var(--accent);font-size:9px}
+.task-row{display:flex;align-items:center;gap:13px;padding:14px 17px;border-bottom:1px solid rgba(193,216,195,.08);font-size:14px}
+.task-row:last-child{border-bottom:0}
+.task-row>span{flex:1;min-width:0;overflow-wrap:anywhere}
+.task-row.is-done>span{color:#82958a;text-decoration:line-through}
+.task-check{width:25px;height:25px;flex:none;border-radius:9px;border:1px solid #607c68;background:#17281f;color:#e3c58e;display:grid;place-items:center}
+.task-row.is-done .task-check{background:#54765d;border-color:#54765d}
+.task-delete{width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:#9ba99e;font-size:22px}
+.task-delete:hover{background:#b9443925;color:#e17b6d}
+.task-empty{min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;color:#90a195;text-align:center}
+.task-empty svg{color:var(--accent)}
+.task-empty b{color:#e9eee7;font-size:14px}
+.task-empty span{font-size:12px}
+@media(max-width:520px){.task-create{flex-direction:column;padding:10px}.task-create input{min-height:44px}.task-create .hero-button{width:100%}.task-row{padding:13px 12px}}
