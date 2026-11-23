@@ -20,6 +20,10 @@ on:
       - "worker/assets/index.html"
       - ".github/workflows/frontend-check.yml"
 
+concurrency:
+  group: frontend-check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
