@@ -813,6 +813,13 @@ async function handleFetch(request, env) {
     });
   }
 
+  // React frontend preview route. The legacy /app remains untouched.
+  if (env.ASSETS && request.method === "GET" && (url.pathname === "/app-next" || url.pathname === "/app-next/")) {
+    const assetUrl = new URL(request.url);
+    assetUrl.pathname = "/next/index.html";
+    return env.ASSETS.fetch(new Request(assetUrl, request));
+  }
+
   // Let Cloudflare Assets serve any remaining static files after API routes.
   if (env.ASSETS && request.method === "GET") {
     return env.ASSETS.fetch(request);
