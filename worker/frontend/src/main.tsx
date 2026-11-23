@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion } from "motion/react";
 import { Drawer } from "vaul";
 import { useDrag } from "@use-gesture/react";
+import { registerSW } from "virtual:pwa-register";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { create } from "zustand";
@@ -12,10 +13,10 @@ import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import { Keyboard } from "@capacitor/keyboard";
 import {
   Bell, Search, Home, Newspaper, Users, MessageCircle, Video, Bookmark,
-  Settings, Menu, Plus, Image as ImageIcon, Smile, Send, Heart, MessageSquare,
+  Settings, Image as ImageIcon, Smile, Send, Heart, MessageSquare,
   Share2, MoreHorizontal, ChevronLeft, ChevronRight, Paperclip, Camera,
-  Music2, CalendarDays, Sparkles, LogOut, Check, CheckCheck, Phone, Info,
-  Hash, Flame, Compass, UserRound, X, WandSparkles, Zap, CirclePlay
+  Music2, CalendarDays, Sparkles, LogOut, CheckCheck, Phone, Info,
+  Flame, UserRound, X, WandSparkles, Zap, CirclePlay
 } from "lucide-react";
 import "./styles.css";
 
@@ -33,6 +34,7 @@ class SvoeDatabase extends Dexie {
 }
 const db = new SvoeDatabase();
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, retry: 1, refetchOnWindowFocus: false } } });
+registerSW({ immediate: true });
 
 type AppState = { tab: Tab; setTab: (tab: Tab) => void };
 const useAppStore = create<AppState>((set) => ({ tab: "home", setTab: (tab) => set({ tab }) }));
@@ -95,7 +97,6 @@ function App() {
   const [postDraft, setPostDraft] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [toast, setToast] = useState("");
-  const [activeStory, setActiveStory] = useState("");
   const [likedComments, setLikedComments] = useState<number[]>([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const messageParent = useRef<HTMLDivElement>(null);
@@ -194,7 +195,7 @@ function App() {
           tab === "home" || tab === "feed" ? <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="feed-page">
             {tab === "home" && <section className="surface profile-card"><div className="profile-cover"/><div className="profile-summary"><div className="profile-avatar-row"><div className="profile-avatar">Н</div><button className="primary-btn" onClick={() => setToast("Редактирование профиля подключим к вашему аккаунту")}>Редактировать</button></div><h1 className="profile-name">Моя страница</h1><div className="profile-status">Добро пожаловать в своё пространство ✨</div></div></section>}
             {tab === "feed" && <h1 className="section-heading">Новости</h1>}
-            <section className="surface stories">{stories.map((s) => <button key={s.name} className={`story ${s.color === "add" ? "add" : ""}`} onClick={() => { setActiveStory(s.name); setToast(s.name === "Добавить" ? "Создание истории доступно в следующем этапе" : `История: ${s.name}`); }}><span className="story-ring"><span>{s.avatar}</span></span><span>{s.name}</span></button>)}</section>
+            <section className="surface stories">{stories.map((s) => <button key={s.name} className={`story ${s.color === "add" ? "add" : ""}`} onClick={() => { setToast(s.name === "Добавить" ? "Создание истории доступно в следующем этапе" : `История: ${s.name}`); }}><span className="story-ring"><span>{s.avatar}</span></span><span>{s.name}</span></button>)}</section>
             <section className="surface feed-composer"><div className="composer-top"><Avatar label="Н"/><button className="soft-action" style={{ flex: 1, justifyContent: "flex-start", background: "#f0f2f5", borderRadius: 22, padding: "11px 15px" }} onClick={() => setDrawerOpen(true)}>Что у вас нового?</button></div><div className="composer-actions"><button className="soft-action" onClick={() => setDrawerOpen(true)}><ImageIcon size={17} color="#4bb34b"/> Фото</button><button className="soft-action" onClick={() => setToast("Видео добавим вместе с медиахранилищем")}><CirclePlay size={17} color="#e64646"/> Видео</button><button className="soft-action" onClick={() => setToast("Музыка появится в медиаразделе")}><Music2 size={17} color="#9b6ad6"/> Музыка</button><button className="soft-action" onClick={() => setToast("Создание события")}><CalendarDays size={17} color="#e3a33a"/> Событие</button></div></section>
             {posts.map((post) => <article className="surface post" key={post.id}>
               <div className="post-head"><Avatar label={post.avatar} color={post.avatar === "МИ" ? "pink" : post.avatar === "С" ? "violet" : "blue"}/><div><div className="post-author">{post.name} {post.verified && <span style={{ color: "#2787f5" }}>✓</span>}</div><div className="post-meta">{post.time} · <span>🌐</span></div></div><button className="icon-btn post-more" onClick={() => setToast("Действия с публикацией")}><MoreHorizontal size={19}/></button></div>
