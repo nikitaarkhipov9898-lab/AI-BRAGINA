@@ -244,10 +244,11 @@ function App(){
         {(active.id==="chef"||active.id==="mechanic")&&<button className="hero-button" onClick={()=>setWorkspace(active.id as "chef"|"mechanic")}>{active.id==="chef"?"ОТКРЫТЬ ИНСТРУМЕНТЫ ШЕФА":"ОТКРЫТЬ ИНСТРУМЕНТЫ МЕХАНИКА"} <ArrowRight size={16}/></button>}</div>
        <div className={"detail-mascot-panel "+active.color}><div className="orbit orbit-a"/><div className="orbit orbit-b"/><Mascot kind={active.icon}/><div className="mascot-caption">СПЕЦИАЛИСТ СОЮЗА №{String(helpers.indexOf(active)+1).padStart(2,"0")}</div></div>
       </div>
-      <div className="detail-grid">
+      {workspace&&<SpecialistWorkspace kind={workspace} onNotify={notify}/>}
+      {!workspace&&<div className="detail-grid">
        <section className="paper-panel"><div className="panel-kicker">01 / КОМПЕТЕНЦИИ</div><h2>Чем поможет специалист</h2><div className="skill-list">{active.skills.map((s,i)=><div className="skill-row"><span>{String(i+1).padStart(2,"0")}</span><b>{s}</b><Check size={16}/></div>)}</div></section>
        <section className="paper-panel usage-panel"><div className="panel-kicker">02 / РАБОЧЕЕ МЕСТО</div><h2>Поставить задачу</h2>{active.status==="open"?<><div className="chat-intro">Опишите ситуацию обычными словами. Специалист уточнит детали и предложит план действий.</div><div className="sample-prompt" onClick={()=>setChat(active.sample)}><Sparkles size={15}/><span>{active.sample}</span><ArrowRight size={15}/></div><div className="mini-chat">{assistantLog.map((m,i)=><div className={"mini-bubble "+(m.role==="user"?"mine":"bot")} key={i}>{m.content}</div>)}{aiBusy&&<div className="mini-bubble bot ai-thinking">СОЮЗ АНАЛИЗИРУЕТ ЗАДАЧУ…</div>}</div><div className="task-input"><input value={chat} onChange={e=>setChat(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} placeholder="Напишите задачу..."/><button onClick={()=>void send()} disabled={aiBusy||!chat.trim()}><Send size={17}/></button></div><small className="demo-note">ИИ-ПОМОЩНИК · ЗАПРОСЫ ОТПРАВЛЯЮТСЯ ЧЕРЕЗ ЗАЩИЩЁННЫЙ СЕРВЕР</small></>:<div className="locked-detail"><div className="lock-emblem"><LockKeyhole size={25}/></div><h3>Специалист проходит подготовку</h3><p>Мы разрабатываем инструменты, проверяем качество рекомендаций и готовим подключение к рабочим данным.</p><button className="notify-btn" onClick={()=>notify("Отметили интерес к помощнику "+active.name)}>Сообщить о запуске <Bell size={15}/></button></div>}</section>
-      </div>
+      </div>}
     </motion.section> :
     tab==="home" ? <motion.div key="home" className="home-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:8}}>
      <div className="hero-banner">
