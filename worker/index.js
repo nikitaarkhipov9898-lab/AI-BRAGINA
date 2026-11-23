@@ -303,6 +303,38 @@ async function ensureAuthSchema(env) {
   await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_user_sessions_token_hash ON user_sessions(token_hash)").run();
 }
 
+
+async function ensureProfileSchema(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS user_profiles (
+    user_id TEXT PRIMARY KEY,
+    first_name TEXT NOT NULL DEFAULT '',
+    last_name TEXT NOT NULL DEFAULT '',
+    about TEXT NOT NULL DEFAULT '',
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  )`).run();
+}
+async function profileGet(env,user) {
+  await ensureProfileSchema(env);
+  const row=await env.DB.prepare("SELECT first_name,last_name,about,updated_at FROM user_profiles WHERE user_id=?").bind(user.id).first();
+  return json({profile:{first_name:row?.first_name||"",last_name:row?.last_name||"",display_name:user.display_name||"",about:row?.about||"",updated_at:row?.updated_at||null}});
+}
+async function profileSave(request,env,user) {
+  let body;try{body=await request.json();}catch{return json({error:"Некорректные данные профиля"},400);}
+  const first=String(body.first_name||"").trim().slice(0,80);
+  const last=String(body.last_name||"").trim().slice(0,80);
+  const display=String(body.display_name||"").trim().slice(0,50);
+  const about=String(body.about||"").trim().slice(0,500);
+  if(!display)return json({error:"Укажи отображаемое имя"},400);
+  await ensureProfileSchema(env);
+  const now=new Date().toISOString();
+  await env.DB.batch([
+    env.DB.prepare("UPDATE users SET display_name=? WHERE id=?").bind(display,user.id),
+    env.DB.prepare("INSERT INTO user_profiles (user_id,first_name,last_name,about,updated_at) VALUES (?,?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET first_name=excluded.first_name,last_name=excluded.last_name,about=excluded.about,updated_at=excluded.updated_at").bind(user.id,first,last,about,now)
+  ]);
+  return json({success:true,profile:{first_name:first,last_name:last,display_name:display,about,updated_at:now}});
+}
+
 async function ensureAdminSchema(env) {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS admin_audit (
     id TEXT PRIMARY KEY, actor_user_id TEXT, actor_username TEXT,
@@ -752,6 +784,14 @@ async function handleFetch(request, env) {
       id:x.id,kind:x.kind,title:x.title,content:JSON.parse(x.content_json || "{}"),
       created_at:x.created_at,updated_at:x.updated_at
     })) });
+  }
+
+
+  if (path === "/profile" && (request.method === "GET" || request.method === "POST")) {
+    const user=await currentUser(request,env);
+    if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    await ensureAuthSchema(env);
+    return request.method === "GET" ? profileGet(env,user) : profileSave(request,env,user);
   }
 
   if (path === "/auth/setup-status" && request.method === "GET") {
