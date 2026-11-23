@@ -97,6 +97,8 @@ function App() {
   const [draft, setDraft] = useState("");
   const [chatSearch, setChatSearch] = useState("");
   const [globalSearch, setGlobalSearch] = useState("");
+  const [searchResultIds, setSearchResultIds] = useState<number[] | null>(null);
+  const searchWorker = useRef<Worker | null>(null);
   const [postDraft, setPostDraft] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [toast, setToast] = useState("");
@@ -122,7 +124,7 @@ function App() {
     const hide = Keyboard.addListener("keyboardWillHide", () => document.body.classList.remove("keyboard-open"));
     return () => { void listener.then((l) => l.remove()); void hide.then((l) => l.remove()); };
   }, []);
-  useEffect(() => connectSvoeRealtime(setRealtimeStatus), []);
+  useEffect(() => {\n    const worker = new Worker(new URL("./workers/search.worker.ts", import.meta.url), { type: "module" });\n    worker.onmessage = (event: MessageEvent<{ ids: number[] }>) => setSearchResultIds(event.data.ids);\n    searchWorker.current = worker;\n    return () => { worker.terminate(); searchWorker.current = null; };\n  }, []);\n  useEffect(() => {\n    if (!globalSearch.trim()) { setSearchResultIds(null); return; }\n    searchWorker.current?.postMessage({ query: globalSearch, items: posts.map((post) => ({ id: post.id, title: post.name, text: post.text })) });\n  }, [globalSearch, posts]);\n  useEffect(() => connectSvoeRealtime(setRealtimeStatus), []);
   useEffect(() => connectSvoeRealtime(setRealtimeStatus), []);
   useEffect(() => {
     if (!toast) return;
@@ -202,7 +204,7 @@ function App() {
             {tab === "feed" && <h1 className="section-heading">Новости</h1>}
             <section className="surface stories">{stories.map((s) => <button key={s.name} className={`story ${s.color === "add" ? "add" : ""}`} onClick={() => { setToast(s.name === "Добавить" ? "Создание истории доступно в следующем этапе" : `История: ${s.name}`); }}><span className="story-ring"><span>{s.avatar}</span></span><span>{s.name}</span></button>)}</section>
             <section className="surface feed-composer"><div className="composer-top"><Avatar label="Н"/><button className="soft-action" style={{ flex: 1, justifyContent: "flex-start", background: "#f0f2f5", borderRadius: 22, padding: "11px 15px" }} onClick={() => setDrawerOpen(true)}>Что у вас нового?</button></div><div className="composer-actions"><button className="soft-action" onClick={() => setDrawerOpen(true)}><ImageIcon size={17} color="#4bb34b"/> Фото</button><button className="soft-action" onClick={() => setToast("Видео добавим вместе с медиахранилищем")}><CirclePlay size={17} color="#e64646"/> Видео</button><button className="soft-action" onClick={() => setToast("Музыка появится в медиаразделе")}><Music2 size={17} color="#9b6ad6"/> Музыка</button><button className="soft-action" onClick={() => setToast("Создание события")}><CalendarDays size={17} color="#e3a33a"/> Событие</button></div></section>
-            {posts.map((post) => <article className="surface post" key={post.id}>
+            {posts.filter((post) => searchResultIds === null || searchResultIds.includes(post.id)).map((post) => <article className="surface post" key={post.id}>
               <div className="post-head"><Avatar label={post.avatar} color={post.avatar === "МИ" ? "pink" : post.avatar === "С" ? "violet" : "blue"}/><div><div className="post-author">{post.name} {post.verified && <span style={{ color: "#2787f5" }}>✓</span>}</div><div className="post-meta">{post.time} · <span>🌐</span></div></div><button className="icon-btn post-more" onClick={() => setToast("Действия с публикацией")}><MoreHorizontal size={19}/></button></div>
               <div className="post-copy">{post.text}</div>
               {post.image && <img className="post-image" src={post.image} loading="lazy" alt="Иллюстрация к публикации"/>}
