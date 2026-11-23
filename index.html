@@ -13,7 +13,11 @@
 <style>
 :root{color-scheme:dark;--bg:#0d1320;--bg2:#121b2b;--panel:#182337;--panel2:#202d43;--text:#f3f6fc;--muted:#9aa9bf;--line:#2b3a52;--accent:#8b9cff;--accent2:#6579ed;--good:#65d6a1;--warn:#f2bd69;--bad:#ff8585;--shadow:0 14px 38px #0005;--radius:20px;--space:16px}
 :root[data-theme="light"]{color-scheme:light;--bg:#f2f5fa;--bg2:#e9eef6;--panel:#fff;--panel2:#f5f7fb;--text:#172235;--muted:#68778d;--line:#dce3ed;--accent:#5268dc;--accent2:#4057c9;--good:#168b5d;--warn:#a96a12;--bad:#c43f4a;--shadow:0 12px 30px #26365312}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 15% -10%,#5268dc25,transparent 38%),radial-gradient(ellipse at 100% 20%,#27a98c12,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding:0 0 calc(86px + env(safe-area-inset-bottom));transition:background .25s,color .25s}.app{width:min(100%,720px);margin:auto;padding:18px 16px 28px}.topbar{display:flex;align-items:center;justify-content:space-between;margin:4px 0 24px}.brand{display:flex;align-items:center;gap:11px}.brandmark{width:44px;height:44px;border-radius:15px;overflow:hidden;display:grid;place-items:center;box-shadow:0 8px 22px #315c4355;flex:none}.brandmark img{display:block;width:100%;height:100%;object-fit:cover}.brand h1{font-size:19px;letter-spacing:.4px;margin:0;font-weight:800}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.5px;margin-top:3px}.icon-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);width:42px;height:42px;border-radius:14px;font-size:18px}.eyebrow{color:var(--accent);font-size:11px;letter-spacing:1.6px;font-weight:800;text-transform:uppercase}.hero{padding:23px;border-radius:25px;background:linear-gradient(130deg,#27365a,#18263c 68%,#1a3540);color:#fff;box-shadow:var(--shadow);position:relative;overflow:hidden;margin-bottom:20px}.hero:after{content:"✦";position:absolute;right:18px;top:-18px;font-size:120px;color:#ffffff0b}.hero h2{font-size:25px;line-height:1.15;margin:9px 0}.hero p{font-size:13px;line-height:1.55;color:#c1cce0;max-width:390px;margin:0}.section-head{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 12px}.section-head h2{font-size:16px;margin:0}.muted{color:var(--muted);font-size:12px;line-height:1.5}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.tool{min-height:148px;text-align:left;border:1px solid var(--line);border-radius:19px;background:linear-gradient(155deg,var(--panel),var(--panel2));color:var(--text);padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}.tool:active,button:active{transform:scale(.985)}.tool-icon{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:#8294ff20;font-size:22px;margin-bottom:13px}.tool strong{display:block;font-size:14px;margin-bottom:5px}.tool small{display:block;color:var(--muted);font-size:11px;line-height:1.4}.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:30px;background:#8b9cff20;color:var(--accent);font-size:9px;font-weight:800;letter-spacing:.4px;margin-top:10px}.pill.warn{background:#f2bd6920;color:var(--warn)}.pill.good{background:#65d6a120;color:var(--good)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:17px;margin:12px 0;box-shadow:var(--shadow)}.page-title{font-size:21px;margin:5px 0 6px}.page-sub{margin:0 0 16px;color:var(--muted);font-size:12px;line-height:1.5}.back{border:0;background:none;color:var(--accent);font-weight:700;padding:8px 0;margin:0 0 8px}.field{margin:13px 0}.field label{display:block;color:var(--muted);font-size:11px;font-weight:750;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:13px;background:var(--bg2);color:var(--text);padding:13px;font:inherit;font-size:14px;outline:none}.field textarea{min-height:82px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}.btn{border:0;border-radius:13px;padding:13px 15px;font-weight:800;font-size:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;width:100%;margin-top:8px;box-shadow:0 7px 18px #6579ed30}.btn.secondary{background:var(--panel2);border:1px solid var(--line);color:var(--text);box-shadow:none}.btn:disabled{opacity:.55;cursor:wait}.row{display:flex;gap:9px}.row>*{flex:1}.tabs{display:flex;gap:7px;background:var(--bg2);padding:5px;border-radius:14px;margin:13px 0}.tab{flex:1;border:0;background:transparent;color:var(--muted);padding:10px 7px;border-radius:10px;font-size:12px;font-weight:750}.tab.active{background:var(--panel);color:var(--text);box-shadow:0 2px 8px #0002}.notice{border:1px solid #f2bd6940;background:#f2bd6912;color:var(--warn);border-radius:13px;padding:11px 12px;font-size:11px;line-height:1.5;margin:12px 0}.status{border:1px solid var(--line);background:var(--bg2);padding:13px;border-radius:13px;font-size:12px;line-height:1.55;margin-top:12px;white-space:pre-wrap}.status.error{border-color:#ff858555;background:#ff858510;color:var(--bad)}.status.success{border-color:#65d6a155;background:#65d6a110;color:var(--good)}.loader{display:flex;align-items:center;gap:10px}.spinner{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.recipe{border:1px solid var(--line);border-radius:16px;padding:15px;margin-top:12px;background:var(--bg2)}.recipe h3{font-size:17px;margin:0 0 8px}.recipe h4{font-size:12px;margin:16px 0 6px;color:var(--accent)}.recipe li{font-size:12px;line-height:1.55;margin:5px 0}.recipe ul,.recipe ol{padding-left:20px;margin:6px 0}.recipe-meta{font-size:10px;color:var(--muted)}.bottom{position:fixed;z-index:20;bottom:0;left:0;right:0;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(18px);border-top:1px solid var(--line)}.bottom-inner{max-width:720px;margin:auto;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px}.nav{border:0;background:transparent;color:var(--muted);padding:7px 2px;border-radius:12px;font-size:9px;font-weight:700;min-width:0}.nav span{display:block;font-size:18px;margin-bottom:3px}.nav{position:relative}.nav-badge{position:absolute;top:1px;left:calc(50% + 3px);min-width:17px;height:17px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:20px;background:#e34b4b;color:#fff;font-size:10px;font-style:normal;font-weight:800;line-height:17px;border:2px solid var(--bg);box-shadow:0 1px 4px #0002}.nav-badge.hidden{display:none}.nav.active{background:var(--panel2);color:var(--accent)}.setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.setting-row:last-child{border:0}.setting-row strong{font-size:12px;display:block}.setting-row small{font-size:10px;color:var(--muted);display:block;margin-top:3px}.switch{appearance:none;width:43px;height:25px;border-radius:20px;background:var(--line);position:relative;flex:none;transition:.2s}.switch:checked{background:var(--accent2)}.switch:after{content:"";position:absolute;width:19px;height:19px;left:3px;top:3px;border-radius:50%;background:white;transition:.2s}.switch:checked:after{transform:translateX(18px)}.select-small{max-width:145px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:8px;font-size:11px}.history-item{padding:12px;border:1px solid var(--line);border-radius:13px;margin:8px 0;background:var(--bg2)}.history-item strong{font-size:12px}.history-item small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.history-actions{display:flex;gap:6px;margin-top:9px}.history-actions button{flex:1;border:0;border-radius:9px;padding:8px;background:var(--panel);color:var(--text);font-size:10px}.hidden{display:none!important}.footer-note{text-align:center;color:var(--muted);font-size:9px;margin:22px 0 5px}.compact .panel{padding:12px}.compact .tool{min-height:128px;padding:13px}.compact .field{margin:9px 0}.mode-switch{display:flex;gap:7px;background:var(--bg2);padding:5px;border-radius:13px;margin:12px 0}.mode-switch button{flex:1;border:0;border-radius:10px;background:transparent;color:var(--muted);padding:10px 7px;font-size:12px;font-weight:800}.mode-switch button.active{background:var(--panel);color:var(--text);box-shadow:0 2px 8px #0002}.inline-edit{border:1px solid var(--line);border-radius:13px;background:var(--panel);padding:12px;margin-top:10px}.inline-edit .field{margin:8px 0}.no-anim *{animation:none!important;transition:none!important;scroll-behavior:auto!important}@media(max-width:370px){.app{padding-left:11px;padding-right:11px}.hero{padding:18px}.hero h2{font-size:22px}.tool{padding:12px;min-height:137px}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 15% -10%,#5268dc25,transparent 38%),radial-gradient(ellipse at 100% 20%,#27a98c12,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding:0 0 calc(86px + env(safe-area-inset-bottom));transition:background .25s,color .25s}.app{width:min(100%,720px);margin:auto;padding:18px 16px 28px}.topbar{display:flex;align-items:center;justify-content:space-between;margin:4px 0 24px}.brand{display:flex;align-items:center;gap:11px}.brandmark{width:44px;height:44px;border-radius:15px;overflow:hidden;display:grid;place-items:center;box-shadow:0 8px 22px #315c4355;flex:none}.brandmark img{display:block;width:100%;height:100%;object-fit:cover}.brand h1{font-size:19px;letter-spacing:.4px;margin:0;font-weight:800}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.5px;margin-top:3px}.icon-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);width:42px;height:42px;border-radius:14px;font-size:18px}.eyebrow{color:var(--accent);font-size:11px;letter-spacing:1.6px;font-weight:800;text-transform:uppercase}.hero{padding:23px;border-radius:25px;background:linear-gradient(130deg,#27365a,#18263c 68%,#1a3540);color:#fff;box-shadow:var(--shadow);position:relative;overflow:hidden;margin-bottom:20px}.hero:after{content:"✦";position:absolute;right:18px;top:-18px;font-size:120px;color:#ffffff0b}.hero h2{font-size:25px;line-height:1.15;margin:9px 0}.hero p{font-size:13px;line-height:1.55;color:#c1cce0;max-width:390px;margin:0}.section-head{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 12px}.section-head h2{font-size:16px;margin:0}.muted{color:var(--muted);font-size:12px;line-height:1.5}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.tool{min-height:148px;text-align:left;border:1px solid var(--line);border-radius:19px;background:linear-gradient(155deg,var(--panel),var(--panel2));color:var(--text);padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}.tool:active,button:active{transform:scale(.985)}.tool-icon{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:#8294ff20;font-size:22px;margin-bottom:13px}.tool strong{display:block;font-size:14px;margin-bottom:5px}.tool small{display:block;color:var(--muted);font-size:11px;line-height:1.4}.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:30px;background:#8b9cff20;color:var(--accent);font-size:9px;font-weight:800;letter-spacing:.4px;margin-top:10px}.pill.warn{background:#f2bd6920;color:var(--warn)}.pill.good{background:#65d6a120;color:var(--good)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:17px;margin:12px 0;box-shadow:var(--shadow)}.page-title{font-size:21px;margin:5px 0 6px}.page-sub{margin:0 0 16px;color:var(--muted);font-size:12px;line-height:1.5}.back{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);font-weight:800;padding:10px 15px;margin:0 0 12px;box-shadow:var(--shadow)}.chef-back{width:100%;position:sticky;top:8px;z-index:5}.field{margin:13px 0}.field label{display:block;color:var(--muted);font-size:11px;font-weight:750;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:13px;background:var(--bg2);color:var(--text);padding:13px;font:inherit;font-size:14px;outline:none}.field textarea{min-height:82px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}.btn{border:0;border-radius:13px;padding:13px 15px;font-weight:800;font-size:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;width:100%;margin-top:8px;box-shadow:0 7px 18px #6579ed30}.btn.secondary{background:var(--panel2);border:1px solid var(--line);color:var(--text);box-shadow:none}.btn:disabled{opacity:.55;cursor:wait}.row{display:flex;gap:9px}.row>*{flex:1}.tabs{display:flex;gap:7px;background:var(--bg2);padding:5px;border-radius:14px;margin:13px 0}.tab{flex:1;border:0;background:transparent;color:var(--muted);padding:10px 7px;border-radius:10px;font-size:12px;font-weight:750}.tab.active{background:var(--panel);color:var(--text);box-shadow:0 2px 8px #0002}.notice{border:1px solid #f2bd6940;background:#f2bd6912;color:var(--warn);border-radius:13px;padding:11px 12px;font-size:11px;line-height:1.5;margin:12px 0}.status{border:1px solid var(--line);background:var(--bg2);padding:13px;border-radius:13px;font-size:12px;line-height:1.55;margin-top:12px;white-space:pre-wrap}.status.error{border-color:#ff858555;background:#ff858510;color:var(--bad)}.status.success{border-color:#65d6a155;background:#65d6a110;color:var(--good)}:root[data-theme="light"] #toast.error{background:#fff0f1!important;color:#8f1d2c!important;border:2px solid #c43f4a!important;box-shadow:0 12px 34px #5b17252e,0 3px 10px #0002!important}
+:root[data-theme="light"] #toast.success{background:#e9fff4!important;color:#12633f!important;border:2px solid #168b5d!important;box-shadow:0 12px 34px #12633f24,0 3px 10px #0002!important}
+:root:not([data-theme="light"]) #toast.error{background:#3b2028!important;color:#ffe8eb!important;border:2px solid #ff8585!important;box-shadow:0 12px 34px #0009!important}
+:root:not([data-theme="light"]) #toast.success{background:#173b30!important;color:#e0fff0!important;border:2px solid #65d6a1!important;box-shadow:0 12px 34px #0009!important}
+#toast{padding:16px 18px!important;border-radius:16px!important;font-size:14px!important;font-weight:750!important;line-height:1.5!important;letter-spacing:.01em;opacity:1!important;backdrop-filter:none!important;white-space:normal!important;}.loader{display:flex;align-items:center;gap:10px}.spinner{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.recipe{border:1px solid var(--line);border-radius:16px;padding:15px;margin-top:12px;background:var(--bg2)}.recipe h3{font-size:17px;margin:0 0 8px}.recipe h4{font-size:12px;margin:16px 0 6px;color:var(--accent)}.recipe li{font-size:12px;line-height:1.55;margin:5px 0}.recipe ul,.recipe ol{padding-left:20px;margin:6px 0}.recipe-meta{font-size:10px;color:var(--muted)}.bottom{position:fixed;z-index:20;bottom:0;left:0;right:0;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(18px);border-top:1px solid var(--line)}.bottom-inner{max-width:720px;margin:auto;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px}.nav{border:0;background:transparent;color:var(--muted);padding:7px 2px;border-radius:12px;font-size:9px;font-weight:700;min-width:0}.nav span{display:block;font-size:18px;margin-bottom:3px}.nav{position:relative}.nav-badge{position:absolute;top:1px;left:calc(50% + 3px);min-width:17px;height:17px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:20px;background:#e34b4b;color:#fff;font-size:10px;font-style:normal;font-weight:800;line-height:17px;border:2px solid var(--bg);box-shadow:0 1px 4px #0002}.nav-badge.hidden{display:none}.nav.active{background:var(--panel2);color:var(--accent)}.setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.setting-row:last-child{border:0}.setting-row strong{font-size:12px;display:block}.setting-row small{font-size:10px;color:var(--muted);display:block;margin-top:3px}.switch{appearance:none;width:43px;height:25px;border-radius:20px;background:var(--line);position:relative;flex:none;transition:.2s}.switch:checked{background:var(--accent2)}.switch:after{content:"";position:absolute;width:19px;height:19px;left:3px;top:3px;border-radius:50%;background:white;transition:.2s}.switch:checked:after{transform:translateX(18px)}.select-small{max-width:145px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:8px;font-size:11px}.history-item{padding:12px;border:1px solid var(--line);border-radius:13px;margin:8px 0;background:var(--bg2)}.history-item strong{font-size:12px}.history-item small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.history-actions{display:flex;gap:6px;margin-top:9px}.history-actions button{flex:1;border:0;border-radius:9px;padding:8px;background:var(--panel);color:var(--text);font-size:10px}.hidden{display:none!important}.footer-note{text-align:center;color:var(--muted);font-size:9px;margin:22px 0 5px}.compact .panel{padding:12px}.compact .tool{min-height:128px;padding:13px}.compact .field{margin:9px 0}.mode-switch{display:flex;gap:7px;background:var(--bg2);padding:5px;border-radius:13px;margin:12px 0}.mode-switch button{flex:1;border:0;border-radius:10px;background:transparent;color:var(--muted);padding:10px 7px;font-size:12px;font-weight:800}.mode-switch button.active{background:var(--panel);color:var(--text);box-shadow:0 2px 8px #0002}.inline-edit{border:1px solid var(--line);border-radius:13px;background:var(--panel);padding:12px;margin-top:10px}.inline-edit .field{margin:8px 0}.no-anim *{animation:none!important;transition:none!important;scroll-behavior:auto!important}@media(max-width:370px){.app{padding-left:11px;padding-right:11px}.hero{padding:18px}.hero h2{font-size:22px}.tool{padding:12px;min-height:137px}}
 
 /* Автомобильный модуль: диагностика, история ремонта и обслуживание */
 .status-chip{display:inline-flex;align-items:center;gap:6px;border-radius:30px;padding:6px 10px;font-size:10px;font-weight:800;border:1px solid var(--line);background:var(--bg2)}.status-chip.open{color:var(--bad);border-color:#ff858555;background:#ff858510}.status-chip.progress{color:var(--warn);border-color:#f2bd6955;background:#f2bd6910}.status-chip.solved{color:var(--good);border-color:#65d6a155;background:#65d6a110}.case-card{border:1px solid var(--line);background:var(--bg2);border-radius:15px;padding:13px;margin:10px 0}.case-card h3{font-size:14px;margin:0 0 7px}.case-card p{font-size:12px;line-height:1.5;margin:7px 0}.case-meta{font-size:10px;color:var(--muted);margin:6px 0}.case-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.case-actions button{flex:1;min-width:105px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);padding:9px;font-size:11px;font-weight:700}.question-card{border:1px solid var(--line);border-radius:13px;padding:12px;margin:9px 0;background:var(--bg2)}.question-card strong{font-size:12px;line-height:1.45;display:block;margin-bottom:9px}.question-card select,.question-card textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);padding:10px;font:inherit;font-size:12px}.question-card textarea{min-height:55px;margin-top:7px}.token-box{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);font-size:11px;color:var(--muted);line-height:1.6;margin:10px 0}.token-box strong{color:var(--text)}.repair-plan{border:1px solid #65d6a155;background:#65d6a10d;border-radius:13px;padding:12px;margin-top:12px}.repair-plan h4{margin:0 0 8px;color:var(--good);font-size:13px}.inline-note{font-size:10px;color:var(--muted);line-height:1.5}.maintenance-item{border:1px solid var(--line);background:var(--bg2);border-radius:13px;padding:12px;margin:8px 0}.maintenance-item strong{font-size:12px}.maintenance-item small{display:block;color:var(--muted);font-size:10px;line-height:1.5;margin-top:5px}.mini-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:8px 10px;border-radius:9px;font-size:10px;font-weight:700}.tabbar{display:flex;gap:6px;overflow:auto;padding:4px;background:var(--bg2);border-radius:13px;margin:12px 0}.tabbar button{flex:1;min-width:max-content;border:0;border-radius:9px;padding:10px 9px;background:transparent;color:var(--muted);font-size:11px;font-weight:800}.tabbar button.active{background:var(--panel);color:var(--accent);box-shadow:0 2px 7px #0002}
@@ -232,6 +236,149 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
  #chat-room .chat-compose{flex:none;background:var(--bg);padding-bottom:env(safe-area-inset-bottom)}
  #chat-room .chat-compose textarea{max-height:120px;resize:none}
 }
+
+/* SVOE v0.9.0 visual refresh */
+.icon-btn{background:linear-gradient(145deg,#263c68,#18294b);border:1px solid #829cff80;color:#fff;box-shadow:0 8px 22px #14234b55}.back{background:linear-gradient(135deg,#2457b8,#173c83)!important;border:1px solid #6fa0ff!important;color:#fff!important;box-shadow:0 7px 18px #17458a40!important}.btn.secondary{background:#244d91!important;border:1px solid #6396ed!important;color:#fff!important}.bottom{background:#101a2b;border-top:1px solid #52658c88;backdrop-filter:blur(22px)}.nav{color:#a9b7d0}.nav.active{background:#263a61;color:#dce6ff;box-shadow:inset 0 0 0 1px #7694dc66}#nav-home.active{color:#9fd7ff}#nav-tools.active{color:#c7adff}#nav-video.active{color:#ffb6c7}#nav-community.active{color:#77d9d2}#nav-tasks.active{color:#f3ca79}#nav-settings.active{color:#c6d0e5}.footer-note{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;padding:15px;border-top:1px solid var(--line)}.footer-note strong{color:#d9b76a;letter-spacing:2px}.footer-note span{color:var(--text);font-weight:800}.footer-note small{width:100%;text-align:center;font-size:9px;letter-spacing:2px;color:var(--muted)}.page-helpers .helper-grid .tool{min-height:155px;padding:14px;border-radius:18px;color:#f6f7ff}.page-helpers .helper-grid .tool:nth-child(1){background:linear-gradient(145deg,#493719,#29251d);border:1px solid #d9a94c}.page-helpers .helper-grid .tool:nth-child(2){background:linear-gradient(145deg,#173e55,#1b2a3c);border:1px solid #4ba7c9}.page-helpers .helper-grid .tool:nth-child(3){background:linear-gradient(145deg,#3c2c59,#25253d);border:1px solid #9a7ad2}.page-helpers .pill.warn{background:#b52c36;color:#fff;border:1px solid #ff7b84;padding:6px 10px;font-size:9px}.page-helpers .pill.good{background:#126b52;color:#d8fff1;border:1px solid #4de0b2}#page-chef{border-top:3px solid #d9a94c}#page-mechanic{border-top:3px solid #4ba7c9}#page-invoice{border-top:3px solid #9a7ad2}#page-chef .page-title{color:#e8c47a}#page-mechanic .page-title{color:#75cce9}#page-invoice .page-title{color:#c2a5ff}
+
+.token-dashboard{margin:20px 0;padding:19px;border-radius:22px;border:1px solid #b88a36;background:linear-gradient(145deg,#302714,#1c2130 72%,#202d46);color:#fff;box-shadow:0 15px 35px #0004}.token-dashboard-head{display:flex;justify-content:space-between;align-items:center}.token-kicker{font-size:9px;letter-spacing:2px;color:#e5c47d;font-weight:900}.token-dashboard h2{font-size:19px;margin:5px 0}.token-dashboard p{font-size:11px;color:#c7c0ae;margin:0}.token-coin{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#f5d98d,#a87520);color:#3b2b0e;font-size:24px}.token-balance{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:18px 0 13px}.token-balance strong{font-size:23px;color:#f4d58d}.token-balance span{font-size:11px;color:#d4c9ad}.token-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.token-stats>div{padding:10px;border:1px solid #d4b46a35;border-radius:13px;background:#ffffff08}.token-stats strong,.token-stats small{display:block}.token-stats strong{font-size:15px;color:#f6dfaa}.token-stats small{font-size:9px;color:#c7c0ae;margin-top:3px}.token-history-toggle{margin-top:13px;width:100%;padding:10px;border:1px solid #d4b46a55;border-radius:12px;background:#ffffff0b;color:#f4d58d;font-weight:800;text-align:left}.token-history{margin-top:8px;max-height:250px;overflow:auto}.token-history-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #ffffff20;font-size:10px;color:#d5d9e4}.token-history-row strong{white-space:nowrap;color:#f4d58d}.event-archive-launch{width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:15px;border:1px solid #5474ad;border-radius:17px;background:linear-gradient(120deg,#1c3152,#202b40);color:#f4f6ff;margin:14px 0}.event-archive-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:#4268a8;font-size:21px}.event-archive-launch>span:nth-child(2){flex:1}.event-archive-launch strong,.event-archive-launch small{display:block}.event-archive-launch small{font-size:10px;color:#b9c7df;margin-top:4px}.event-archive-launch b{font-size:10px;color:#9fc0ff;white-space:nowrap}.event-archive-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;margin:10px 0;border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:var(--shadow)}.event-archive-card strong{font-size:13px}.event-archive-card p{font-size:10px;color:var(--muted);margin:5px 0 0}.event-archive-actions{display:flex;gap:6px;flex:none}.event-archive-actions .btn{width:auto;margin:0;padding:9px 10px;font-size:10px}#chef-event-create{background:linear-gradient(145deg,#1c3553,#1b2639)!important;border:1px solid #6d91c5!important;box-shadow:0 14px 30px #0003!important}@media(max-width:420px){.event-archive-card{align-items:flex-start;flex-direction:column}.event-archive-actions{width:100%}.event-archive-actions .btn{flex:1}}
+
+/* HOME — premium gold & graphite identity; clearly separated surfaces */
+#page-home{padding:3px 2px 22px}
+#page-home .home-hero{position:relative;isolation:isolate;overflow:hidden;border:1px solid #c49a4c;background:radial-gradient(circle at 88% 14%,#d8b66a35,transparent 32%),linear-gradient(128deg,#17191c 0%,#29251d 58%,#40331e 100%);box-shadow:0 18px 42px #17130d35}
+#page-home .home-hero:before{border-color:#e6c77b55;box-shadow:0 0 0 18px #e6c77b0d,0 0 0 38px #e6c77b08}
+#page-home .home-hero:after{color:#d9b96b24}
+#page-home .home-hero .eyebrow{display:inline-flex;align-items:center;gap:8px;color:#e5c77f;font-weight:850}
+#page-home .home-hero .eyebrow:before{content:"✦";font-size:13px;color:#f2d995}
+#page-home .home-hero h2{color:#fff4d7;text-shadow:0 2px 18px #0005}
+#page-home .home-hero p{color:#d8cfba}
+#page-home>.command-panel{position:relative;margin:0 0 22px;padding:18px;border:1px solid #c9a45c;border-radius:23px;background:linear-gradient(145deg,#fffdf7,#f5eedf);color:#29251d;box-shadow:0 12px 30px #6c51201c,inset 0 1px #fff}
+#page-home .command-panel .section-head h2{color:#3a2d17}
+#page-home .command-panel .muted{color:#927543}
+#page-home .command-panel input{min-height:51px;border:1px solid #c9b27e;background:#fff;color:#30291c;box-shadow:inset 0 2px 4px #5b46100c}
+#page-home .command-panel input:focus{outline:2px solid #c69a43;outline-offset:2px}
+#page-home .command-panel input::placeholder{color:#9b927f}
+#page-home .command-panel .btn{background:linear-gradient(135deg,#b78b36,#806020)!important;border:1px solid #e3c477!important;color:#fff9e9!important;box-shadow:0 7px 16px #8d682d35}
+#page-home .today-heading{display:flex;align-items:center;justify-content:space-between;margin:25px 2px 11px;padding-left:11px;border-left:3px solid #c49a4c}
+#page-home .today-heading h2{color:var(--text);letter-spacing:.1px}
+#page-home .today-heading .mini-btn{border:1px solid #c6a45f;background:linear-gradient(145deg,#fff8e7,#eee1c2);color:#654b1d}
+#page-home>#home-today{min-height:78px;margin:0 0 20px;padding:17px;border:1px solid #cbb77e;border-radius:20px;background:linear-gradient(145deg,#fffefa,#f2ecdf);color:#3a3428;box-shadow:0 9px 24px #4e3b1714,inset 0 1px #fff}
+#page-home>#home-today .muted{color:#887d67}
+#page-home .token-dashboard{margin:0 0 17px;border:1px solid #d6b76e;background:radial-gradient(circle at 95% 0%,#d5ad5230,transparent 32%),linear-gradient(145deg,#17191c,#29251d 67%,#40331e);box-shadow:0 16px 34px #17130d30}
+#page-home #general-warning{margin-top:14px;padding:13px 15px;border:1px solid #c4a45d66;border-radius:16px;background:linear-gradient(120deg,#f7f0df,#eee5d1);color:#67532d}
+#page-home .section-head{position:relative}
+:root:not([data-theme="dark"]) #page-home .home-hero{color:#fff}
+:root[data-theme="dark"] #page-home>.command-panel{background:linear-gradient(145deg,#302a20,#25231f);border-color:#98763b;color:#f7efd9}
+:root[data-theme="dark"] #page-home .command-panel .section-head h2{color:#f3dfae}
+:root[data-theme="dark"] #page-home .command-panel .muted{color:#c5ad78}
+:root[data-theme="dark"] #page-home .command-panel input{background:#171a1d;border-color:#8d7547;color:#fff4dc}
+:root[data-theme="dark"] #page-home .command-panel input::placeholder{color:#a69a82}
+:root[data-theme="dark"] #page-home .today-heading .mini-btn{background:linear-gradient(145deg,#4a3a20,#30291e);border-color:#a98a4b;color:#f3d99d}
+:root[data-theme="dark"] #page-home>#home-today{background:linear-gradient(145deg,#292a27,#202326);border-color:#927642;color:#f4eddb}
+:root[data-theme="dark"] #page-home>#home-today .muted{color:#bdb39c}
+:root[data-theme="dark"] #page-home #general-warning{background:linear-gradient(120deg,#332d20,#29251f);border-color:#8c713d;color:#e2d0a3}
+@media(max-width:390px){#page-home .home-hero{padding:24px 19px}#page-home>.command-panel{padding:15px}#page-home>#home-today{padding:14px}}
+
+/* HOME REDESIGN — editorial premium, distinct geometry, restrained motion */
+#page-home{padding:0 2px 24px}
+#page-home .home-hero{min-height:258px;display:flex;flex-direction:column;justify-content:center;isolation:isolate;overflow:hidden;position:relative;margin:0 -2px 22px;padding:34px 28px;border:1px solid #8e7544;border-radius:5px 28px 5px 28px;background:radial-gradient(ellipse at 82% 22%,#b9975230,transparent 34%),linear-gradient(112deg,#101b18 0%,#1b3028 48%,#27372b 100%);box-shadow:0 22px 48px #17251d35}
+#page-home .home-hero:before{content:"";position:absolute;z-index:-1;top:-45%;left:-65%;width:52%;height:190%;border:0;border-radius:0;transform:rotate(24deg);background:linear-gradient(90deg,transparent,#e6cb8a0c,transparent);box-shadow:none;animation:homeLightSweep 12s ease-in-out infinite}
+#page-home .home-hero:after{content:"S";position:absolute;z-index:-1;right:7%;top:50%;transform:translateY(-55%);font-family:Georgia,serif;font-size:clamp(170px,38vw,280px);line-height:1;font-weight:400;color:#e1c27b0c;text-shadow:0 0 60px #e1c27b0a}
+@keyframes homeLightSweep{0%,58%{left:-65%;opacity:0}68%{opacity:1}90%,100%{left:125%;opacity:0}}
+#page-home .home-hero .eyebrow{color:#d8bd7b;font-size:10px;letter-spacing:3px}
+#page-home .home-hero h2{max-width:420px;margin:18px 0 12px;color:#fff8e9;font-family:Georgia,"Times New Roman",serif;font-size:clamp(34px,8vw,48px);font-weight:500;line-height:1.04;letter-spacing:-1.2px}
+#page-home .home-hero p{max-width:350px;color:#c3cfc5;font-size:13px;line-height:1.7}
+#page-home>.command-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin:0 0 27px;padding:21px 22px 20px;border:0;border-left:3px solid #b28b45;border-top:1px solid #e2d8c3;border-bottom:1px solid #e2d8c3;border-radius:2px 14px 2px 14px;background:linear-gradient(105deg,#fffdf8,#f4efe4);color:#26352d;box-shadow:0 12px 30px #253b2d0c}
+#page-home .command-panel .section-head{margin:0 0 10px;align-items:baseline}
+#page-home .command-panel .section-head h2{font-family:Georgia,"Times New Roman",serif;font-size:21px;font-weight:500;letter-spacing:-.3px;color:#26382d}
+#page-home .command-panel .muted{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:#9b8255}
+#page-home .command-panel .field{margin:0 0 10px}
+#page-home .command-panel input{height:52px;padding:0 15px;border:1px solid #d7cebb;border-radius:3px;background:#fff;color:#25372c;font-size:13px;box-shadow:inset 0 1px 2px #392d1608}
+#page-home .command-panel input:focus{border-color:#a9823f;outline:2px solid #b28b4522}
+#page-home .command-panel input::placeholder{color:#9a9a8c}
+#page-home .command-panel .btn{width:auto;min-width:178px;justify-self:start;margin:0;padding:12px 20px;border:1px solid #d6b978;border-radius:3px;background:linear-gradient(110deg,#b18a43,#87672f)!important;color:#fff!important;box-shadow:0 7px 16px #8a6b3228;letter-spacing:.15px}
+#page-home .today-heading{margin:0 0 0;padding:15px 2px 13px;border-top:1px solid #d8d4c8;border-left:0}
+#page-home .today-heading h2{font-family:Georgia,"Times New Roman",serif;font-size:23px;font-weight:500;letter-spacing:-.4px;color:var(--text)}
+#page-home .today-heading .mini-btn{padding:8px 12px;border:1px solid #b79a62;border-radius:3px;background:transparent;color:#806333;font-size:10px}
+#page-home>#home-today{min-height:74px;margin:0 0 25px;padding:16px 17px;border:0;border-top:1px solid #ded9cd;border-bottom:1px solid #ded9cd;border-radius:0;background:linear-gradient(90deg,#eae8df,#f4f1e9 55%,#e9e7de);color:#354238;box-shadow:none}
+#page-home>#home-today .muted{color:#788176}
+#page-home .token-dashboard{position:relative;overflow:hidden;margin:0 0 18px;padding:22px 22px 20px;border:1px solid #a98a4c;border-radius:4px 20px 4px 20px;background:radial-gradient(ellipse at 90% 8%,#d6b66a22,transparent 30%),linear-gradient(115deg,#17231e,#202c25 64%,#2b3026);box-shadow:0 16px 34px #1a261d24}
+#page-home .token-dashboard:after{content:"";position:absolute;right:-30px;bottom:-70px;width:190px;height:190px;border:1px solid #d8bd7b20;border-radius:50%;box-shadow:0 0 0 18px #d8bd7b08,0 0 0 38px #d8bd7b05;pointer-events:none}
+#page-home .token-kicker{color:#d9bd7c;letter-spacing:2.3px}
+#page-home .token-dashboard h2{font-family:Georgia,"Times New Roman",serif;font-size:24px;font-weight:500;color:#fff4d7}
+#page-home .token-dashboard p{color:#c0c7bc}
+#page-home .token-coin{border:1px solid #d7b76e;border-radius:4px;background:linear-gradient(145deg,#e5cc8a,#9d7738);color:#352a17}
+#page-home .token-stats>div{border:1px solid #c8aa6538;border-radius:3px;background:#ffffff08}
+#page-home .token-history-toggle{border-radius:3px;border-color:#c8aa6560}
+#page-home #general-warning{margin-top:16px;padding:12px 15px;border:0;border-left:3px solid #b28b45;border-radius:0;background:#e9e5d9;color:#6d624b}
+:root[data-theme="dark"] #page-home>.command-panel{background:linear-gradient(105deg,#222820,#1b211c);border-color:#655538;color:#f3eedf}
+:root[data-theme="dark"] #page-home .command-panel .section-head h2{color:#f2e6c9}
+:root[data-theme="dark"] #page-home .command-panel .muted{color:#c5aa72}
+:root[data-theme="dark"] #page-home .command-panel input{background:#111914;border-color:#66583c;color:#f7f0df}
+:root[data-theme="dark"] #page-home .command-panel input::placeholder{color:#9b9b88}
+:root[data-theme="dark"] #page-home .command-panel .btn{background:linear-gradient(110deg,#a9823f,#735629)!important}
+:root[data-theme="dark"] #page-home .today-heading{border-color:#41473d}
+:root[data-theme="dark"] #page-home .today-heading h2{color:#f1f0e7}
+:root[data-theme="dark"] #page-home .today-heading .mini-btn{color:#e3c987;border-color:#826c43}
+:root[data-theme="dark"] #page-home>#home-today{background:linear-gradient(90deg,#1d2821,#222921 55%,#1a241e);border-color:#3b473c;color:#edf1e9}
+:root[data-theme="dark"] #page-home>#home-today .muted{color:#a9b3a8}
+:root[data-theme="dark"] #page-home #general-warning{background:#28281f;color:#dfd0a6;border-color:#a68a4d}
+@media(max-width:430px){
+ #page-home .home-hero{min-height:238px;padding:27px 21px;border-radius:3px 21px 3px 21px}
+ #page-home .home-hero h2{font-size:36px}
+ #page-home .home-hero:after{right:1%;font-size:190px}
+ #page-home>.command-panel{padding:17px 16px}
+ #page-home .command-panel .section-head h2{font-size:19px}
+ #page-home .command-panel .btn{width:100%}
+ #page-home .token-dashboard{padding:18px 16px}
+}
+@media(prefers-reduced-motion:reduce){#page-home .home-hero:before{animation:none}}
+
+/* AI Store Manager — complete emerald visual identity */
+.page-helpers .manager-helper-card{border:1px solid #55c49a!important;background:linear-gradient(145deg,#174d3e,#18352f 68%,#203b39)!important;color:#f2fff8!important;box-shadow:0 12px 28px #071d183d}
+.page-helpers .manager-helper-card .tool-icon{background:linear-gradient(145deg,#2c9874,#17654f);box-shadow:0 5px 14px #071d1855}
+.page-helpers .manager-helper-card strong{color:#e4ffef}
+.page-helpers .manager-helper-card small{color:#b8d9ca}
+.page-helpers .manager-helper-card .pill{background:#a12f39;color:#fff;border:1px solid #ff8990}
+.page-store-manager{border-top:3px solid #45b98c}
+.page-store-manager .manager-hero{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;gap:17px;padding:22px;border:1px solid #55c49a;border-radius:23px;background:radial-gradient(circle at 92% 8%,#4bbd8b44,transparent 35%),linear-gradient(125deg,#174d3e,#17352f 64%,#203d3b);color:#f2fff8;box-shadow:0 15px 32px #061c1738}
+.page-store-manager .manager-hero:after{content:"";position:absolute;z-index:-1;width:170px;height:170px;right:-55px;bottom:-100px;border:1px solid #a5e9c533;border-radius:50%;box-shadow:0 0 0 18px #a5e9c30a,0 0 0 38px #a5e9c308}
+.manager-hero-icon{width:68px;height:68px;flex:none;display:grid;place-items:center;border:1px solid #a5e9c555;border-radius:21px;background:linear-gradient(145deg,#36a77b,#17644e);box-shadow:0 8px 22px #061c1755;font-size:35px}
+.manager-hero .page-title{margin:8px 0 4px;color:#f0fff6!important;font-size:25px}
+.manager-hero p{margin:0;color:#c3e4d3;font-size:12px;line-height:1.55}
+.manager-hero .pill{background:#a12f39;color:#fff;border:1px solid #ff8990;padding:6px 10px;font-size:9px}
+.page-store-manager .section-head{margin-top:22px}
+.page-store-manager .section-head h2{color:#5fc99b}
+.manager-feature-grid{gap:12px}
+.manager-feature{position:relative;overflow:hidden;min-height:184px;display:flex;flex-direction:column;padding:16px;border:1px solid #4caa8a66;border-radius:19px;background:linear-gradient(150deg,#1b3c34,#202d30);color:#effaf4;box-shadow:0 9px 22px #061c172b}
+.manager-feature:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--feature-accent,#48b58b)}
+.manager-feature:nth-child(2){--feature-accent:#58b9d0;border-color:#58b9d055;background:linear-gradient(150deg,#1b3944,#202d34)}
+.manager-feature:nth-child(3){--feature-accent:#8d9fe0;border-color:#8d9fe055;background:linear-gradient(150deg,#29334d,#242d3b)}
+.manager-feature:nth-child(4){--feature-accent:#d5a65d;border-color:#d5a65d55;background:linear-gradient(150deg,#493923,#302c27)}
+.manager-feature:nth-child(5){--feature-accent:#c49be8;border-color:#c49be855;background:linear-gradient(150deg,#3b2e4d,#2c2b3b)}
+.manager-feature:nth-child(6){--feature-accent:#62c9b7;border-color:#62c9b755;background:linear-gradient(150deg,#1b4643,#202f34)}
+.manager-feature-icon{width:43px;height:43px;display:grid;place-items:center;margin-bottom:12px;border:1px solid var(--feature-accent,#48b58b)55;border-radius:14px;background:var(--feature-accent,#48b58b)22;font-size:23px}
+.manager-feature-title{font-size:14px;font-weight:850;color:#f3fff8}
+.manager-feature p{font-size:11px;line-height:1.5;color:#b9cec5;margin:6px 0 13px;flex:1}
+.manager-feature-footer{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.manager-lock{font-size:17px;opacity:.9}
+.manager-feature .pill.warn{background:#8e3038;color:#fff;border:1px solid #d76b73;padding:5px 8px;font-size:8px}
+.page-store-manager .notice{border-color:#4eaa8b88;background:linear-gradient(120deg,#183b32,#202f30);color:#c7e5d6}
+@media(max-width:390px){.page-store-manager .manager-hero{padding:17px;gap:12px}.manager-hero-icon{width:55px;height:55px;font-size:29px}.manager-hero .page-title{font-size:21px}.manager-feature{min-height:190px;padding:13px}}
+.manager-feature .pill{margin:0;background:#f2bd6920;color:var(--warn);border:1px solid #f2bd6940;font-size:9px}
+:root[data-theme="light"] .manager-feature{background:linear-gradient(155deg,#fff,#f3f6f4);border-color:#d7e3dc}
+@media(max-width:370px){.manager-feature{min-height:190px;padding:12px}.manager-feature .pill{font-size:8px;padding:5px 6px}}
+
+
+/* Тестовый статус и бегущая строка */
+.test-mode-label{display:inline-block;margin-left:6px;padding:3px 6px;border:1px solid #caa85d88;color:#caa85d;font-size:8px;letter-spacing:.8px;font-weight:900;vertical-align:middle}
+.home-ticker{height:32px;overflow:hidden;display:flex;align-items:center;margin:0 0 13px;background:#17251d;border-top:1px solid #b9954b55;border-bottom:1px solid #b9954b55;color:#e5ca88}
+.home-ticker-track{display:flex;align-items:center;gap:42px;width:max-content;white-space:nowrap;animation:homeTickerMove 32s linear infinite;font-size:9px;letter-spacing:1.35px;font-weight:850}
+.home-ticker-track span{display:inline-flex;align-items:center;gap:12px}
+.home-ticker:hover .home-ticker-track{animation-play-state:paused}
+@keyframes homeTickerMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.home-ticker-track{animation:none;transform:none}}
+:root[data-theme="light"] .home-ticker{background:#203d2e}
+
 </style>
 </head>
 <body>
@@ -247,17 +394,14 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
 <div id="auth-status" class="status hidden"></div>
 </div></div>
 <div class="app">
-<header class="topbar"><div class="brand"><div class="brandmark"><img src="https://raw.githubusercontent.com/nikitaarkhipov9898-lab/AI-BRAGINA/admin-panel/icon.svg" alt="СВОЁ"></div><div><h1>СВОЁ</h1><small>МЕСТО ДЛЯ СВОИХ</small></div></div><button class="icon-btn" onclick="showPage('settings')" aria-label="Настройки">⚙</button></header>
+<header class="topbar"><div class="brand"><div class="brandmark"><img src="https://raw.githubusercontent.com/nikitaarkhipov9898-lab/AI-BRAGINA/admin-panel/icon.svg" alt="СВОЁ"></div><div><h1>СВОЁ</h1><small>МЕСТО ДЛЯ СВОИХ · v0.9.0 <span class="test-mode-label">ТЕСТОВЫЙ РЕЖИМ</span></small></div></div><button class="icon-btn" onclick="showPage('settings')" aria-label="Настройки">⚙</button></header>
 <main>
+<div class="home-ticker" role="status" aria-label="Объявление"><div class="home-ticker-track"><span>✦ СВОЁ — МЕСТО ДЛЯ СВОИХ</span><span>ПЛАТФОРМА В ТЕСТОВОМ РЕЖИМЕ</span><span>МЫ СОЗДАЁМ НОВЫЕ ВОЗМОЖНОСТИ</span><span>✦ СВОЁ — МЕСТО ДЛЯ СВОИХ</span><span>ПЛАТФОРМА В ТЕСТОВОМ РЕЖИМЕ</span><span>МЫ СОЗДАЁМ НОВЫЕ ВОЗМОЖНОСТИ</span></div></div>
 <section id="page-home" class="page-home">
  <div class="hero home-hero"><div class="eyebrow">ТВОЁ ПРОСТРАНСТВО</div><h2>Всё нужное.<br>В одном месте.</h2><p>Помощники, общение и повседневные дела — спокойно, удобно и по-своему.</p></div>
  <div class="panel command-panel"><div class="section-head"><h2>Что нужно сделать?</h2><span class="muted">Быстрый доступ</span></div><div class="field"><input id="home-command-input" placeholder="Рецепт, машина, учёт товара, задача..." onkeydown="if(event.key==='Enter')dispatchHomeCommand()"></div><button class="btn" onclick="dispatchHomeCommand()">Найти инструмент</button></div>
  <div class="section-head today-heading"><h2>Сегодня</h2><button class="mini-btn" onclick="showPage('tasks')">Все дела</button></div><div class="panel" id="home-today"><p class="muted">Здесь будут твои задачи и напоминания.</p></div>
- <div class="grid home-shortcuts">
-  <button class="tool shortcut-helper" onclick="showPage('helpers')"><span class="tool-icon">✦</span><strong>Помощники</strong><small>ИИ и полезные инструменты</small></button>
-  <button class="tool shortcut-community" onclick="showPage('community')"><span class="tool-icon">💬</span><strong>Общение</strong><small>Личные чаты и пространства</small></button>
-  <button class="tool shortcut-tasks" onclick="showPage('tasks')"><span class="tool-icon">✓</span><strong>Мои дела</strong><small>Задачи, планы и заметки</small></button>
- </div><div class="notice" id="general-warning">ИИ-помощники могут ошибаться. Важную информацию проверяй перед применением.</div>
+ <section class="token-dashboard" id="token-dashboard"><div class="token-dashboard-head"><div><span class="token-kicker">СЧЁТ ИИ</span><h2>Мой баланс</h2><p>Статистика использования помощников</p></div><span class="token-coin">✦</span></div><div class="token-balance" id="token-balance">Загружаем…</div><div class="token-stats" id="token-stats"></div><button class="token-history-toggle" onclick="toggleTokenHistory()">История запросов　⌄</button><div id="token-history" class="token-history hidden"></div></section><div class="notice" id="general-warning">ИИ-помощники могут ошибаться. Важную информацию проверяй перед применением.</div>
 </section>
 <section id="page-helpers" class="hidden page-helpers">
  <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">Помощники</h2><p class="page-sub">Специализированные ИИ и инструменты для повседневных задач.</p>
@@ -265,6 +409,7 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
   <button class="tool" onclick="showPage('chef')"><span class="tool-icon">🍳</span><strong>ИИ-Шеф</strong><small>Рецепты, меню, питание и список покупок</small><span class="pill warn">ЭКСПЕРИМЕНТАЛЬНЫЙ</span></button>
   <button class="tool" onclick="showPage('mechanic')"><span class="tool-icon">🔧</span><strong>ИИ-Механик</strong><small>Диагностика, ремонт и обслуживание автомобиля</small><span class="pill good">РАННЯЯ ВЕРСИЯ</span></button>
   <button class="tool" onclick="showPage('invoice')"><span class="tool-icon">📦</span><strong>Учёт и инвентаризация</strong><small>Приёмка, товары, остатки, имущество и недостачи</small><span class="pill warn">В РАЗРАБОТКЕ</span></button>
+  <button class="tool manager-helper-card" onclick="showPage('store-manager')"><span class="tool-icon">🏪</span><strong>ИИ-Управляющий</strong><small>Комплексное управление магазином: товары, склад, закупки и продажи</small><span class="pill warn">В РАЗРАБОТКЕ</span></button>
  </div>
  <div class="section-head"><h2>В планах</h2><span class="muted">Добавляем постепенно</span></div><div class="grid">
   <div class="tool"><span class="tool-icon">🛠️</span><strong>ИИ-Мастер</strong><small>Ремонт дома, сантехника, электрика и строительство</small><span class="pill">В ПЛАНАХ</span></div>
@@ -296,10 +441,16 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
  <div class="notice">Календарь, повторяющиеся напоминания и совместные задачи подключим следующим этапом.</div>
 </section>
 <section id="page-chef" class="hidden">
- <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">ИИ-Шеф</h2><p class="page-sub">Подберём блюдо или составим рецепт из того, что есть дома.</p>
- <div class="notice">Экспериментальный режим. ИИ может ошибаться в рецептах и пропорциях. Проверяйте состав и готовность продуктов.</div>
- <div class="tabs"><button class="tab active" id="tab-pantry" onclick="chefMode='pantry';renderChefMode()">Что есть дома</button><button class="tab" id="tab-specific" onclick="chefMode='specific';renderChefMode()">Конкретное блюдо</button></div>
- <div id="chef-pantry" class="panel">
+ <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">ИИ-Шеф</h2><p class="page-sub">Выберите, с чем нужна помощь.</p>
+<div id="chef-chooser" class="grid">
+ <button class="tool" onclick="showPage('chef-events')"><span class="tool-icon">🎉</span><strong>Праздник под ключ</strong><small>Гости, меню, рецепты, продукты и подготовка</small></button>
+ <button class="tool" onclick="openChefMode('pantry')"><span class="tool-icon">🥕</span><strong>Что есть дома</strong><small>Подберём, что приготовить из имеющихся продуктов</small></button>
+ <button class="tool" onclick="openChefMode('specific')"><span class="tool-icon">🍲</span><strong>Конкретное блюдо</strong><small>Рецепт выбранного блюда и точное количество порций</small></button>
+</div>
+<div class="notice">Экспериментальный режим. ИИ может ошибаться в рецептах и пропорциях. Проверяйте состав и готовность продуктов.</div>
+<div id="chef-workspace" class="hidden">
+ <button class="back chef-back" onclick="closeChefMode()">← К выбору раздела</button>
+<div id="chef-pantry" class="panel">
   <div class="field"><label>Основные продукты — каждый с новой строки или через запятую</label><textarea id="chef-products" placeholder="Картофель, курица, лук"></textarea></div>
   <div class="field"><label>Дополнительные продукты (необязательно)</label><input id="chef-extras" placeholder="Например: сыр, сливки"></div>
   <div class="field" style="border:1px solid var(--line);border-radius:13px;padding:12px;background:var(--bg2)">
@@ -307,19 +458,40 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
    <div class="muted" style="margin:7px 0 0 27px">Соль, чёрный перец, сахар и растительное масло. Шеф предложит их отдельно — добавлять необязательно.</div>
   </div>
   <div class="field"><label>Что приготовить?</label><select id="chef-type"><option>На усмотрение ИИ-Шефа</option><option>Завтрак</option><option>Обед или ужин</option><option>Закуска или салат</option><option>Выпечка или десерт</option></select></div>
-  <div class="field"><label>Количество порций</label><select id="chef-servings"><option>2</option><option selected>4</option><option>6</option><option>8</option></select></div>
+  <div class="field"><label>Количество порций</label><input id="chef-servings" type="number" min="1" max="1000" step="1" value="4" inputmode="numeric"></div>
   <div class="field"><label>Пожелания</label><textarea id="chef-wishes" placeholder="Например: быстро, не слишком жирно"></textarea></div>
   <button class="btn" id="chef-generate" onclick="generateChef()">Создать рецепт</button>
  </div>
  <div id="chef-specific" class="panel hidden">
   <div class="field"><label>Какое блюдо приготовить?</label><input id="chef-dish" placeholder="Например: плов с курицей"></div>
-  <div class="field"><label>Количество порций</label><select id="chef-servings2"><option>2</option><option selected>4</option><option>6</option><option>8</option></select></div>
+  <div class="field"><label>Количество порций</label><input id="chef-servings2" type="number" min="1" max="1000" step="1" value="4" inputmode="numeric"></div>
   <div class="field"><label>Пожелания</label><textarea id="chef-wishes2" placeholder="Например: рассыпчатый рис"></textarea></div>
   <button class="btn" id="chef-generate2" onclick="generateChef()">Создать рецепт</button>
  </div>
  <div id="chef-result" class="panel hidden"><div class="section-head"><h2>Результат</h2><span class="pill warn">ПРОВЕРЯЙТЕ</span></div><div id="chef-output"></div><div class="row"><button class="btn secondary" onclick="copyResult('chef-output')">Копировать</button><button class="btn secondary" onclick="generateChef(true)">Другой вариант</button></div></div>
  <div class="panel"><div class="section-head"><h2>Мои рецепты</h2><button class="tab" onclick="renderHistory()">Обновить</button></div><div id="recipe-history"><p class="muted">Сохранённые рецепты появятся здесь.</p></div></div>
+ <p class="muted" id="chef-draft-status">Черновик автоматически сохраняется на этом устройстве.</p>
+</div>
 </section>
+<section id="page-chef-events" class="hidden">
+ <button class="back" onclick="showPage('chef')">← ИИ-Шеф</button>
+ <h2 class="page-title">Праздник под ключ</h2>
+ <p class="page-sub">От списка гостей до меню, напитков, бюджета и подготовки.</p>
+ <div class="notice">Создайте проект мероприятия. Точные числа гостей рассчитываются по статусам, а цены без подтверждённого источника не выдаются за актуальные рыночные цены.</div>
+ <div id="chef-event-create" class="panel">
+  <div class="section-head"><h2>Новое мероприятие</h2></div>
+  <div class="field"><label>Название</label><input id="event-name" maxlength="100" placeholder="Например: Свадьба"></div>
+  <div class="field"><label>Тип</label><select id="event-type"><option>Свадьба</option><option>Юбилей</option><option>День рождения</option><option>Детский праздник</option><option>Новый год</option><option>Корпоратив</option><option>Семейный праздник</option><option>Пикник / шашлыки</option><option>Фуршет</option><option>Другое</option></select></div>
+  <div class="field"><label>Дата</label><input id="event-date" type="date"></div>
+  <div class="field"><label>Регион и город закупки</label><input id="event-region" maxlength="120" placeholder="Город, регион"></div>
+  <div class="field"><label>Общий бюджет, ₽</label><input id="event-budget" type="number" min="0" step="100" placeholder="Необязательно"></div>
+  <button class="btn" onclick="createChefEvent()">Создать проект</button>
+ </div>
+ <button id="chef-event-archive-launch" class="event-archive-launch" onclick="showPage('chef-event-archive')"><span class="event-archive-icon">▤</span><span><strong>Мои мероприятия</strong><small>Архив праздников, меню и покупок</small></span><b>Открыть →</b></button>
+ <div id="chef-event-list" class="event-project-list" aria-live="polite"></div>
+ <div id="chef-event-workspace" class="hidden"></div>
+</section>
+<section id="page-chef-event-archive" class="hidden page-event-archive"><button class="back" onclick="showPage('chef-events')">← Праздник под ключ</button><h2 class="page-title">Мои мероприятия</h2><p class="page-sub">История праздников, меню, рецептов и покупок.</p><div class="panel"><div class="field"><label>Поиск</label><input id="chef-event-search" placeholder="Название, тип или место" oninput="renderChefEventArchive()"></div><div class="field"><label>Сортировка</label><select id="chef-event-sort" onchange="renderChefEventArchive()"><option value="new">Сначала новые</option><option value="old">Сначала старые</option><option value="name">По названию</option></select></div></div><div id="chef-event-archive-list"></div></section>
 <section id="page-mechanic" class="hidden">
  <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">ИИ-Механик</h2><p class="page-sub">Не просто ответ, а сопровождение от первых симптомов до проверки ремонта.</p>
  <div class="notice">Экспериментальный помощник. Это предварительная консультация, а не подтверждённый диагноз. При проблемах с тормозами, рулевым управлением, давлением масла, перегреве, дыме, запахе топлива или сильном стуке безопасно остановитесь и обратитесь за профессиональной помощью.</div>
@@ -357,6 +529,21 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
 Проводится техническая доработка, чтобы снизить количество ошибок при распознавании наименований, количества и цен.
 
 Существующие данные и настройки приложения не затрагиваются.</div></div>
+</section>
+
+<section id="page-store-manager" class="hidden page-store-manager">
+ <button class="back" onclick="showPage('helpers')">← К помощникам</button>
+ <div class="manager-hero"><div class="manager-hero-icon">🏪</div><div><span class="pill warn">В РАЗРАБОТКЕ</span><h2 class="page-title">ИИ-Управляющий</h2><p>Умная система управления магазином: от приёмки товара до анализа продаж и закупок.</p></div></div>
+ <div class="section-head"><h2>Функции помощника</h2><span class="muted">План разработки</span></div>
+ <div class="grid manager-feature-grid">
+  <div class="manager-feature"><span class="manager-feature-icon">📝</span><div class="manager-feature-title">Заявки</div><p>Формирование заказов поставщикам, подбор количества и контроль заявок</p><div class="manager-feature-footer"><span class="manager-lock">🔒</span><span class="pill warn">В РАЗРАБОТКЕ</span></div></div>
+  <div class="manager-feature"><span class="manager-feature-icon">📦</span><div class="manager-feature-title">Склад</div><p>Остатки, инвентаризация, перемещения, списания и недостачи</p><div class="manager-feature-footer"><span class="manager-lock">🔒</span><span class="pill warn">В РАЗРАБОТКЕ</span></div></div>
+  <div class="manager-feature"><span class="manager-feature-icon">🧾</span><div class="manager-feature-title">Продажи</div><p>Учёт продаж, возвратов и динамики спроса через кассу и учётную систему</p><div class="manager-feature-footer"><span class="manager-lock">🔒</span><span class="pill warn">В РАЗРАБОТКЕ</span></div></div>
+  <div class="manager-feature"><span class="manager-feature-icon">🚚</span><div class="manager-feature-title">Приёмка</div><p>Сверка поставок с накладными, количества, штрихкодов и закупочных цен</p><div class="manager-feature-footer"><span class="manager-lock">🔒</span><span class="pill warn">В РАЗРАБОТКЕ</span></div></div>
+  <div class="manager-feature"><span class="manager-feature-icon">🏷️</span><div class="manager-feature-title">Цены</div><p>Контроль закупочных и розничных цен, переоценка и подготовка ценников</p><div class="manager-feature-footer"><span class="manager-lock">🔒</span><span class="pill warn">В РАЗРАБОТКЕ</span></div></div>
+  <div class="manager-feature"><span class="manager-feature-icon">📊</span><div class="manager-feature-title">Аналитика</div><p>Продажи, остатки, прибыльность, динамика спроса и подсказки владельцу</p><div class="manager-feature-footer"><span class="manager-lock">🔒</span><span class="pill warn">В РАЗРАБОТКЕ</span></div></div>
+ </div>
+ <div class="notice">Функции пока закрыты: мы проектируем их состав и порядок запуска. Замочки обозначают, что модули ещё не доступны.</div>
 </section>
 
 <section id="page-admin" class="hidden">
@@ -416,12 +603,12 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
 Приёмка товара — в разработке</div></div>
 <div class="panel hidden" id="admin-entry"><strong>Управление платформой</strong><p class="muted">Доступ владельца к аккаунтам и серверным перепискам.</p><button class="btn" onclick="showPage('admin');loadAdminOverview();loadAdminUsers();loadAdminAudit()">Открыть админ-панель</button></div>
  <div class="panel"><strong>Аккаунт</strong><p class="muted" id="account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div></section>
-</main><div class="footer-note">СВОЁ · Место для своих</div>
+</main><div class="footer-note"><strong>СВОЁ</strong><span>Место для своих</span><small>LEGACY · ВЕРСИЯ 0.9.0</small></div>
 </div>
-<nav class="bottom"><div class="bottom-inner"><button class="nav active" id="nav-home" onclick="showPage('home')"><span>⌂</span>Главная</button><button class="nav" id="nav-tools" onclick="showPage('helpers')"><span>✦</span>Помощники</button><button class="nav" id="nav-video" onclick="showPage('video')"><span>▶</span>Видео</button><button class="nav" id="nav-community" onclick="showPage('community')"><span>♡</span><i class="nav-badge hidden" id="chat-nav-badge">0</i>Общение</button><button class="nav" id="nav-tasks" onclick="showPage('tasks')"><span>✓</span>Дела</button><button class="nav" id="nav-settings" onclick="showPage('settings')"><span>⚙</span>Настройки</button></div></nav>
+<nav class="bottom"><div class="bottom-inner"><button class="nav active" id="nav-home" onclick="showPage('home')"><span>⌂</span>Главная</button><button class="nav" id="nav-tools" onclick="showPage('helpers')"><span>✦</span>Помощники</button><button class="nav" id="nav-video" onclick="showPage('video')"><span>▶</span>Видео</button><button class="nav" id="nav-community" onclick="showPage('community')"><span>✉</span><i class="nav-badge hidden" id="chat-nav-badge">0</i>Сообщения</button><button class="nav" id="nav-tasks" onclick="showPage('tasks')"><span>✓</span>Дела</button><button class="nav" id="nav-settings" onclick="showPage('settings')"><span>⚙</span>Настройки</button></div></nav>
 <script>
 'use strict';
-const WORKER_URL='https://admin-panel-chef-api.bosstayson24.workers.dev';
+const WORKER_URL=location.hostname.endsWith('.workers.dev')?location.origin:'https://admin-panel-chef-api.bosstayson24.workers.dev';
 let APP_KEY='ai_bragina_data_v2';
 const SETTINGS_KEY='ai_bragina_settings_v1';
 let authMode='login',authToken=localStorage.getItem('ai_bragina_token')||'',currentUser=null;
@@ -434,7 +621,7 @@ function activateUserStorage(user){
  if(!localStorage.getItem(key)&&oldData)localStorage.setItem(key,oldData);
  if(oldData)localStorage.removeItem(legacy);
  APP_KEY=key;
- appData={version:4,tasks:[],history:[],favorites:[],mechanicCases:[],maintenance:{vehicle:{name:'',odometer:''},items:[]},kitchen:{staples:['соль','чёрный перец','сахар','растительное масло','вода'],custom:''}};
+ appData={version:5,tasks:[],history:[],favorites:[],chefEvents:[],mechanicCases:[],maintenance:{vehicle:{name:'',odometer:''},items:[]},kitchen:{staples:['соль','чёрный перец','сахар','растительное масло','вода'],custom:''}};
  loadData();
  renderMechanicHistory();
  renderMaintenance();
@@ -448,6 +635,7 @@ let conversationSyncTimer=null;
 function conversationItems(){
  const items=[];
  for(const entry of (appData.history||[]))items.push({id:String(entry.id),kind:'recipe',title:String(entry.title||'Рецепт'),created_at:entry.date,content:{entry}});
+ for(const ev of (appData.chefEvents||[]))items.push({id:String(ev.id),kind:'chef_event',title:String(ev.name||'Мероприятие'),created_at:ev.createdAt,content:{event:ev}});
  for(const c of (appData.mechanicCases||[])){
   const safe={...c,vehicle:{...(c.vehicle||{}),vin:''}};
   items.push({id:String(c.id),kind:'mechanic',title:String(c.title||'Диагностика'),created_at:c.createdAt,content:{case:safe}});
@@ -456,19 +644,20 @@ function conversationItems(){
 }
 async function syncConversations(){
  if(!authToken||!currentUser)return;
+ appData.chefEvents=Array.isArray(appData.chefEvents)?appData.chefEvents:[];
  const headers={'Content-Type':'application/json',Authorization:'Bearer '+authToken};
- const r=await fetch(WORKER_URL+'/conversations/sync',{method:'POST',headers,body:JSON.stringify({items:conversationItems()})});
- if(!r.ok)throw new Error('Не удалось сохранить переписки на сервере.');
  const get=await fetch(WORKER_URL+'/conversations',{headers:{Authorization:'Bearer '+authToken}});
  if(!get.ok)throw new Error('Не удалось загрузить серверную историю.');
  const data=await get.json();let changed=false;
  for(const row of (data.conversations||[])){
   if(row.kind==='recipe'&&row.content?.entry&&!appData.history.some(x=>x.id===row.id)){appData.history.unshift(row.content.entry);changed=true;}
   if(row.kind==='mechanic'&&row.content?.case&&!appData.mechanicCases.some(x=>x.id===row.id)){appData.mechanicCases.unshift(row.content.case);changed=true;}
+  if(row.kind==='chef_event'&&row.content?.event){const local=appData.chefEvents.find(x=>x.id===row.id);if(!local){appData.chefEvents.unshift(row.content.event);changed=true;}else if(new Date(row.content.event.updatedAt||row.content.event.createdAt||0)>new Date(local.updatedAt||local.createdAt||0)){Object.assign(local,row.content.event);changed=true;}}
  }
  if(changed){appData.history=appData.history.slice(0,100);appData.mechanicCases=appData.mechanicCases.slice(0,250);try{localStorage.setItem(APP_KEY,JSON.stringify(appData));}catch(e){}renderHistory();renderMechanicHistory();}
-}
-function queueConversationSync(){
+ const r=await fetch(WORKER_URL+'/conversations/sync',{method:'POST',headers,body:JSON.stringify({items:conversationItems()})});
+ if(!r.ok)throw new Error('Не удалось сохранить переписки и проекты на сервере.');
+}function queueConversationSync(){
  if(!authToken||!currentUser)return;
  clearTimeout(conversationSyncTimer);
  conversationSyncTimer=setTimeout(()=>syncConversations().catch(e=>console.warn('conversation sync',e)),900);
@@ -563,7 +752,9 @@ async function checkAuth(){
   loadData();renderTasks();renderToday();
   $('auth-screen').classList.add('hidden');
   const rememberedPage=localStorage.getItem('svoe_last_page')||'home';
-  showPage(['home','video','helpers','chef','mechanic','invoice','community','tasks','settings'].includes(rememberedPage)?rememberedPage:'home');
+  const requestedPage=new URLSearchParams(location.search).get('page');
+  const allowedPages=['home','video','helpers','chef','mechanic','invoice','community','tasks','settings','chef-events','chef-event-archive'];
+  showPage(allowedPages.includes(requestedPage||'')?requestedPage:allowedPages.includes(rememberedPage)?rememberedPage:'home');
  }catch(e){
   authToken='';currentUser=null;
   localStorage.removeItem('ai_bragina_token');localStorage.removeItem('ai_bragina_user');
@@ -575,13 +766,13 @@ async function logout(){
  try{if(authToken)await fetch(WORKER_URL+'/auth/logout',{method:'POST',headers:{Authorization:'Bearer '+authToken}});}catch(e){}
  authToken='';currentUser=null;clearInterval(chatUnreadTimer);const chatBadge=$('chat-nav-badge');if(chatBadge)chatBadge.classList.add('hidden');
  localStorage.removeItem('ai_bragina_token');localStorage.removeItem('ai_bragina_user');
- appData={version:3,history:[],favorites:[],mechanicCases:[],maintenance:{vehicle:{name:'',odometer:''},items:[]},kitchen:{staples:['соль','чёрный перец','сахар','растительное масло','вода'],custom:''}};
+ appData={version:5,tasks:[],history:[],favorites:[],chefEvents:[],mechanicCases:[],maintenance:{vehicle:{name:'',odometer:''},items:[]},kitchen:{staples:['соль','чёрный перец','сахар','растительное масло','вода'],custom:''}};
  $('auth-screen').classList.remove('hidden');
 }
 
 let chefMode='pantry',currentRecipe=null,variantTitles=[],isBusy=false;
 let settings={theme:'warm',compact:false,animations:true,reduced:false,tap:false,start:false,done:false,error:false,volume:25,warnings:true,history:true,confirm:true};
-let appData={version:4,tasks:[],history:[],favorites:[],mechanicCases:[],maintenance:{vehicle:{name:'',odometer:''},items:[]},kitchen:{staples:['соль','чёрный перец','сахар','растительное масло','вода'],custom:''}};
+let appData={version:5,tasks:[],history:[],favorites:[],chefEvents:[],mechanicCases:[],maintenance:{vehicle:{name:'',odometer:''},items:[]},kitchen:{staples:['соль','чёрный перец','сахар','растительное масло','вода'],custom:''}};
 function $(id){return document.getElementById(id)}
 
 const VIDEO_KEY='svoe_auto_video_cache_v1';
@@ -770,7 +961,7 @@ function renderChatList(items){
   const b=document.createElement("button");b.className="chat-list-item";
   const info=document.createElement("span");info.style.flex="1";
   const title=document.createElement("strong");title.textContent=c.peer_display_name||c.peer_username||"Пользователь";
-  const meta=document.createElement("small");meta.textContent=(c.last_message||"Начните общение")+(c.last_message_at?" · "+new Date(c.last_message_at).toLocaleString("ru-RU"):"");
+  const meta=document.createElement("small");meta.textContent=(chatDisplayText(c.last_message)||"Начните общение")+(c.last_message_at?" · "+new Date(c.last_message_at).toLocaleString("ru-RU"):"");
   info.append(title,meta);b.appendChild(info);
   if(Number(c.unread)>0){const n=document.createElement("span");n.className="chat-unread";n.textContent=String(c.unread);b.appendChild(n);}
   b.onclick=()=>openChatRoom(c.id,{id:c.peer_id,username:c.peer_username,display_name:c.peer_display_name,avatar_url:c.peer_avatar});box.appendChild(b);
@@ -838,7 +1029,7 @@ async function loadChatMessages(initial){
   setPeerTypingIndicator(!!d.peer_typing);
   (d.messages||[]).forEach(m=>{
    const b=document.createElement("div");b.className="chat-bubble"+(m.sender_id===currentUser?.id?" mine":"");
-   const body=document.createElement("div");body.textContent=m.body;
+   const body=document.createElement("div");body.textContent=chatDisplayText(m.body);
    const meta=document.createElement("small");meta.textContent=new Date(m.created_at).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
    b.append(body,meta);box.appendChild(b);chatLastMessageId=m.id;chatLastMessageAt=m.created_at;
   });
@@ -862,11 +1053,11 @@ async function loadAdminChatMessages(threadId,username){
  const box=$("admin-chat-message-view");box.classList.remove("hidden");box.textContent="Загружаю сообщения…";
  try{const d=await adminFetch("/admin/chat/messages?thread_id="+encodeURIComponent(threadId));box.innerHTML="";
   if(!d.messages?.length){box.textContent="Сообщений пока нет.";return;}
-  d.messages.forEach(m=>{const item=document.createElement("div");item.className="history-item";const who=document.createElement("strong");who.textContent=(m.display_name||m.username||"Пользователь")+" (@"+m.username+")";const body=document.createElement("p");body.style.whiteSpace="pre-wrap";body.style.overflowWrap="anywhere";body.textContent=m.body;const time=document.createElement("small");time.textContent=new Date(m.created_at).toLocaleString("ru-RU");item.append(who,body,time);box.appendChild(item);});
+  d.messages.forEach(m=>{const item=document.createElement("div");item.className="history-item";const who=document.createElement("strong");who.textContent=(m.display_name||m.username||"Пользователь")+" (@"+m.username+")";const body=document.createElement("p");body.style.whiteSpace="pre-wrap";body.style.overflowWrap="anywhere";body.textContent=chatDisplayText(m.body);const time=document.createElement("small");time.textContent=new Date(m.created_at).toLocaleString("ru-RU");item.append(who,body,time);box.appendChild(item);});
  }catch(e){box.textContent=e.message;}
 }
 
-function showPage(page){if(videoFocusMode&&page!=='video')closeVideoFocus();if(page!=='community'){stopChatTyping();document.body.classList.remove("svoe-chat-open");clearInterval(chatPollTimer);chatPollTimer=null;activeChatThread=null;}if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}const target=$('page-'+page);if(!target){toast('Раздел пока готовится.');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));target.classList.remove('hidden');document.body.dataset.page=page;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));const map={home:'nav-home',video:'nav-video',helpers:'nav-tools',chef:'nav-tools',mechanic:'nav-tools',invoice:'nav-tools',community:'nav-community',tasks:'nav-tasks',settings:'nav-settings',admin:'nav-settings'};const nav=$(map[page]||'nav-tools');if(nav)nav.classList.add('active');if(page==='community')loadChatList();if(page==='tasks')renderTasks();if(page==='home')renderToday();if(page==='video'){videoItems=[];videoTopicPage=1;videoSessionSeed=Math.floor(Math.random()*5)+1;loadAutoVideoFeed(true);}try{localStorage.setItem('svoe_last_page',page);}catch(e){}window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
+function showPage(page){if(page==='chef-events'){renderChefEvents();restoreChefDraft();}if(page==='chef-event-archive')renderChefEventArchive();if(videoFocusMode&&page!=='video')closeVideoFocus();if(page!=='community'){stopChatTyping();document.body.classList.remove("svoe-chat-open");clearInterval(chatPollTimer);chatPollTimer=null;activeChatThread=null;}if(page==='admin'&&currentUser?.role!=='owner'){toast('Нет доступа к панели владельца.','error');return;}const target=$('page-'+page);if(!target){toast('Раздел пока готовится.');return;}document.querySelectorAll('main section[id^="page-"]').forEach(x=>x.classList.add('hidden'));target.classList.remove('hidden');document.body.dataset.page=page;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));const map={home:'nav-home',video:'nav-video',helpers:'nav-tools',chef:'nav-tools',mechanic:'nav-tools',invoice:'nav-tools',community:'nav-community',tasks:'nav-tasks',settings:'nav-settings',admin:'nav-settings'};const nav=$(map[page]||'nav-tools');if(nav)nav.classList.add('active');if(page==='community')loadChatList();if(page==='tasks')renderTasks();if(page==='home'){renderToday();renderTokenDashboard();}if(page==='video'){videoItems=[];videoTopicPage=1;videoSessionSeed=Math.floor(Math.random()*5)+1;loadAutoVideoFeed(true);}try{localStorage.setItem('svoe_last_page',page);}catch(e){}window.scrollTo({top:0,behavior:settings.animations&&!settings.reduced?'smooth':'auto'});}
 function dispatchHomeCommand(){const q=String($('home-command-input')?.value||'').trim().toLowerCase();if(!q){showPage('helpers');return;}if(/рецепт|еда|приготов|ужин|завтрак|шеф/.test(q)){showPage('chef');return;}if(/машин|авто|двигател|механик/.test(q)){showPage('mechanic');return;}if(/уч[её]т|товар|склад|остат|инвентар|наклад/.test(q)){showPage('invoice');return;}if(/задач|напом|дело|план/.test(q)){showPage('tasks');return;}if(/чат|сообщ|семь|друз|общен/.test(q)){showPage('community');return;}showPage('helpers');toast('Подходящий раздел пока не найден. Посмотри каталог помощников.');}
 function addTask(){const title=String($('task-title')?.value||'').trim();if(!title){toast('Напиши, что нужно сделать.','error');return;}appData.tasks=Array.isArray(appData.tasks)?appData.tasks:[];appData.tasks.unshift({id:crypto.randomUUID(),title:title.slice(0,160),due:$('task-due')?.value||'',done:false,createdAt:new Date().toISOString()});$('task-title').value='';$('task-due').value='';saveData();renderTasks();renderToday();toast('Задача добавлена.');}
 function toggleTask(id){const t=(appData.tasks||[]).find(x=>x.id===id);if(!t)return;t.done=!t.done;saveData();renderTasks();renderToday();}
@@ -874,51 +1065,277 @@ function deleteTask(id){appData.tasks=(appData.tasks||[]).filter(x=>x.id!==id);s
 function taskNode(t){const item=document.createElement('div');item.className='history-item';const row=document.createElement('div');row.style.display='flex';row.style.alignItems='center';row.style.gap='9px';const check=document.createElement('input');check.type='checkbox';check.checked=!!t.done;check.setAttribute('aria-label','Отметить задачу выполненной');check.onchange=()=>toggleTask(t.id);row.appendChild(check);const title=document.createElement('strong');title.textContent=t.title;title.style.flex='1';if(t.done)title.style.textDecoration='line-through';row.appendChild(title);item.appendChild(row);const meta=document.createElement('small');meta.textContent=(t.due?'Срок: '+new Date(t.due+'T12:00:00').toLocaleDateString('ru-RU')+' · ':'')+(t.done?'Выполнено':'В работе');item.appendChild(meta);const del=document.createElement('button');del.className='mini-btn';del.textContent='Удалить';del.style.marginTop='8px';del.onclick=()=>deleteTask(t.id);item.appendChild(del);return item;}
 function renderTasks(){const box=$('task-list');if(!box)return;box.innerHTML='';const tasks=Array.isArray(appData.tasks)?appData.tasks:[];$('task-count').textContent=tasks.length+' задач · '+tasks.filter(x=>!x.done).length+' активных';if(!tasks.length){box.innerHTML='<div class="panel muted">Пока задач нет. Добавь первую — она появится здесь.</div>';return;}tasks.forEach(t=>box.appendChild(taskNode(t)));}
 function renderToday(){const box=$('home-today');if(!box)return;box.innerHTML='';const tasks=(Array.isArray(appData.tasks)?appData.tasks:[]).filter(t=>!t.done).slice(0,3);if(!tasks.length){box.innerHTML='<p class="muted">На сегодня пока нет активных задач. Добавь дело, чтобы ничего не забыть.</p><button class="mini-btn" onclick="showPage(\'tasks\')">Добавить задачу</button>';return;}tasks.forEach(t=>box.appendChild(taskNode(t)));const all=document.createElement('button');all.className='mini-btn';all.textContent='Все задачи';all.onclick=()=>showPage('tasks');box.appendChild(all);}
-function renderChefMode(){ $('chef-pantry').classList.toggle('hidden',chefMode!=='pantry');$('chef-specific').classList.toggle('hidden',chefMode!=='specific');$('tab-pantry').classList.toggle('active',chefMode==='pantry');$('tab-specific').classList.toggle('active',chefMode==='specific');}
-function loadData(){try{const d=JSON.parse(localStorage.getItem(APP_KEY)||'null');if(d&&(d.version===2||d.version===3||d.version===4)){appData.tasks=Array.isArray(d.tasks)?d.tasks:[];appData.history=Array.isArray(d.history)?d.history:[];appData.favorites=Array.isArray(d.favorites)?d.favorites:[];appData.kitchen=d.kitchen||appData.kitchen;appData.mechanicCases=Array.isArray(d.mechanicCases)?d.mechanicCases.map(x=>({...x,mode:x.mode==='quick'?'quick':'deep'})):[];appData.maintenance=d.maintenance&&typeof d.maintenance==='object'?{vehicle:d.maintenance.vehicle||{name:'',odometer:''},items:Array.isArray(d.maintenance.items)?d.maintenance.items:[]}:appData.maintenance;}}catch(e){console.warn(e)}try{const s=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');if(s)settings={...settings,...s};}catch(e){console.warn(e)}applySettings();renderHistory();}
-function saveData(){try{appData.version=4;localStorage.setItem(APP_KEY,JSON.stringify(appData));queueConversationSync();}catch(e){toast('Не удалось сохранить данные. Возможно, память браузера заполнена.','error');}}
+
+let activeChefEventId=null;
+function chefEventById(id){return (appData.chefEvents||[]).find(x=>x.id===id)||null;}
+function chefEventCounts(e){const g=e.guests||[],sum=(list)=>list.reduce((n,x)=>n+Math.max(1,Number(x.count)||1),0);return {confirmed:sum(g.filter(x=>x.status==='confirmed')),pending:sum(g.filter(x=>['pending','invited','no_response'].includes(x.status))),declined:sum(g.filter(x=>x.status==='declined')),noShow:sum(g.filter(x=>x.status==='no_show')),maximum:sum(g.filter(x=>!['declined','no_show'].includes(x.status))),adults:sum(g.filter(x=>x.kind!=='child'&&!['declined','no_show'].includes(x.status))),children:sum(g.filter(x=>x.kind==='child'&&!['declined','no_show'].includes(x.status)))};}
+function createChefEvent(){const name=$('event-name').value.trim();if(!name){toast('Укажите название мероприятия.','error');return;}const b=$('event-budget').value;if(b!==''&&(!Number.isFinite(Number(b))||Number(b)<0)){toast('Бюджет должен быть неотрицательным числом.','error');return;}const e={id:'ev_'+Date.now(),name,type:$('event-type').value,date:$('event-date').value,region:$('event-region').value.trim(),budget:b===''?null:Number(b),guests:[],menu:[],tasks:[],createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};appData.chefEvents=appData.chefEvents||[];appData.chefEvents.unshift(e);e.updatedAt=new Date().toISOString();saveData();['event-name','event-date','event-region','event-budget'].forEach(id=>{const el=$(id);if(el)el.value='';});$('event-type').selectedIndex=0;activeChefEventId=e.id;openChefEvent(e.id);}
+function renderChefEvents(){
+ const box=$('chef-event-list');if(!box)return;
+ box.innerHTML='';
+ const items=(appData.chefEvents||[]).filter(e=>!e.archived).sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||'')));
+ if(!items.length){const empty=document.createElement('div');empty.className='panel muted';empty.textContent='Пока нет активных мероприятий. Создайте проект выше — здесь появятся гости, меню, рецепты, покупки и задачи.';box.appendChild(empty);return;}
+ const heading=document.createElement('h3');heading.className='section-head';heading.textContent='Активные мероприятия · '+items.length;box.appendChild(heading);
+ items.forEach(e=>{
+  const card=document.createElement('article');card.className='event-archive-card';
+  const info=document.createElement('div'),title=document.createElement('strong'),meta=document.createElement('p');
+  title.textContent=e.name||'Без названия';
+  const counts=chefEventCounts(e);
+  meta.textContent=[e.type,e.date||'Дата не указана',e.region,counts.maximum+' гостей',(e.menu||[]).length+' блюд'].filter(Boolean).join(' · ');
+  info.append(title,meta);
+  const actions=document.createElement('div');actions.className='event-archive-actions';
+  const open=document.createElement('button');open.className='btn';open.textContent='Продолжить';open.onclick=()=>openChefEvent(e.id);
+  const archive=document.createElement('button');archive.className='btn secondary';archive.textContent='В архив';archive.onclick=()=>{e.archived=true;e.updatedAt=new Date().toISOString();saveData();renderChefEvents();};
+  const del=document.createElement('button');del.className='btn secondary';del.textContent='Удалить';del.onclick=()=>{if(!del.dataset.confirmed){del.dataset.confirmed='1';del.textContent='Подтвердить удаление';return;}appData.chefEvents=appData.chefEvents.filter(x=>x.id!==e.id);saveData();renderChefEvents();};
+  actions.append(open,archive,del);card.append(info,actions);box.appendChild(card);
+ });
+}
+function renderChefEventArchive(){const box=$('chef-event-archive-list');if(!box)return;const q=String($('chef-event-search')?.value||'').trim().toLowerCase(),sort=$('chef-event-sort')?.value||'new';let items=[...(appData.chefEvents||[])].filter(e=>[e.name,e.type,e.region,e.date].join(' ').toLowerCase().includes(q));items.sort((x,y)=>sort==='old'?String(x.date||x.createdAt||'').localeCompare(String(y.date||y.createdAt||'')):sort==='name'?String(x.name||'').localeCompare(String(y.name||''),'ru'):String(y.date||y.createdAt||'').localeCompare(String(x.date||x.createdAt||'')));box.innerHTML='';if(!items.length){box.innerHTML='<div class="panel muted">Мероприятия не найдены.</div>';return;}items.forEach(e=>{const card=document.createElement('article');card.className='event-archive-card';const info=document.createElement('div'),title=document.createElement('strong'),meta=document.createElement('p');title.textContent=e.name||'Без названия';meta.textContent=[e.type,e.date||'Дата не указана',e.region].filter(Boolean).join(' · ')+' · '+(e.menu||[]).length+' блюд';info.append(title,meta);const actions=document.createElement('div');actions.className='event-archive-actions';const open=document.createElement('button');open.className='btn';open.textContent='Открыть';open.onclick=()=>{showPage('chef-events');openChefEvent(e.id);};const del=document.createElement('button');del.className='btn secondary';del.textContent='Удалить';del.onclick=()=>{if(!del.dataset.confirmed){del.dataset.confirmed='1';del.textContent='Подтвердить';return;}appData.chefEvents=appData.chefEvents.filter(x=>x.id!==e.id);saveData();renderChefEventArchive();};actions.append(open,del);card.append(info,actions);box.append(card);});}
+function openChefEvent(id){const e=(appData.chefEvents||[]).find(x=>x.id===id);if(!e)return;activeChefEventId=id;$('chef-event-create').classList.add('hidden');$('chef-event-archive-launch').classList.add('hidden');$('chef-event-workspace').classList.remove('hidden');renderChefEventWorkspace(e);restoreChefDraft();}
+function renderChefEventWorkspace(e){
+ const box=$('chef-event-workspace');box.innerHTML='';
+ const back=document.createElement('button');back.className='back';back.textContent='← Мероприятия';back.onclick=()=>{box.classList.add('hidden');$('chef-event-create').classList.remove('hidden');$('chef-event-archive-launch').classList.remove('hidden');renderChefEvents();};box.appendChild(back);
+ const h=document.createElement('h2');h.className='page-title';h.textContent=e.name;box.appendChild(h);
+ const counts=document.createElement('div');counts.className='panel';counts.innerHTML='<h3>Сколько будет гостей?</h3><p class="muted">Укажите количество взрослых и детей.</p><div class="grid"><div class="field"><label>Взрослые</label><input id="ev-adults" type="number" min="0" max="500" step="1" value="'+Math.max(0,Number(e.plannedAdults??e.guests?.filter(g=>g.kind!=='child'&&g.status!=='declined'&&g.status!=='no_show').reduce((n,g)=>n+(Number(g.count)||1),0))||0)+'"></div><div class="field"><label>Дети</label><input id="ev-children" type="number" min="0" max="500" step="1" value="'+Math.max(0,Number(e.plannedChildren??e.guests?.filter(g=>g.kind==='child'&&g.status!=='declined'&&g.status!=='no_show').reduce((n,g)=>n+(Number(g.count)||1),0))||0)+'"></div></div><button class="btn" id="ev-save-guests">Сохранить количество гостей</button><p id="ev-guest-total" class="muted"></p>';box.appendChild(counts);
+ const total=()=>Math.max(0,Number($('ev-adults').value)||0)+Math.max(0,Number($('ev-children').value)||0);
+ const totalLabel=$('ev-guest-total');totalLabel.textContent='Всего: '+total()+' человек';
+ ['ev-adults','ev-children'].forEach(id=>$(id).oninput=()=>{totalLabel.textContent='Всего: '+total()+' человек';});
+ $('ev-save-guests').onclick=()=>{const a=Number($('ev-adults').value),ch=Number($('ev-children').value);if(!Number.isInteger(a)||!Number.isInteger(ch)||a<0||ch<0||a+ch<1||a>500||ch>500){toast('Укажите целое количество гостей.','error');return;}e.plannedAdults=a;e.plannedChildren=ch;e.updatedAt=new Date().toISOString();saveData();renderChefEvents();renderChefEventWorkspace(e);toast('Количество гостей сохранено.');};
+ const ai=document.createElement('div');ai.className='panel';ai.innerHTML='<h3>Подобрать праздничное меню</h3><p class="muted">ИИ предложит блюда с учётом праздника, гостей и пожеланий. Можно обновить весь список предложений.</p><div class="field"><label>Какой стол хотите?</label><select id="ev-menu-level"><option value="economy">Экономно — простые доступные продукты</option><option value="standard">Обычный — знакомые и праздничные блюда</option><option value="rich">Богатый праздничный стол</option></select></div><div class="field"><label>Пожелания</label><textarea id="ev-menu-wishes" rows="2" placeholder="Например: без рыбы, больше курицы, детские блюда отдельно"></textarea></div><label class="muted"><input type="checkbox" id="ev-menu-alcohol"> Добавить идеи алкогольных напитков</label><button class="btn" id="ev-ai-menu">Подобрать блюда</button><button class="btn secondary" id="ev-refresh-menu">Обновить все предложения</button><div id="ev-menu-suggestions"></div>';box.appendChild(ai);
+ $('ev-menu-level').value=e.menuLevel||'standard';$('ev-menu-wishes').value=e.menuWishes||'';$('ev-menu-alcohol').checked=!!e.menuAlcohol;
+ const details=document.createElement('details');details.open=true;details.className='panel';details.innerHTML='<summary style="font-weight:800;cursor:pointer">Моё праздничное меню · '+(e.menu||[]).length+' блюд</summary><p class="muted">Добавляйте предложенные блюда или закажите своё. Внутри будут рецепты, способ приготовления и общий список покупок.</p><div id="ev-menu-list"></div><div class="inline-edit"><h3>Добавить своё блюдо</h3><p class="muted">Например: шашлык из курицы на мангале или мясо в казане. ИИ подберёт рецепт и добавит блюдо в это меню.</p><div class="field"><label>Какое блюдо хотите?</label><input id="ev-custom-dish" maxlength="180" placeholder="Шашлык из курицы на мангале"></div><button class="btn" id="ev-add-custom-dish">Сгенерировать и добавить блюдо</button></div><div class="field"><label>Размер порций</label><select id="ev-serving-mode"><option value="full">Полноценный стол</option><option value="tasting">Попробовать всё понемногу</option></select></div><button class="btn" id="ev-build-recipes">Рассчитать рецепты и продукты для меню</button><button class="btn secondary" id="ev-rebuild-recipes">Обновить рецепты всех блюд</button><div id="ev-shopping-result"></div>';box.appendChild(details);
+ const suggestions=$('ev-menu-suggestions');const renderSuggestions=()=>{suggestions.innerHTML='';if(!Array.isArray(e.menuSuggestions)||!e.menuSuggestions.length)return;if(Array.isArray(e.menuNotes)&&e.menuNotes.length){const note=document.createElement('p');note.className='muted';note.textContent=e.menuNotes.join(' · ');suggestions.appendChild(note);}e.menuSuggestions.forEach(m=>{const row=document.createElement('div');row.className='history-item';const title=document.createElement('strong');title.textContent=m.name;const desc=document.createElement('p');desc.className='muted';desc.textContent=(m.category||'Блюдо')+' · '+(m.description||'');const add=document.createElement('button');add.className='mini-btn';const exists=(e.menu||[]).some(x=>x.name===m.name);add.textContent=exists?'Уже в меню':'Добавить в моё меню';add.disabled=exists;add.onclick=()=>{e.menu=e.menu||[];e.menu.push({id:'m_'+Date.now(),name:m.name,category:m.category||'Другое'});e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);};row.append(title,desc,add);suggestions.appendChild(row);});};
+ const ml=$('ev-menu-list');(e.menu||[]).forEach((m,index)=>{const row=document.createElement('div');row.className='history-item';const title=document.createElement('strong');title.textContent=(index+1)+'. '+m.name;const desc=document.createElement('p');desc.className='muted';desc.textContent=(m.category||'Блюдо')+(m.recipe?' · рецепт готов':' · рецепт ещё не рассчитан');const actions=document.createElement('div');actions.className='history-actions';const replace=document.createElement('button');replace.textContent='Заменить блюдо';replace.onclick=()=>replaceChefEventDish(e.id,m.id);const remove=document.createElement('button');remove.textContent='Убрать';remove.onclick=()=>{e.menu=e.menu.filter(x=>x.id!==m.id);e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);};actions.append(replace,remove);row.append(title,desc,actions);ml.appendChild(row);});
+ renderSuggestions();
+ $('ev-ai-menu').onclick=()=>suggestChefEventMenu(e.id);
+ $('ev-refresh-menu').onclick=()=>{if(confirm('Получить новый полный список предложений? Уже выбранные блюда останутся в моём меню.'))suggestChefEventMenu(e.id);};
+ $('ev-add-custom-dish').onclick=()=>addCustomChefEventDish(e.id);
+ $('ev-build-recipes').onclick=()=>generateChefEventRecipes(e.id);
+ $('ev-rebuild-recipes').onclick=()=>{if(confirm('Заново запросить рецепты и способы приготовления для всех блюд меню? Это потратит токены ИИ.'))generateChefEventRecipes(e.id,true);};
+ $('ev-serving-mode').value=e.servingMode||'full';$('ev-serving-mode').onchange=()=>{e.servingMode=$('ev-serving-mode').value;saveData();};
+ renderChefEventShopping(e);
+ const tasks=document.createElement('div');tasks.className='panel';tasks.innerHTML='<h3>Подготовка к празднику</h3><div class="field"><label>Что нужно сделать?</label><input id="ev-task-name" maxlength="160" placeholder="Например: заказать торт"></div><div class="field"><label>Когда?</label><input id="ev-task-date" type="date"></div><button class="btn secondary" id="ev-add-task">Добавить задачу</button><div id="ev-task-list"></div>';box.appendChild(tasks);
+ $('ev-add-task').onclick=()=>{const n=$('ev-task-name').value.trim();if(!n){toast('Напишите, что нужно сделать.','error');return;}e.tasks=e.tasks||[];e.tasks.push({id:'t_'+Date.now(),title:n,due:$('ev-task-date').value,done:false});e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);};
+ const tl=$('ev-task-list');(e.tasks||[]).forEach(t=>{const row=document.createElement('div');row.className='history-item';const label=document.createElement('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!t.done;cb.onchange=()=>{t.done=cb.checked;e.updatedAt=new Date().toISOString();saveData();};label.append(cb,document.createTextNode(' '+t.title+(t.due?' · '+t.due:'')));row.appendChild(label);const del=document.createElement('button');del.className='mini-btn';del.textContent='Удалить';del.onclick=()=>{e.tasks=e.tasks.filter(x=>x.id!==t.id);saveData();renderChefEventWorkspace(e);};row.appendChild(del);tl.appendChild(row);});
+}
+
+function addChefEventUsage(e,usage,kind){if(!e.aiUsage)e.aiUsage={prompt_tokens:0,completion_tokens:0,total_tokens:0,requests:0,byType:{}};const u=e.aiUsage;if(usage){u.prompt_tokens+=Number(usage.prompt_tokens)||0;u.completion_tokens+=Number(usage.completion_tokens)||0;u.total_tokens+=Number(usage.total_tokens)||0;u.requests++;u.byType[kind]=(u.byType[kind]||0)+1;}e.updatedAt=new Date().toISOString();saveData();}
+function chefEventUsageMarkup(e){const u=e.aiUsage||{};return '<div class="token-box"><strong>Расход ИИ по мероприятию</strong><br>Запросов: '+(u.requests||0)+' · Всего токенов: '+(u.total_tokens||0).toLocaleString('ru-RU')+'<br>Вход: '+(u.prompt_tokens||0).toLocaleString('ru-RU')+' · Выход: '+(u.completion_tokens||0).toLocaleString('ru-RU')+'</div>';}
+function chefEventRecipeValidation(menu,guestUnits){let grams=0,pieces=0;for(const dish of menu){for(const item of dish.recipe?.ingredients||[]){const amount=chefIngredientAmount(item.amount,item.unit);const unit=chefIngredientUnit(item.unit);if(amount===null)continue;if(unit==='г'||unit==='мл')grams+=amount;else if(unit==='шт.')pieces+=amount;}}const perGuest=grams/Math.max(1,guestUnits),piecesPerGuest=pieces/Math.max(1,guestUnits);if(perGuest>2400||piecesPerGuest>12)return {ok:false,grams,perGuest,piecesPerGuest,message:'Проверка не пройдена: ИИ рассчитал около '+Math.round(perGuest)+' г/мл продуктов и '+Math.round(piecesPerGuest)+' шт. на одного взрослого эквивалентного гостя. Для всего меню это подозрительно много. Рецептуры не сохранены. Нажмите «Пересчитать рецептуры» — запрос будет повторён с более строгими нормами.'};return {ok:true,grams,perGuest,piecesPerGuest};}
+function chefEventGuestUnits(e){
+ const adults=Math.max(0,Number(e.plannedAdults)||0);
+ const children=Math.max(0,Number(e.plannedChildren)||0);
+ return adults+children*.65;
+}
+function chefIngredientUnit(unit){
+ const u=String(unit||'').trim().toLowerCase().replace(/\./g,'');
+ if(['кг','kg'].includes(u))return 'г';
+ if(['л','литр','литра','литров','l'].includes(u))return 'мл';
+ if(['шт','штука','штуки','штук','pcs','pc'].includes(u))return 'шт.';
+ if(['г','гр','грамм','грамма','граммов','g'].includes(u))return 'г';
+ if(['мл','миллилитр','миллилитра','миллилитров','ml'].includes(u))return 'мл';
+ return String(unit||'шт.');
+}
+function chefIngredientAmount(amount,unit){
+ const n=Number(amount);if(!Number.isFinite(n)||n<0)return null;
+ const u=String(unit||'').trim().toLowerCase().replace(/\./g,'');
+ if(['кг','kg'].includes(u))return n*1000;
+ if(['л','литр','литра','литров','l'].includes(u))return n*1000;
+ return n;
+}
+function chefEventShoppingRows(e){
+ const rows=new Map();
+ const currentUnits=chefEventGuestUnits(e);
+ (e.menu||[]).forEach(dish=>{
+  const recipeBase=Math.max(.01,Number(dish.recipe?.baseGuestUnits)||currentUnits||1);
+  const factor=currentUnits>0?currentUnits/recipeBase:1;
+  (dish.recipe?.ingredients||[]).forEach(item=>{
+   const unit=chefIngredientUnit(item.unit),amount=chefIngredientAmount(item.amount,item.unit);
+   if(amount===null)return;
+   const key=String(item.name||'').trim().toLocaleLowerCase('ru-RU')+'|'+unit;
+   if(!rows.has(key))rows.set(key,{key,name:String(item.name||'').trim(),unit,baseAmount:0,amount:0});
+   const row=rows.get(key);row.baseAmount+=amount;row.amount+=amount*factor;
+  });
+ });
+ return [...rows.values()].sort((a,b)=>a.name.localeCompare(b.name,'ru'));
+}
+function chefFormatAmount(value){
+ const n=Math.round((Number(value)||0)*100)/100;
+ return n.toLocaleString('ru-RU',{maximumFractionDigits:2});
+}
+function renderChefEventShopping(e){
+ const box=$('ev-shopping-result');if(!box)return;box.innerHTML='';
+ const menu=e.menu||[];
+ if(!menu.length){box.textContent='Сначала добавьте блюда в выбранное меню.';return;}
+ const ready=menu.filter(x=>x.recipe&&Array.isArray(x.recipe.ingredients));
+ const missing=menu.length-ready.length;
+ if(!ready.length){box.innerHTML='<p class="muted">Пока нет рассчитанных рецептов. Нажмите «Рассчитать рецепты и продукты» — рецептуры всех выбранных блюд будут подготовлены одним запросом.</p>';return;}
+ const info=document.createElement('p');info.className='muted';info.textContent='Рассчитано рецептов: '+ready.length+' из '+menu.length+'. '+(missing?'Осталось рассчитать: '+missing+'.':'Все блюда рассчитаны.')+' Количество автоматически масштабируется при изменении числа гостей.';box.appendChild(info);box.insertAdjacentHTML('beforeend',chefEventUsageMarkup(e));
+ const recipes=document.createElement('div');recipes.className='panel';recipes.innerHTML='<h3>Рецепты и приготовление</h3>';ready.forEach((dish,i)=>{const d=document.createElement('details');d.className='recipe';const summary=document.createElement('summary');summary.style.cssText='font-weight:800;cursor:pointer';summary.textContent=(i+1)+'. '+dish.name;d.appendChild(summary);const ing=document.createElement('h4');ing.textContent='Ингредиенты';d.appendChild(ing);const ul=document.createElement('ul');(dish.recipe.ingredients||[]).forEach(x=>{const li=document.createElement('li');const factor=chefEventGuestUnits(e)/Math.max(.01,Number(dish.recipe.baseGuestUnits)||chefEventGuestUnits(e)||1);li.textContent=x.name+' — '+chefFormatAmount(x.amount*factor)+' '+x.unit;ul.appendChild(li);});d.appendChild(ul);const how=document.createElement('h4');how.textContent='Как готовить';d.appendChild(how);const ol=document.createElement('ol');(dish.recipe.steps||[]).forEach(x=>{const li=document.createElement('li');li.textContent=x;ol.appendChild(li);});d.appendChild(ol);if(dish.recipe.notes?.length){const note=document.createElement('p');note.className='muted';note.textContent='Советы: '+dish.recipe.notes.join(' · ');d.appendChild(note);}recipes.appendChild(d);});box.appendChild(recipes);const rows=chefEventShoppingRows(e),list=document.createElement('div');list.className='history-list';
+ if(!rows.length){list.textContent='В рецептах пока нет ингредиентов с корректными количествами.';box.appendChild(list);return;}
+ const stock=e.shoppingStock&&typeof e.shoppingStock==='object'?e.shoppingStock:(e.shoppingStock={});
+ rows.forEach(item=>{
+  const row=document.createElement('div');row.className='history-item';
+  const title=document.createElement('strong');title.textContent=item.name;row.appendChild(title);
+  const need=document.createElement('p');need.className='muted';need.textContent='Нужно: '+chefFormatAmount(item.amount)+' '+item.unit;row.appendChild(need);
+  const field=document.createElement('div');field.className='field';
+  const label=document.createElement('label');label.textContent='Есть дома ('+item.unit+')';
+  const input=document.createElement('input');input.type='number';input.min='0';input.step='any';input.value=stock[item.key]??'0';input.setAttribute('aria-label','Есть дома: '+item.name);
+  const result=document.createElement('p');result.className='muted';
+  const update=()=>{const have=Math.max(0,Number(input.value)||0),left=Math.max(0,item.amount-have);result.textContent=left>0?'Купить: '+chefFormatAmount(left)+' '+item.unit:'Уже хватает дома';stock[item.key]=have;saveData();};
+  input.onchange=update;label.appendChild(input);field.append(label,result);row.appendChild(field);update();list.appendChild(row);
+ });
+ box.appendChild(list);
+ const footer=document.createElement('p');footer.className='muted';footer.textContent='Это расчётная потребность по рецептурам. Перед покупкой проверьте фактические остатки, упаковки и ограничения гостей.';box.appendChild(footer);
+}
+async function generateChefEventRecipes(id){
+ const e=chefEventById(id);if(!e||isBusy)return;
+ const menu=e.menu||[];if(!menu.length){toast('Сначала добавьте блюда в выбранное меню.','error');return;}
+ const force=arguments.length>1&&arguments[1]===true;
+ const missing=force?menu:menu.filter(x=>!x.recipe||!Array.isArray(x.recipe.ingredients));
+ if(!missing.length){renderChefEventShopping(e);toast('Рецептуры уже сохранены. Пересчёт выполняется без ИИ.');return;}
+ const adults=Math.max(0,Number(e.plannedAdults)||0),children=Math.max(0,Number(e.plannedChildren)||0),guestUnits=adults+children*.65;
+ if(guestUnits<=0){toast('Сначала укажите количество взрослых и детей.','error');return;}
+ const btn=$('ev-build-recipes'),out=$('ev-shopping-result');
+ if(isBusy)return;isBusy=true;if(btn){btn.disabled=true;btn.textContent='Рассчитываю рецептуры…';}
+ if(out)out.textContent='ИИ рассчитывает ингредиенты выбранных блюд одним запросом. После сохранения изменение порций будет бесплатным и мгновенным.';
+ try{
+  const menuContext=menu.map((x,i)=>({id:x.id,name:x.name,category:x.category}));
+  const payload={model:'openai/gpt-oss-120b',temperature:.2,max_tokens:5000,response_format:{type:'json_object'},messages:[
+   {role:'system',content:'Ты профессиональный повар-технолог. Рассчитай практичные домашние рецептуры для всего праздничного меню как единого стола. Верни только JSON вида {"recipes":[{"menuId":"точный id блюда","ingredients":[{"name":"картофель","amount":1200,"unit":"г"}],"steps":["шаг"],"notes":["примечание"]}]}. Верни рецепт для каждого блюда из списка, укажи его точный menuId. Количество ингредиентов должно быть числом, unit — г, кг, мл, л или шт. Не используй диапазоны и текст вместо числа. Все количества указывай СТРОГО на всё указанное число гостей, а не на 100 порций и не на условную большую компанию. Для общего праздничного стола учитывай, что гости пробуют несколько блюд: суммарно по всем блюдам ориентир сырьевых продуктов обычно 700–1200 г на взрослого гостя (включая горячее, гарнир, салаты, закуски и десерт), для очень обильного стола не превышай примерно 1600 г на гостя без особой причины. Не рассчитывай полную порцию каждого салата/закуски на каждого гостя. Разделяй общую потребность между всеми блюдами: чем больше блюд одной категории, тем меньше доля каждого. Для хлеба/булочек указывай реальные штуки на весь стол, а не порции на каждого к каждому блюду. Не используй нормы на 100 человек. Для горячего, гарнира, салатов, закусок, десертов и напитков учитывай их категорию. Для детей ориентируйся на более небольшие порции и неострые варианты. Не добавляй ингредиенты, которых нет в рецепте, но включай все необходимые для приготовления. Учитывай пищевые ограничения из пожеланий мероприятия. Все количества укажи на указанное число гостей. Инструкции короткие и понятные.'},
+   {role:'user',content:'Мероприятие: '+e.name+' ('+e.type+'). Гости: '+adults+' взрослых и '+children+' детей. Для расчёта используй взрослые единицы '+guestUnits+'. Пожелания к меню: '+String(e.menuWishes||'не указаны')+'. Все блюда меню: '+JSON.stringify(menuContext)+'. Подготовь рецептуры только для блюд: '+JSON.stringify(missing.map(x=>({id:x.id,name:x.name,category:x.category})))+'. Верни полный список ингредиентов для приготовления каждого блюда и краткие шаги.'}
+  ]};
+  const result=await callAI(payload),data=JSON.parse(cleanJson(result.content));
+  addChefEventUsage(e,result.usage,'recipes');
+  if(!Array.isArray(data.recipes))throw new Error('ИИ не вернул список рецептур. Повтори расчёт.');
+  const previousRecipes=new Map(menu.map(d=>[d.id,d.recipe]));
+  let saved=0;
+  data.recipes.forEach(r=>{
+   const dish=menu.find(x=>x.id===String(r.menuId));
+   if(!dish||!Array.isArray(r.ingredients))return;
+   const ingredients=r.ingredients.map(x=>({name:String(x.name||'').trim(),amount:Number(x.amount),unit:String(x.unit||'г')})).filter(x=>x.name&&Number.isFinite(x.amount)&&x.amount>=0);
+   if(!ingredients.length)return;
+   dish.recipe={version:1,baseAdults:adults,baseChildren:children,baseGuestUnits:guestUnits,ingredients,steps:Array.isArray(r.steps)?r.steps.map(String).slice(0,20):[],notes:Array.isArray(r.notes)?r.notes.map(String).slice(0,10):[],createdAt:new Date().toISOString()};
+   saved++;
+  });
+  if(!saved)throw new Error('Не удалось сохранить рецептуры. Проверьте ответ и повторите запрос.');
+  const quality=chefEventRecipeValidation(menu,guestUnits);if(!quality.ok){menu.forEach(dish=>{dish.recipe=previousRecipes.get(dish.id);});if(out)out.textContent=quality.message;toast('Слишком большой расчёт. Рецептуры не сохранены.','error');return;}
+  e.recipeBaseGuestUnits=guestUnits;e.recipeBaseAdults=adults;e.recipeBaseChildren=children;e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);toast('Сохранено рецептур: '+saved+'. Ориентир: '+Math.round(quality.perGuest)+' г/мл на гостя.');
+ }catch(err){if(out)out.textContent=err.message||'Не удалось рассчитать рецептуры.';toast(err.message||'Не удалось рассчитать рецептуры.','error');}
+ finally{isBusy=false;if(btn&&btn.isConnected){btn.disabled=false;btn.textContent='Рассчитать рецепты и продукты';}}
+}
+
+async function addCustomChefEventDish(id){
+ const e=chefEventById(id),field=$('ev-custom-dish'),name=field?.value.trim();if(!e||!name||isBusy){if(!name)toast('Напишите название блюда.','error');return;}
+ const btn=$('ev-add-custom-dish');isBusy=true;if(btn){btn.disabled=true;btn.textContent='Готовлю рецепт…';}
+ try{
+  const guests=Math.max(1,(Number(e.plannedAdults)||0)+(Number(e.plannedChildren)||0)*.65);
+  const prompt='Составь полный домашний рецепт именно этого блюда для праздничного стола: '+name+'. Рассчитай ингредиенты на '+guests+' эквивалентных гостей с учётом общего меню: '+JSON.stringify((e.menu||[]).map(x=>x.name))+'. Верни только JSON {"name":"...","category":"...","ingredients":[{"name":"...","amount":100,"unit":"г"}],"steps":["подробный пошаговый способ приготовления"],"notes":["важные советы"]}. Количества — числа, единицы г/кг/мл/л/шт. Шаги должны содержать температуру/время/готовность там, где это важно. Для мангала или казана дай подходящий способ и меры безопасности. Не пропускай маринад, специи и технологические ингредиенты.';
+  const r=await callAI({model:'openai/gpt-oss-120b',messages:[{role:'system',content:'Ты профессиональный повар-технолог. Верни только корректный JSON с полноценным рецептом.'},{role:'user',content:prompt}],temperature:.2,max_tokens:2200,response_format:{type:'json_object'}});
+  addChefEventUsage(e,r.usage,'custom_dish');const d=JSON.parse(cleanJson(r.content));if(!Array.isArray(d.ingredients)||!d.ingredients.length||!Array.isArray(d.steps)||!d.steps.length)throw new Error('ИИ вернул неполный рецепт. Повтори запрос.');
+  e.menu=e.menu||[];e.menu.push({id:'m_'+Date.now(),name:String(d.name||name),category:String(d.category||'Горячее'),recipe:{version:1,baseGuestUnits:guests,ingredients:d.ingredients.filter(x=>x&&x.name&&Number(x.amount)>0).map(x=>({name:String(x.name),amount:Number(x.amount),unit:String(x.unit||'г')})),steps:d.steps.map(String).slice(0,24),notes:Array.isArray(d.notes)?d.notes.map(String).slice(0,10):[],createdAt:new Date().toISOString()}});
+  e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);toast('Блюдо и его рецепт добавлены в праздничное меню.');
+ }catch(err){toast(err.message||'Не удалось создать рецепт.','error');}finally{isBusy=false;if(btn&&btn.isConnected){btn.disabled=false;btn.textContent='Сгенерировать и добавить блюдо';}}
+}
+async function replaceChefEventDish(id,dishId){
+ const e=chefEventById(id),dish=e?.menu?.find(x=>x.id===dishId);if(!e||!dish||isBusy)return;
+ const answer=prompt('На какое блюдо заменить «'+dish.name+'»? Например: мясо в казане');if(!answer?.trim())return;
+ isBusy=true;
+ try{
+  const guests=Math.max(1,(Number(e.plannedAdults)||0)+(Number(e.plannedChildren)||0)*.65);
+  const promptText='Замени блюдо «'+dish.name+'» на «'+answer.trim()+'» в праздничном меню '+e.name+'. Остальные блюда: '+JSON.stringify(e.menu.filter(x=>x.id!==dishId).map(x=>x.name))+'. Гостей: '+guests+'. Верни только JSON {"name":"...","category":"...","ingredients":[{"name":"...","amount":100,"unit":"г"}],"steps":["пошаговый способ приготовления"],"notes":[]}. Дай полноценный рецепт и количества на указанное число гостей.';
+  const r=await callAI({model:'openai/gpt-oss-120b',messages:[{role:'system',content:'Ты профессиональный повар-технолог. Верни только корректный JSON рецепта.'},{role:'user',content:promptText}],temperature:.2,max_tokens:2200,response_format:{type:'json_object'}});
+  addChefEventUsage(e,r.usage,'replace_dish');const d=JSON.parse(cleanJson(r.content));if(!Array.isArray(d.ingredients)||!d.ingredients.length||!Array.isArray(d.steps)||!d.steps.length)throw new Error('ИИ вернул неполный рецепт замены.');
+  dish.name=String(d.name||answer.trim());dish.category=String(d.category||dish.category||'Горячее');dish.recipe={version:1,baseGuestUnits:guests,ingredients:d.ingredients.filter(x=>x&&x.name&&Number(x.amount)>0).map(x=>({name:String(x.name),amount:Number(x.amount),unit:String(x.unit||'г')})),steps:d.steps.map(String).slice(0,24),notes:Array.isArray(d.notes)?d.notes.map(String).slice(0,10):[],createdAt:new Date().toISOString()};e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);toast('Блюдо заменено, новый рецепт добавлен.');
+ }catch(err){toast(err.message||'Не удалось заменить блюдо.','error');}finally{isBusy=false;}
+}
+async function suggestChefEventMenu(id){
+ const e=chefEventById(id);if(!e||isBusy)return;
+ const adults=Math.max(0,Number(e.plannedAdults)||0),children=Math.max(0,Number(e.plannedChildren)||0),total=adults+children;
+ if(total<1){toast('Сначала укажите количество взрослых и детей.','error');return;}
+ const level=$('ev-menu-level').value,wishes=$('ev-menu-wishes').value.trim(),alcohol=$('ev-menu-alcohol').checked,btn=$('ev-ai-menu'),out=$('ev-menu-suggestions');
+ e.menuWishes=wishes;e.menuAlcohol=alcohol;e.menuLevel=level;
+ const levelText={economy:'ЭКОНОМНО: в основном недорогие, доступные в обычных магазинах продукты; курица, картофель, сезонные овощи, крупы, яйца, простые салаты. Не предлагай дорогую рыбу, морепродукты, редкие сыры и деликатесы.',standard:'ОБЫЧНЫЙ ПРАЗДНИЧНЫЙ СТОЛ: сочетай знакомые доступные блюда с 2–3 более интересными позициями. Обязательно рассмотри картофель, курицу, котлеты или мясное горячее, салаты вроде Оливье/Зимнего и Цезаря, простые закуски, фрукты и торт.',rich:'БОГАТЫЙ ПРАЗДНИЧНЫЙ СТОЛ: разнообразное меню с привычной основой (картофель, курица/мясо, знакомые салаты, закуски) и несколькими премиальными позициями по желанию. Дорогие продукты предлагай как варианты, а не обязательную основу.'};
+ isBusy=true;btn.disabled=true;btn.textContent='Подбираю меню…';out.innerHTML='<p class="muted">Составляю меню одним запросом…</p>';
+ try{
+  const system='Ты профессиональный шеф-повар и организатор домашних праздников. Составь понятное, реалистичное меню из продуктов, которые обычно можно найти в обычных супермаркетах. По умолчанию предпочитай доступные и знакомые блюда, не делай лосось, морепродукты, дорогие сыры, экзотические продукты и деликатесы обязательными. Верни только JSON: {"items":[{"category":"Салаты","name":"Оливье","description":"Коротко почему подходит"}],"notes":["краткий совет"]}. Дай 9–12 позиций: 2–3 салата (включая знакомый классический и при уместности Цезарь), 3–4 закуски, 1–2 горячих блюда, гарнир, фрукты/десерт и безалкогольные напитки. Для детского праздника добавь простые детские варианты, не делай меню слишком острым. Не дублируй блюда. Учитывай число взрослых и детей. Алкоголь предлагай только если пользователь включил соответствующий переключатель, отдельной необязательной категорией. Не указывай цены и не выдумывай количество продуктов. Пиши по-русски, конкретно, без длинных объяснений.';
+  const user='Событие: '+e.type+'; название: '+e.name+'. Регион: '+(e.region||'не указан')+'. Гости: '+adults+' взрослых и '+children+' детей, всего '+total+'. Уровень стола: '+levelText[level]+'. Пожелания: '+(wishes||'нет')+'. Алкоголь: '+(alcohol?'можно предложить как необязательный вариант':'не предлагать')+'. Составь сбалансированное меню для этого праздника.';
+  const result=await callAI({model:'openai/gpt-oss-120b',messages:[{role:'system',content:system},{role:'user',content:user}],temperature:.3,max_tokens:1500,response_format:{type:'json_object'}});
+  addChefEventUsage(e,result.usage,'menu');
+  const data=JSON.parse(cleanJson(result.content));if(!data||!Array.isArray(data.items)||!data.items.length)throw new Error('Не удалось составить меню. Попробуйте ещё раз.');
+  e.menuSuggestions=data.items.filter(x=>x&&typeof x.name==='string'&&x.name.trim()).slice(0,14).map(x=>({category:String(x.category||'Другое'),name:x.name.trim(),description:String(x.description||'')}));e.menuNotes=Array.isArray(data.notes)?data.notes.map(String).slice(0,5):[];e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);
+ }catch(err){out.textContent=err.message||'Не удалось подобрать меню. Попробуйте ещё раз.';}finally{isBusy=false;if(btn&&btn.isConnected){btn.disabled=false;btn.textContent='Подобрать меню';}}
+}
+function openChefMode(mode){chefMode=mode==='specific'?'specific':'pantry';$('chef-chooser').classList.add('hidden');$('chef-workspace').classList.remove('hidden');renderChefMode();restoreChefDraft();window.scrollTo({top:0,behavior:'smooth'});}
+function closeChefMode(){saveChefDraft();$('chef-workspace').classList.add('hidden');$('chef-chooser').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}
+
+const CHEF_DRAFT_SUFFIX='_chef_form_draft_v1';
+let chefDraftSaveTimer=null;
+function chefDraftStorageKey(){const ws=$('chef-event-workspace');const scope=ws&&!ws.classList.contains('hidden')&&activeChefEventId?'_'+activeChefEventId:'_general';return APP_KEY+CHEF_DRAFT_SUFFIX+scope;}
+function saveChefDraft(){
+ try{
+  const fields={};
+  document.querySelectorAll('#page-chef input[id],#page-chef textarea[id],#page-chef select[id],#page-chef-events input[id],#page-chef-events textarea[id],#page-chef-events select[id]').forEach(el=>{
+   if(!/^(chef-|event-|ev-)/.test(el.id))return;
+   fields[el.id]=el.type==='checkbox'?el.checked:el.value;
+  });
+  localStorage.setItem(chefDraftStorageKey(),JSON.stringify({savedAt:Date.now(),fields}));
+  const status=$('chef-draft-status');if(status)status.textContent='Черновик сохранён на этом устройстве';
+ }catch(e){console.warn('Chef draft save failed',e);}
+}
+function scheduleChefDraftSave(){clearTimeout(chefDraftSaveTimer);chefDraftSaveTimer=setTimeout(saveChefDraft,180);}
+function restoreChefDraft(){
+ try{
+  const data=JSON.parse(localStorage.getItem(chefDraftStorageKey())||'null');if(!data?.fields)return;
+  Object.entries(data.fields).forEach(([id,value])=>{const el=$(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else el.value=String(value??'');});
+  const total=$('ev-guest-total');if(total&&$('ev-adults')&&$('ev-children'))total.textContent='Всего: '+(Math.max(0,Number($('ev-adults').value)||0)+Math.max(0,Number($('ev-children').value)||0))+' человек';
+ }catch(e){console.warn('Chef draft restore failed',e);}
+}
+document.addEventListener('input',e=>{if(e.target.closest('#page-chef,#page-chef-events'))scheduleChefDraftSave();},true);
+document.addEventListener('change',e=>{if(e.target.closest('#page-chef,#page-chef-events'))scheduleChefDraftSave();},true);
+window.addEventListener('pagehide',saveChefDraft);
+
+function renderChefMode(){ $('chef-pantry').classList.toggle('hidden',chefMode!=='pantry');$('chef-specific').classList.toggle('hidden',chefMode!=='specific');}
+function loadData(){try{const d=JSON.parse(localStorage.getItem(APP_KEY)||'null');if(d&&(d.version===2||d.version===3||d.version===4||d.version===5||d.version===6)){appData.tasks=Array.isArray(d.tasks)?d.tasks:[];appData.history=Array.isArray(d.history)?d.history:[];appData.favorites=Array.isArray(d.favorites)?d.favorites:[];appData.chefEvents=Array.isArray(d.chefEvents)?d.chefEvents:[];appData.kitchen=d.kitchen||appData.kitchen;appData.mechanicCases=Array.isArray(d.mechanicCases)?d.mechanicCases.map(x=>({...x,mode:x.mode==='quick'?'quick':'deep'})):[];appData.maintenance=d.maintenance&&typeof d.maintenance==='object'?{vehicle:d.maintenance.vehicle||{name:'',odometer:''},items:Array.isArray(d.maintenance.items)?d.maintenance.items:[]}:appData.maintenance;}}catch(e){console.warn(e)}try{const s=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');if(s)settings={...settings,...s};}catch(e){console.warn(e)}applySettings();renderHistory();}
+function saveData(){try{appData.version=6;localStorage.setItem(APP_KEY,JSON.stringify(appData));queueConversationSync();}catch(e){toast('Не удалось сохранить данные. Возможно, память браузера заполнена.','error');}}
 function applySettings(){const root=document.documentElement;let theme=settings.theme;if(theme==='system')theme=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';root.dataset.theme=theme==='dark'?'dark':theme==='light'?'light':'warm';document.body.classList.toggle('compact',!!settings.compact);document.body.classList.toggle('no-anim',!settings.animations||settings.reduced);if($('general-warning'))$('general-warning').classList.toggle('hidden',!settings.warnings);Object.keys(settings).forEach(k=>{const el=$('set-'+k);if(el){if(el.type==='checkbox')el.checked=!!settings[k];else el.value=settings[k];}});}
 function updateSetting(key,value){settings[key]=value;localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));applySettings();if(key==='tap'&&value){prepareSvoeAudio();playTone('tap');}}
 function resetSettings(){if(settings.confirm&&!confirm('Вернуть настройки приложения к исходным?'))return;settings={theme:'warm',compact:false,animations:true,reduced:false,tap:false,start:false,done:false,error:false,volume:25,warnings:true,history:true,confirm:true};localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));applySettings();toast('Настройки восстановлены');}
 let svoeAudioContext=null;function prepareSvoeAudio(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;if(!svoeAudioContext)svoeAudioContext=new C({latencyHint:'interactive'});if(svoeAudioContext.state==='suspended')svoeAudioContext.resume();return svoeAudioContext;}catch(e){return null;}}function playTone(type){if(type==='tap'&&!settings.tap)return;if(type==='start'&&!settings.start)return;if(type==='done'&&!settings.done&&$('set-done')&&!$('set-done').checked)return;if(type==='error'&&!settings.error)return;const ctx=prepareSvoeAudio();if(!ctx)return;const vol=Math.max(0,Math.min(100,Number(settings.volume)||0))/100;if(!vol)return;try{const osc=ctx.createOscillator(),gain=ctx.createGain();const now=ctx.currentTime;const notes=type==='done'?[740,990]:type==='error'?[245,185]:type==='start'?[520,660]:[520];osc.type='sine';osc.frequency.setValueAtTime(notes[0],now);if(notes[1])osc.frequency.setValueAtTime(notes[1],now+.075);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(Math.min(.22,vol*.22),now+.008);gain.gain.exponentialRampToValueAtTime(.0001,now+(type==='done'?.27:type==='start'?.15:.085));osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+(type==='done'?.28:type==='start'?.16:.095));}catch(e){}}document.addEventListener('pointerdown',e=>{if(!settings.tap||!e.target.closest('button'))return;prepareSvoeAudio();playTone('tap');},{capture:true,passive:true});document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('button')&&settings.tap)playTone('tap');},true);
-function toast(message,type='success'){const old=$('toast');if(old)old.remove();const el=document.createElement('div');el.id='toast';el.className='status '+(type==='error'?'error':'success');el.textContent=message;el.style.cssText='position:fixed;z-index:99;left:16px;right:16px;bottom:90px;max-width:680px;margin:auto;box-shadow:var(--shadow)';document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+function toast(message,type='success'){const old=$('toast');if(old)old.remove();const el=document.createElement('div');el.id='toast';el.className='status '+(type==='error'?'error':'success');el.setAttribute('role',type==='error'?'alert':'status');el.setAttribute('aria-live',type==='error'?'assertive':'polite');el.textContent=(type==='error'?'⚠️ ':'✓ ')+message;el.style.cssText='position:fixed;z-index:9999;left:16px;right:16px;bottom:calc(90px + env(safe-area-inset-bottom));max-width:680px;margin:auto;';document.body.appendChild(el);const timer=setTimeout(()=>{if(el.isConnected)el.remove();},type==='error'?6000:4000);el.addEventListener('click',()=>{clearTimeout(timer);el.remove();},{once:true});}
 function friendlyError(err,response){const status=response?.status||0;const raw=String(err?.message||err||'');if(!navigator.onLine)return 'Нет подключения к интернету. Проверьте соединение и попробуйте ещё раз.';if(status===429||/rate_limit|too many requests|quota/i.test(raw))return 'Временно достигнут лимит запросов к ИИ. Подождите немного и попробуйте снова.';if(status===401||status===403)return 'Сервис ИИ отклонил запрос. Возможно, возникла проблема с доступом. Сообщите разработчику.';if(status>=500)return 'Сервис ИИ временно недоступен. Попробуйте повторить запрос немного позже.';if(/failed to generate json|failed_generation|json/i.test(raw))return 'ИИ не смог оформить ответ правильно. Попробуйте ещё раз или немного измените описание задачи.';if(/failed to fetch|networkerror|load failed/i.test(raw))return 'Не удалось связаться с сервером. Проверьте интернет и попробуйте снова.';if(/empty|пустой ответ/i.test(raw))return 'ИИ прислал пустой ответ. Попробуйте повторить запрос.';return 'Не удалось получить ответ от ИИ. Попробуйте ещё раз. Если ошибка повторится, сообщите разработчику.';}
 function cleanJson(text){return String(text||'').trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'');}
 async function callAI(payload){
  if(!authToken)throw new Error('Сначала войдите в аккаунт.');
- let response;
- try{
-  response=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},body:JSON.stringify(payload)});
- }catch(e){throw new Error(friendlyError(e));}
- let data;
- try{data=await response.json();}catch(e){throw new Error(friendlyError(new Error('empty response'),response));}
- if(response.status===401){
-  authToken='';currentUser=null;
-  localStorage.removeItem('ai_bragina_token');localStorage.removeItem('ai_bragina_user');
-  $('auth-screen').classList.remove('hidden');
-  throw new Error('Сессия завершена. Войдите в аккаунт снова.');
- }
+ let response;try{response=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},body:JSON.stringify(payload)});}catch(e){throw new Error(friendlyError(e));}
+ let data;try{data=await response.json();}catch(e){throw new Error(friendlyError(new Error('empty response'),response));}
+ if(response.status===401){authToken='';currentUser=null;localStorage.removeItem('ai_bragina_token');localStorage.removeItem('ai_bragina_user');$('auth-screen').classList.remove('hidden');throw new Error('Сессия завершена. Войдите в аккаунт снова.');}
  if(!response.ok){const er=new Error(data?.error?.message||data?.error||'request failed');er.status=response.status;throw new Error(friendlyError(er,response));}
- const content=data?.choices?.[0]?.message?.content;
- if(!content)throw new Error('ИИ прислал пустой ответ. Попробуйте повторить запрос.');
+ const content=data?.choices?.[0]?.message?.content;if(!content)throw new Error('ИИ прислал пустой ответ. Попробуйте повторить запрос.');
+ if(data.usage&&typeof appData!=='undefined'&&appData){if(!appData.aiUsage)appData.aiUsage={requests:0,prompt_tokens:0,completion_tokens:0,total_tokens:0,history:[]};const u=data.usage,entry={at:new Date().toISOString(),page:document.body.dataset.page||'unknown',model:String(payload.model||'ИИ-помощник'),prompt_tokens:Number(u.prompt_tokens)||0,completion_tokens:Number(u.completion_tokens)||0,total_tokens:Number(u.total_tokens)||0};appData.aiUsage.requests++;appData.aiUsage.prompt_tokens+=entry.prompt_tokens;appData.aiUsage.completion_tokens+=entry.completion_tokens;appData.aiUsage.total_tokens+=entry.total_tokens;appData.aiUsage.history.unshift(entry);appData.aiUsage.history=appData.aiUsage.history.slice(0,200);saveData();renderTokenDashboard();try{await fetch(WORKER_URL+'/usage',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},body:JSON.stringify({usage:u,model:payload.model,page:document.body.dataset.page||'unknown'})});}catch(err){console.warn('Не удалось синхронизировать статистику токенов',err);}}
  return {content,usage:data.usage||null};
 }
+async function renderTokenDashboard(){try{const response=await fetch(WORKER_URL+'/usage',{headers:{'Authorization':'Bearer '+authToken}});if(response.ok){const data=await response.json();if(data.usage)appData.aiUsage=data.usage;}}catch(err){console.warn('Не удалось загрузить статистику токенов',err);}const u=appData?.aiUsage||{requests:0,prompt_tokens:0,completion_tokens:0,total_tokens:0,history:[]},owner=currentUser?.role==='owner',balance=$('token-balance'),stats=$('token-stats');if(balance)balance.innerHTML=owner?'<strong>∞</strong><span>Неограниченный баланс владельца</span>':'<strong>Баланс не назначен</strong><span>Расход учитывается по фактическим данным провайдера</span>';if(stats)stats.innerHTML='<div><strong>'+Number(u.total_tokens||0).toLocaleString('ru-RU')+'</strong><small>Всего токенов</small></div><div><strong>'+Number(u.requests||0).toLocaleString('ru-RU')+'</strong><small>ИИ-запросов</small></div><div><strong>'+Number(u.prompt_tokens||0).toLocaleString('ru-RU')+'</strong><small>Входящих</small></div><div><strong>'+Number(u.completion_tokens||0).toLocaleString('ru-RU')+'</strong><small>Исходящих</small></div>';if($('token-history')&&!$('token-history').classList.contains('hidden'))renderTokenHistory();}
+function renderTokenHistory(){const box=$('token-history');if(!box)return;box.innerHTML='';const list=appData?.aiUsage?.history||[];if(!list.length){box.textContent='Пока нет зарегистрированных ИИ-запросов.';return;}list.forEach(x=>{const row=document.createElement('div');row.className='token-history-row';const left=document.createElement('span'),right=document.createElement('strong');left.textContent=new Date(x.created_at||x.at).toLocaleString('ru-RU')+' · '+x.page+' · '+(x.provider_model||x.model);right.textContent=Number(x.total_tokens||0).toLocaleString('ru-RU')+' ток.';row.append(left,right);box.append(row);});}
+function toggleTokenHistory(){const box=$('token-history');if(!box)return;box.classList.toggle('hidden');if(!box.classList.contains('hidden'))renderTokenHistory();}
+
 function tokenText(u){if(!u)return 'Статистика токенов не пришла от сервера.';return `Вход: ${u.prompt_tokens??'—'} · Выход: ${u.completion_tokens??'—'} · Всего: ${u.total_tokens??'—'} токенов`;}
 function addCaseUsage(c,u){if(!c.usage)c.usage={prompt_tokens:0,completion_tokens:0,total_tokens:0,requests:0};if(u){c.usage.prompt_tokens+=Number(u.prompt_tokens)||0;c.usage.completion_tokens+=Number(u.completion_tokens)||0;c.usage.total_tokens+=Number(u.total_tokens)||0;c.usage.requests++;}c.updatedAt=new Date().toISOString();saveData();}
 function caseUsageMarkup(c,last){return `<div class="token-box"><strong>Расход ИИ</strong><br>Этот запрос: ${escapeHTML(tokenText(last))}<br>По этой неисправности: ${c.usage?.total_tokens??0} токенов · запросов: ${c.usage?.requests??0}</div>`;}
 function escapeHTML(v){return String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
 function parseList(v){return String(v||'').split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean);}
+function chatDisplayText(value){if(value===null||value===undefined)return '';if(typeof value==='string'){const raw=value.trim();if(!raw||raw==='[object Object]')return 'Сообщение не удалось отобразить';if((raw[0]==='{'&&raw.endsWith('}'))||(raw[0]==='['&&raw.endsWith(']'))){try{return chatDisplayText(JSON.parse(raw));}catch(e){}}return raw;}if(Array.isArray(value))return value.map(chatDisplayText).filter(Boolean).join('\n');if(typeof value==='object'){for(const key of ['body','text','content','message','caption'])if(value[key]!==undefined&&value[key]!==value)return chatDisplayText(value[key]);try{return JSON.stringify(value);}catch(e){return 'Сообщение не удалось отобразить';}}return String(value);}
 function makeChefPrompts(regen){let inputs;if(chefMode==='specific'){inputs={mode:'specific',dish:$('chef-dish').value.trim(),servings:$('chef-servings2').value,wishes:$('chef-wishes2').value.trim()};if(!inputs.dish)throw new Error('Напишите название блюда.');}else{inputs={mode:'pantry',main:parseList($('chef-products').value),extras:parseList($('chef-extras').value),basics:$('chef-use-staples')?.checked?(appData.kitchen?.staples||['соль','чёрный перец','сахар','растительное масло']).filter(x=>!['вода','воду'].includes(norm(x))):[],meal:$('chef-type').value,servings:$('chef-servings').value,wishes:$('chef-wishes').value.trim()};if(!inputs.main.length)throw new Error('Укажите хотя бы один основной продукт.');const unsafe=inputs.main.concat(inputs.extras).some(x=>/(кошка|кошк|кот|собака|собак|пёс|пес|щенок|котёнок|котенок|питомец|животн)/i.test(x));if(unsafe)throw new Error('В списке указано домашнее животное. ИИ-Шеф работает только с пищевыми продуктами. Удалите эту позицию и укажите продукты, которые можно использовать для приготовления.');}
-const old=variantTitles.slice(-5).join('; ')||'Нет';let system,user;if(inputs.mode==='pantry'){system=`Ты профессиональный шеф-повар. Составь простой, полноценный рецепт из основных и дополнительных продуктов пользователя. СТРОГО: массив ingredients содержит только продукты из основных и дополнительных списков. Не добавляй туда домашние базовые продукты. Отдельные домашние продукты из списка BASIC допускается предложить только в массиве optional_staples и использовать в шагах как необязательные добавки. Они не должны быть обязательными: рецепт должен оставаться выполнимым, если человек их не положит. Не добавляй никакие другие продукты, даже если они кажутся обычными. Не заменяй один продукт другим. Если рецепт невозможен, честно объясни это в result. Верни валидный JSON с полями title, servings, difficulty, time, ingredients (массив объектов name/amount), optional_staples (массив объектов name/amount), steps (массив строк), result, tips (массив), improvements (массив). Дай не менее 3 подробных шагов, если рецепт возможен. Пиши по-русски.`;user=`ОСНОВНЫЕ ПРОДУКТЫ ПОЛЬЗОВАТЕЛЯ: ${inputs.main.join(', ')}. ДОПОЛНИТЕЛЬНЫЕ ПРОДУКТЫ: ${inputs.extras.join(', ')||'нет'}. РАЗРЕШЁННЫЕ ДЛЯ НЕОБЯЗАТЕЛЬНОГО ИСПОЛЬЗОВАНИЯ ДОМАШНИЕ БАЗОВЫЕ ПРОДУКТЫ (только если уместны, обязательно укажи отдельно): ${inputs.basics.join(', ')||'не использовать'}. Тип блюда: ${inputs.meal}. Порции: ${inputs.servings}. Пожелания: ${inputs.wishes||'нет'}. Предыдущие варианты, не повторять: ${old}. Составь рецепт: основные и дополнительные продукты — обязательная основа, домашние базовые продукты — только необязательное дополнение. Если человек их не добавит, рецепт всё равно должен быть понятным и выполнимым.`;}else{system=`Ты профессиональный шеф-повар. Составь качественный и реалистичный рецепт указанного блюда. Пользователь может купить ингредиенты. Укажи точные количества, время, температуру и признаки готовности. Соблюдай пищевую безопасность, особенно для мяса и птицы. Сохрани именно указанное блюдо. Не повторяй предыдущие варианты. Верни только JSON с полями title, servings, difficulty, time, ingredients (массив объектов name/amount), steps (массив строк), result, tips (массив), shopping_list (массив). Пиши по-русски.`;user=`Блюдо: ${inputs.dish}. Порции: ${inputs.servings}. Пожелания: ${inputs.wishes||'нет'}. Предыдущие варианты: ${old}. Создай рецепт.`;}return {inputs,system,user};}
+const old=variantTitles.slice(-5).join('; ')||'Нет';let system,user;if(inputs.mode==='pantry'){system=`Ты профессиональный шеф-повар. Составь простой, полноценный рецепт из основных и дополнительных продуктов пользователя. СТРОГО: массив ingredients содержит только продукты из основных и дополнительных списков. Не добавляй туда домашние базовые продукты. Отдельные домашние продукты из списка BASIC допускается предложить только в массиве optional_staples и использовать в шагах как необязательные добавки. Они не должны быть обязательными: рецепт должен оставаться выполнимым, если человек их не положит. Не добавляй никакие другие продукты, даже если они кажутся обычными. Не заменяй один продукт другим. Если рецепт невозможен, честно объясни это в result. Верни валидный JSON с полями title, servings, difficulty, time, ingredients (массив объектов name/amount), optional_staples (массив объектов name/amount), steps (массив строк), result, tips (массив), improvements (массив). Дай не менее 3 подробных шагов, если рецепт возможен. Пиши по-русски.`;user=`ОСНОВНЫЕ ПРОДУКТЫ ПОЛЬЗОВАТЕЛЯ: ${inputs.main.join(', ')}. ДОПОЛНИТЕЛЬНЫЕ ПРОДУКТЫ: ${inputs.extras.join(', ')||'нет'}. РАЗРЕШЁННЫЕ ДЛЯ НЕОБЯЗАТЕЛЬНОГО ИСПОЛЬЗОВАНИЯ ДОМАШНИЕ БАЗОВЫЕ ПРОДУКТЫ (только если уместны, обязательно укажи отдельно): ${inputs.basics.join(', ')||'не использовать'}. Тип блюда: ${inputs.meal}. Порции: ${inputs.servings}. Пожелания: ${inputs.wishes||'нет'}. Предыдущие варианты, не повторять: ${old}. Составь рецепт: основные и дополнительные продукты — обязательная основа, домашние базовые продукты — только необязательное дополнение. Если человек их не добавит, рецепт всё равно должен быть понятным и выполнимым.`;}else{system=`Ты профессиональный универсальный шеф-повар. Составь качественный, реалистичный и технологически правильный рецепт указанного блюда. Пользователь может купить ингредиенты. Укажи точные количества, время, температуру и признаки готовности. Соблюдай пищевую безопасность, особенно для мяса и птицы. Если пользователь указал способ или оборудование (тандыр, казан, духовка, мангал, гриль, плита и т. п.), обязательно соблюдай его. Если способ не указан, самостоятельно выбери наиболее подходящий и объясни выбор в начале или в tips. Учитывай точное число порций; не используй диапазоны вместо заданного числа. Сохрани именно указанное блюдо. Не повторяй предыдущие варианты. Верни только JSON с полями title, servings, difficulty, time, ingredients (массив объектов name/amount), steps (массив строк), result, tips (массив), shopping_list (массив). Пиши по-русски.`;user=`Блюдо: ${inputs.dish}. Порции: ${inputs.servings}. Пожелания: ${inputs.wishes||'нет'}. Предыдущие варианты: ${old}. Создай рецепт.`;}return {inputs,system,user};}
 async function generateChef(regen=false){if(isBusy)return;let p;try{p=makeChefPrompts(regen);}catch(e){toast(e.message,'error');return;}if(!regen)variantTitles=[];isBusy=true;playTone('start');const btn=$(chefMode==='pantry'?'chef-generate':'chef-generate2');btn.disabled=true;btn.textContent='ИИ готовит ответ…';$('chef-result').classList.remove('hidden');$('chef-output').innerHTML='<div class="loader"><span class="spinner"></span><span class="muted">ИИ-Шеф подбирает рецепт. Это может занять несколько секунд.</span></div>';
 try{
  let result=null,recipe=null,lastProblem='';
- const attempts=p.inputs.mode==='pantry'?2:1;
+ const attempts=1;
  for(let attempt=0;attempt<attempts;attempt++){
-  const correction=attempt===0?'':('\n\nИСПРАВЛЕНИЕ ПРЕДЫДУЩЕГО ОТВЕТА: '+lastProblem+'. Сгенерируй рецепт заново. В ingredients разрешены только основные и дополнительные продукты: '+[...p.inputs.main,...p.inputs.extras].join(', ')+'. Домашние продукты '+(p.inputs.basics||[]).join(', ')+' можно указать только в optional_staples и использовать необязательно. Верни полный JSON.');
+  const correction=attempt===0?'':(p.inputs.mode==='pantry'?'\n\nИСПРАВЛЕНИЕ ПРЕДЫДУЩЕГО ОТВЕТА: '+lastProblem+'. Сгенерируй рецепт заново. В ingredients разрешены только основные и дополнительные продукты: '+[...p.inputs.main,...p.inputs.extras].join(', ')+'. Домашние продукты '+(p.inputs.basics||[]).join(', ')+' можно указать только в optional_staples и использовать необязательно. Верни полный JSON.':'\n\nПОВТОРНАЯ ПОПЫТКА: предыдущий ответ был неполным или не соответствовал JSON. Составь рецепт именно блюда «'+p.inputs.dish+'». Верни только корректный JSON-объект с полями title (строка), servings, difficulty, time, ingredients (непустой массив объектов name/amount), steps (непустой массив строк), result, tips (массив), shopping_list (массив). Не добавляй пояснений вне JSON.');
   result=await callAI({model:'openai/gpt-oss-120b',messages:[{role:'system',content:p.system},{role:'user',content:p.user+correction}],temperature:p.inputs.mode==='pantry'?.25:.45,max_tokens:2600,response_format:{type:'json_object'}});
   try{recipe=JSON.parse(cleanJson(result.content));}catch(e){lastProblem='ответ не является корректным полным JSON';recipe=null;}
-  if(!recipe||typeof recipe.title!=='string'||!Array.isArray(recipe.ingredients)||!Array.isArray(recipe.steps)||!recipe.ingredients.length||!recipe.steps.length){lastProblem='ответ неполный: нужны название, список ингредиентов и шаги приготовления';recipe=null;if(attempt+1<attempts)continue;throw new Error('ИИ не смог составить полный рецепт даже после повторной попытки. Попробуйте ещё раз или добавьте продукты.');}
+  if(!recipe||typeof recipe.title!=='string'||!Array.isArray(recipe.ingredients)||!Array.isArray(recipe.steps)||!recipe.ingredients.length||!recipe.steps.length){lastProblem='ответ неполный: нужны название, список ингредиентов и шаги приготовления';recipe=null;if(attempt+1<attempts)continue;throw new Error('ИИ вернул неполный или неподходящий ответ. Проверьте пожелания и нажмите «Другой вариант», чтобы повторить запрос.');}
   if(p.inputs.mode==='pantry'){
    const allowed=[...p.inputs.main,...p.inputs.extras].map(norm).filter(Boolean);
    const bad=recipe.ingredients.filter(x=>!x||typeof x.name!=='string'||!allowed.includes(norm(x.name)));
