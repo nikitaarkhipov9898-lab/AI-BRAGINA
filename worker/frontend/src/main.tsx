@@ -121,6 +121,7 @@ function App() {
     return () => { void listener.then((l) => l.remove()); void hide.then((l) => l.remove()); };
   }, []);
   useEffect(() => connectSvoeRealtime(setRealtimeStatus), []);
+  useEffect(() => connectSvoeRealtime(setRealtimeStatus), []);
   useEffect(() => {
     if (!toast) return;
     const timer = window.setTimeout(() => setToast(""), 2500);
