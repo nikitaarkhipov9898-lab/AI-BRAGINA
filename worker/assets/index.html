@@ -950,15 +950,18 @@ function chefIngredientAmount(amount,unit){
 }
 function chefEventShoppingRows(e){
  const rows=new Map();
- const base=Math.max(.01,Number(e.recipeBaseGuestUnits)||chefEventGuestUnits(e)||1);
- const factor=chefEventGuestUnits(e)>0?chefEventGuestUnits(e)/base:1;
- (e.menu||[]).forEach(dish=>(dish.recipe?.ingredients||[]).forEach(item=>{
-  const unit=chefIngredientUnit(item.unit),amount=chefIngredientAmount(item.amount,item.unit);
-  if(amount===null)return;
-  const key=String(item.name||'').trim().toLocaleLowerCase('ru-RU')+'|'+unit;
-  if(!rows.has(key))rows.set(key,{key,name:String(item.name||'').trim(),unit,baseAmount:0,amount:0});
-  const row=rows.get(key);row.baseAmount+=amount;row.amount+=amount*factor;
- }));
+ const currentUnits=chefEventGuestUnits(e);
+ (e.menu||[]).forEach(dish=>{
+  const recipeBase=Math.max(.01,Number(dish.recipe?.baseGuestUnits)||currentUnits||1);
+  const factor=currentUnits>0?currentUnits/recipeBase:1;
+  (dish.recipe?.ingredients||[]).forEach(item=>{
+   const unit=chefIngredientUnit(item.unit),amount=chefIngredientAmount(item.amount,item.unit);
+   if(amount===null)return;
+   const key=String(item.name||'').trim().toLocaleLowerCase('ru-RU')+'|'+unit;
+   if(!rows.has(key))rows.set(key,{key,name:String(item.name||'').trim(),unit,baseAmount:0,amount:0});
+   const row=rows.get(key);row.baseAmount+=amount;row.amount+=amount*factor;
+  });
+ });
  return [...rows.values()].sort((a,b)=>a.name.localeCompare(b.name,'ru'));
 }
 function chefFormatAmount(value){
@@ -1028,6 +1031,7 @@ async function suggestChefEventMenu(id){
  const adults=Math.max(0,Number(e.plannedAdults)||0),children=Math.max(0,Number(e.plannedChildren)||0),total=adults+children;
  if(total<1){toast('Сначала укажите количество взрослых и детей.','error');return;}
  const level=$('ev-menu-level').value,wishes=$('ev-menu-wishes').value.trim(),alcohol=$('ev-menu-alcohol').checked,btn=$('ev-ai-menu'),out=$('ev-menu-suggestions');
+ e.menuWishes=wishes;e.menuAlcohol=alcohol;e.menuLevel=level;
  const levelText={economy:'ЭКОНОМНО: в основном недорогие, доступные в обычных магазинах продукты; курица, картофель, сезонные овощи, крупы, яйца, простые салаты. Не предлагай дорогую рыбу, морепродукты, редкие сыры и деликатесы.',standard:'ОБЫЧНЫЙ ПРАЗДНИЧНЫЙ СТОЛ: сочетай знакомые доступные блюда с 2–3 более интересными позициями. Обязательно рассмотри картофель, курицу, котлеты или мясное горячее, салаты вроде Оливье/Зимнего и Цезаря, простые закуски, фрукты и торт.',rich:'БОГАТЫЙ ПРАЗДНИЧНЫЙ СТОЛ: разнообразное меню с привычной основой (картофель, курица/мясо, знакомые салаты, закуски) и несколькими премиальными позициями по желанию. Дорогие продукты предлагай как варианты, а не обязательную основу.'};
  isBusy=true;btn.disabled=true;btn.textContent='Подбираю меню…';out.innerHTML='<p class="muted">Составляю меню одним запросом…</p>';
  try{
