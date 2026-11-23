@@ -216,3 +216,10 @@
 - **CI:** workflow `.github/workflows/frontend-check.yml` теперь выполняет TypeScript/Vite build, `node --check ../index.js` и проверяет наличие собранного `../assets/next/index.html`. Commit `fec9b8e` прошёл build и Worker syntax/asset checks. Более поздний commit с жестами должен пройти отдельную проверку прежде чем считаться verified.
 - **Ограничение деплоя:** Cloudflare preview comment пока указывает на commit `d72fbc9`; до получения deployment confirmation на актуальный HEAD ссылку нельзя выдавать за обновлённую.
 
+
+## 12. Последняя проверка
+
+- UI commit `42c8074` прошёл GitHub Actions run `45212575965`: `npm run build`, Worker syntax check и проверка собранного Worker asset bundle — все шаги успешны.
+- Проверка: https://github.com/nikitaarkhipov9898-lab/AI-BRAGINA/actions/runs/45212575965
+- Проверенный UI SHA: `42c807441a98997be8291c529704640fcf6df0bb`.
+- Это подтверждает компиляцию и упаковку, но не является E2E-проверкой браузера/Android и не подтверждает актуальный Cloudflare Preview deployment.
