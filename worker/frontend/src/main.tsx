@@ -32,11 +32,12 @@ function App(){
  const [chat,setChat]=useState("");
  const [sent,setSent]=useState<string[]>([]);
  const [toast,setToast]=useState("");
+ const [profile,setProfile]=useState(()=>{try{return JSON.parse(localStorage.getItem("soyuz_personal_dossier")||"{}")}catch{return {}}});
  const notify=(s:string)=>{setToast(s);window.setTimeout(()=>setToast(""),2400)};
  const go=(t:string)=>{setTab(t);setActive(null);window.scrollTo({top:0,behavior:"smooth"});};
  const openHelper=(h:Helper)=>{setActive(h);setChat("");setSent([]);};
  const visibleHelpers=helpers.filter(h=>(h.name+" "+h.role+" "+h.desc).toLowerCase().includes(query.toLowerCase()));
- const nav=[{id:"home",label:"ГЛАВНАЯ",icon:Home},{id:"helpers",label:"БЮРО",icon:Sparkles},{id:"community",label:"СООБЩЕСТВО",icon:Users},{id:"messages",label:"СВЯЗЬ",icon:MessageCircle},{id:"work",label:"ДЕЛА",icon:ClipboardList}];
+ const nav=[{id:"home",label:"ГЛАВНАЯ",icon:Home},{id:"helpers",label:"БЮРО",icon:Sparkles},{id:"community",label:"СООБЩЕСТВО",icon:Users},{id:"messages",label:"СВЯЗЬ",icon:MessageCircle},{id:"work",label:"ДЕЛА",icon:ClipboardList},{id:"profile",label:"ЛИЧНОЕ ДЕЛО",icon:UserRound}];
  const systemDate=new Date().toLocaleDateString("ru-RU",{day:"2-digit",month:"long",year:"numeric"}).toUpperCase();
  const send=()=>{if(!chat.trim())return;setSent(v=>[...v,chat.trim()]);setChat("");};
  return <div className="union-app">
@@ -45,7 +46,7 @@ function App(){
    <button className="seal" onClick={()=>go("home")} aria-label="На главную"><span className="seal-star">✦</span><span className="seal-orbit"/></button>
    <div className="brand-lockup"><div className="brand-name">СОЮЗ<span>®</span></div><div className="brand-sub">ЕДИНАЯ ЦИФРОВАЯ СИСТЕМА</div></div>
    <div className="header-center"><span className="live-dot"/> СИСТЕМА АКТИВНА <b>·</b> {systemDate}</div>
-   <div className="header-actions"><button className="round-icon" onClick={()=>notify("Новых оповещений пока нет")}><Bell size={18}/><i/></button><button className="profile-chip" onClick={()=>notify("Личный кабинет демонстрационный")}><span className="profile-avatar">Н</span><span>УЧАСТНИК</span></button></div>
+   <div className="header-actions"><button className="round-icon" onClick={()=>notify("Новых оповещений пока нет")}><Bell size={18}/><i/></button><button className="profile-chip" onClick={()=>go("profile")}><span className="profile-avatar">Н</span><span>УЧАСТНИК</span></button></div>
   </header>
   <div className="mobile-status"><span className="live-dot"/> СИСТЕМА АКТИВНА <span>·</span> {systemDate}</div>
   <div className="union-layout">
@@ -58,7 +59,7 @@ function App(){
     <button className="rail-link" onClick={()=>go("work")}><CalendarDays size={18}/><span>ПЛАНИРОВАНИЕ</span></button>
     <button className="rail-link" onClick={()=>notify("Архив подключим вместе с хранилищем файлов")}><Archive size={18}/><span>АРХИВ</span></button>
     <button className="rail-link" onClick={()=>notify("Сигналы системы появятся здесь")}><Bell size={18}/><span>СИГНАЛЫ</span></button>
-    <button className="rail-link" onClick={()=>notify("Параметры профиля подключим к учётной записи")}><UserRound size={18}/><span>ПРОФИЛЬ</span></button>
+    <button className={"rail-link "+(tab==="profile"?"selected":"")} onClick={()=>go("profile")}><UserRound size={18}/><span>ЛИЧНОЕ ДЕЛО</span></button>
     <button className="rail-link" onClick={()=>notify("Настройки системы готовятся")}><Settings size={18}/><span>ПАРАМЕТРЫ СИСТЕМЫ</span></button>
     <div className="rail-bottom"><div className="rail-stamp">С</div><div><b>СОЮЗ / 01</b><small>ВЕРСИЯ 0.1 · ПРЕДПРОСМОТР</small></div></div>
    </aside>
@@ -100,6 +101,7 @@ function App(){
       <div className="helper-grid catalog-grid">{visibleHelpers.map(h=><HelperCard key={h.id} h={h} onClick={()=>openHelper(h)}/>)}</div>
       <div className="catalog-foot"><ShieldCheck size={18}/> Состав бюро расширяется. Новые специалисты проходят проверку перед запуском.</div>
     </motion.div> :
+    tab==="profile" ? <motion.div key="profile" className="generic-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}><div className="eyebrow">УЧЁТНАЯ ЗАПИСЬ УЧАСТНИКА</div><h1>ЛИЧНОЕ ДЕЛО</h1><p className="lead">Ваша личная карточка в системе СОЮЗ.</p><div className="paper-panel dossier-panel"><div className="post-emblem">С</div><h2>Создать личное дело</h2><p>Заполните основные сведения. Пока данные сохраняются только в этом браузере на данном устройстве.</p><label className="dossier-field">Имя<input value={profile.firstName||""} onChange={e=>setProfile({...profile,firstName:e.target.value})} placeholder="Введите имя"/></label><label className="dossier-field">Фамилия<input value={profile.lastName||""} onChange={e=>setProfile({...profile,lastName:e.target.value})} placeholder="Введите фамилию"/></label><label className="dossier-field">Отображаемое имя<input value={profile.displayName||""} onChange={e=>setProfile({...profile,displayName:e.target.value})} placeholder="Как вас будут видеть участники"/></label><label className="dossier-field">О себе<textarea value={profile.about||""} onChange={e=>setProfile({...profile,about:e.target.value})} placeholder="Кратко расскажите о себе"/></label><button className="hero-button" onClick={()=>{localStorage.setItem("soyuz_personal_dossier",JSON.stringify(profile));notify("Личное дело сохранено на этом устройстве")}}>СОХРАНИТЬ ЛИЧНОЕ ДЕЛО <Check size={16}/></button><small className="demo-note">ЛОКАЛЬНОЕ СОХРАНЕНИЕ · РЕГИСТРАЦИЯ И СИНХРОНИЗАЦИЯ С СЕРВЕРОМ ЕЩЁ НЕ ПОДКЛЮЧЕНЫ</small></div></motion.div> :
     tab==="community" ? <motion.div key="community" className="generic-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}><div className="eyebrow">СООБЩЕСТВО СОЮЗА</div><h1>СООБЩЕСТВО</h1><p className="lead">Пространство людей, идей и полезных открытий.</p><div className="community-compose"><div className="profile-avatar">Н</div><input placeholder="Поделитесь новостью или идеей..."/><button onClick={()=>notify("Публикации появятся после подключения ленты")}><Plus size={18}/> СОЗДАТЬ</button></div><div className="feed-post"><div className="post-top"><div className="post-emblem">С</div><div><b>РЕДАКЦИЯ СОЮЗА</b><small>Центральная лента · 15 минут назад</small></div><span className="verified">✓</span></div><h3>Открываем новое цифровое пространство</h3><p>СОЮЗ объединяет инструменты для повседневных задач, общение и специализированных интеллектуальных помощников. Это только начало большого пути.</p><div className="post-image-graphic"><div className="post-sun"/><div className="post-graphic-text">БУДУЩЕЕ<br/>СОЗДАЁТСЯ<br/><b>ВМЕСТЕ</b></div><div className="post-graphic-star">✦</div></div><div className="post-actions"><button onClick={()=>notify("Отметка добавлена")}>♡ 128</button><button onClick={()=>notify("Комментарии скоро появятся")}>◯ 24 ОТВЕТА</button><button onClick={()=>notify("Ссылка скопирована")}>↗ ПОДЕЛИТЬСЯ</button></div></div></motion.div> :
     tab==="messages" ? <motion.div key="messages" className="generic-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}><div className="eyebrow">СИСТЕМА СВЯЗИ</div><h1>ЛИЧНЫЕ СООБЩЕНИЯ</h1><p className="lead">Личные диалоги, общие чаты, контакты, аудио- и видеосвязь.</p><div className="message-placeholder"><div className="signal-icon"><MessageCircle size={32}/></div><h2>КАНАЛ СВЯЗИ ГОТОВИТСЯ</h2><p>Здесь будут личные сообщения, общие чаты, контакты, аудио- и видеозвонки и обмен файлами. Подключение к действующей системе связи — отдельный этап.</p><button className="outline-btn" onClick={()=>notify("Раздел связи добавлен в список интересов")}>СЛЕДИТЬ ЗА ЗАПУСКОМ <Bell size={15}/></button></div></motion.div> :
     <motion.div key="work" className="generic-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}><div className="eyebrow">ПЛАНИРОВАНИЕ</div><h1>МОИ ДЕЛА</h1><p className="lead">Задачи, напоминания и рабочие процессы в одном месте.</p><div className="work-grid"><div className="work-card"><CalendarDays/><small>СЕГОДНЯ</small><h2>План дня</h2><p>Соберите важные дела в одном расписании.</p><button onClick={()=>notify("Планировщик будет подключён отдельным модулем")}>ОТКРЫТЬ <ArrowRight size={14}/></button></div><div className="work-card"><Package/><small>УЧЁТ И РЕСУРСЫ</small><h2>Рабочие инструменты</h2><p>Учёт, документы, списки и контроль процессов.</p><button onClick={()=>notify("Рабочие инструменты готовятся")}>ОТКРЫТЬ <ArrowRight size={14}/></button></div></div></motion.div>}
@@ -111,7 +113,7 @@ function App(){
     <div className="brief-help"><CircleHelp size={18}/><div><b>Нужна помощь?</b><small>Центр поддержки пользователей</small><button onClick={()=>notify("Центр поддержки будет подключён позже")}>ОТКРЫТЬ <ArrowRight size={12}/></button></div></div>
    </aside>
   </div>
-  <nav className="mobile-nav">{nav.map(n=><button key={n.id} className={tab===n.id&&!active?"active":""} onClick={()=>go(n.id)}><n.icon size={19}/><span>{n.label==="СООБЩЕСТВО"?"ЛЮДИ":n.label==="БЮРО"?"ИИ":n.label==="ГЛАВНАЯ"?"ГЛАВНАЯ":n.label==="СВЯЗЬ"?"ЧАТЫ":"ДЕЛА"}</span></button>)}</nav>
+  <nav className="mobile-nav">{nav.map(n=><button key={n.id} className={tab===n.id&&!active?"active":""} onClick={()=>go(n.id)}><n.icon size={19}/><span>{n.label==="СООБЩЕСТВО"?"ЛЮДИ":n.label==="БЮРО"?"ИИ":n.label==="ГЛАВНАЯ"?"ГЛАВНАЯ":n.label==="СВЯЗЬ"?"ЧАТЫ":n.label==="ЛИЧНОЕ ДЕЛО"?"ПРОФИЛЬ":"ДЕЛА"}</span></button>)}</nav>
   <footer className="union-footer"><span>СОЮЗ © 2026</span><span>ЕДИНСТВО · ЗНАНИЯ · ВОЗМОЖНОСТИ</span><span>ДЕМО-КОНЦЕПЦИЯ</span></footer>
   <AnimatePresence>{toast&&<motion.div className="union-toast" initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} exit={{opacity:0,y:8}}>{toast}</motion.div>}</AnimatePresence>
  </div>;
