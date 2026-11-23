@@ -913,7 +913,6 @@ const ml=$('ev-menu-list');(e.menu||[]).forEach(m=>{const row=document.createEle
 const tl=$('ev-task-list');(e.tasks||[]).forEach(t=>{const row=document.createElement('div');row.className='history-item';const label=document.createElement('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!t.done;cb.onchange=()=>{t.done=cb.checked;e.updatedAt=new Date().toISOString();saveData();};label.append(cb,document.createTextNode(' '+t.title+(t.due?' · '+t.due:'')));row.appendChild(label);tl.appendChild(row);});
 }
 
-del.className='mini-btn';del.textContent='Удалить';del.onclick=()=>{e.menu=e.menu.filter(x=>x.id!==m.id);e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);};row.append(t,p,del);ml.appendChild(row);});
 const tl=$('ev-task-list');(e.tasks||[]).forEach(t=>{const row=document.createElement('div');row.className='history-item';const label=document.createElement('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!t.done;cb.onchange=()=>{t.done=cb.checked;e.updatedAt=new Date().toISOString();saveData();};label.append(cb,document.createTextNode(' '+t.title+(t.due?' · '+t.due:'')));row.appendChild(label);tl.appendChild(row);});
 }
 
