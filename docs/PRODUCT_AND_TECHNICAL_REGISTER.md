@@ -206,3 +206,13 @@
 - Задачи остаются локальными; нет серверной синхронизации, повторяющихся задач и фоновых уведомлений.
 - Архив пока содержит завершённые задачи, а не универсальное файловое/документное хранилище.
 - Рутубе-видеолента зависит от доступности публичного каталога RUTUBE.
+
+## 11. Дополнения к серверным модулям и мобильной сборке (23 ноября 2026)
+
+- **Сообщество:** Worker API `GET/POST /community/posts`, `POST /community/like`, `GET/POST /community/comments`; таблицы `community_posts`, `community_likes`, `community_comments`. React-клиент публикует текст, ставит/снимает отметки и загружает/добавляет комментарии. Фото/видео-вложения, модерация, жалобы, подписки и лента по подпискам ещё не реализованы.
+- **Задачи:** Worker API `GET/POST /tasks`; действия POST: `create`, `update`, `delete`. Таблица `user_tasks`; фронтенд связывает локальные Dexie-записи с серверными ID, синхронизирует список после входа, сохраняет локальный офлайн-кеш. Проверить конфликтное разрешение при одновременном редактировании с нескольких устройств; напоминания/повторы и календарная синхронизация ещё не сделаны.
+- **Capacitor API origin:** `worker/frontend/src/lib/platform.ts` содержит `apiFetch` и `VITE_API_BASE_URL`; веб/PWA по умолчанию использует same-origin. Пример native build origin — `worker/frontend/.env.example`. Worker CORS allowlist дополнен `capacitor://localhost`, localhost и preview hostname. Для production native build указывать утверждённый production Worker origin только после отдельного разрешения на production rollout.
+- **Жесты:** вертикальный swipe в заголовке видеоплеера переключает ролик/закрывает плеер через `@use-gesture/react`.
+- **CI:** workflow `.github/workflows/frontend-check.yml` теперь выполняет TypeScript/Vite build, `node --check ../index.js` и проверяет наличие собранного `../assets/next/index.html`. Commit `fec9b8e` прошёл build и Worker syntax/asset checks. Более поздний commit с жестами должен пройти отдельную проверку прежде чем считаться verified.
+- **Ограничение деплоя:** Cloudflare preview comment пока указывает на commit `d72fbc9`; до получения deployment confirmation на актуальный HEAD ссылку нельзя выдавать за обновлённую.
+
