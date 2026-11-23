@@ -751,7 +751,9 @@ async function checkAuth(){
   loadData();renderTasks();renderToday();
   $('auth-screen').classList.add('hidden');
   const rememberedPage=localStorage.getItem('svoe_last_page')||'home';
-  showPage(['home','video','helpers','chef','mechanic','invoice','community','tasks','settings'].includes(rememberedPage)?rememberedPage:'home');
+  const requestedPage=new URLSearchParams(location.search).get('page');
+  const allowedPages=['home','video','helpers','chef','mechanic','invoice','community','tasks','settings','chef-events','chef-event-archive'];
+  showPage(allowedPages.includes(requestedPage||'')?requestedPage:allowedPages.includes(rememberedPage)?rememberedPage:'home');
  }catch(e){
   authToken='';currentUser=null;
   localStorage.removeItem('ai_bragina_token');localStorage.removeItem('ai_bragina_user');
