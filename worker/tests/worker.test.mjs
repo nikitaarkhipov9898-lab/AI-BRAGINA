@@ -81,3 +81,10 @@ test("GitHub Pages and Worker service-worker copies stay identical", () => {
   const cloudflareWorker = readFileSync(resolve(root, "worker/assets/sw.js"), "utf8");
   assert.equal(cloudflareWorker, pagesWorker);
 });
+
+test("GitHub Pages and Worker legacy app copies stay identical", () => {
+  const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+  const pagesApp = readFileSync(resolve(root, "index.html"), "utf8");
+  const cloudflareApp = readFileSync(resolve(root, "worker/assets/index.html"), "utf8");
+  assert.equal(cloudflareApp, pagesApp);
+});
