@@ -26,6 +26,34 @@ function json(data, status = 200, origin = "") {
     }
   });
 }
+async function ensureAiUsageSchema(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS ai_usage_events (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    provider_model TEXT NOT NULL,
+    page TEXT NOT NULL,
+    prompt_tokens INTEGER NOT NULL DEFAULT 0,
+    completion_tokens INTEGER NOT NULL DEFAULT 0,
+    total_tokens INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL
+  )`).run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_ai_usage_user_created ON ai_usage_events(user_id, created_at DESC)").run();
+}
+async function aiUsageGet(env, user) {
+  await ensureAiUsageSchema(env);
+  const totals = await env.DB.prepare("SELECT COUNT(*) AS requests, COALESCE(SUM(prompt_tokens),0) AS prompt_tokens, COALESCE(SUM(completion_tokens),0) AS completion_tokens, COALESCE(SUM(total_tokens),0) AS total_tokens FROM ai_usage_events WHERE user_id=?").bind(user.id).first();
+  const rows = await env.DB.prepare("SELECT provider_model,page,prompt_tokens,completion_tokens,total_tokens,created_at FROM ai_usage_events WHERE user_id=? ORDER BY created_at DESC LIMIT 200").bind(user.id).all();
+  return json({ usage: { requests:Number(totals?.requests||0), prompt_tokens:Number(totals?.prompt_tokens||0), completion_tokens:Number(totals?.completion_tokens||0), total_tokens:Number(totals?.total_tokens||0), history:rows.results||[] }, unlimited:user.role==="owner" });
+}
+async function aiUsagePost(request, env, user) {
+  const b=await request.json(),u=b.usage||{};
+  const prompt=Math.max(0,Math.floor(Number(u.prompt_tokens)||0)),completion=Math.max(0,Math.floor(Number(u.completion_tokens)||0)),total=Math.max(0,Math.floor(Number(u.total_tokens)||prompt+completion));
+  if(!total || total>10000000 || prompt>10000000 || completion>10000000) return json({error:"Некорректная статистика токенов"},400);
+  await ensureAiUsageSchema(env);
+  await env.DB.prepare("INSERT INTO ai_usage_events (id,user_id,provider_model,page,prompt_tokens,completion_tokens,total_tokens,created_at) VALUES (?,?,?,?,?,?,?,?)").bind(crypto.randomUUID(),user.id,String(b.model||"ИИ-помощник").slice(0,120),String(b.page||"unknown").slice(0,40),prompt,completion,total,new Date().toISOString()).run();
+  return json({success:true,unlimited:user.role==="owner"});
+}
+
 
 function toB64(bytes) {
   let s = "";
@@ -578,6 +606,17 @@ async function handleFetch(request, env) {
     }
   }
 
+
+  if (path === "/usage" && request.method === "GET") {
+    const user = await currentUser(request, env);
+    if (!user) return json({ error: "Необходим вход в аккаунт" }, 401);
+    return aiUsageGet(env, user);
+  }
+  if (path === "/usage" && request.method === "POST") {
+    const user = await currentUser(request, env);
+    if (!user) return json({ error: "Необходим вход в аккаунт" }, 401);
+    return aiUsagePost(request, env, user);
+  }
 
   if (path === "/conversations/sync" && request.method === "POST") {
     const user = await currentUser(request, env);
