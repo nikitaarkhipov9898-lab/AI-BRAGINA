@@ -304,6 +304,80 @@ async function ensureAuthSchema(env) {
 }
 
 
+
+async function ensureCommunitySchema(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS community_posts (
+    id TEXT PRIMARY KEY, user_id TEXT NOT NULL, body TEXT NOT NULL, created_at TEXT NOT NULL
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS community_likes (
+    post_id TEXT NOT NULL, user_id TEXT NOT NULL, created_at TEXT NOT NULL,
+    PRIMARY KEY(post_id,user_id)
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS community_comments (
+    id TEXT PRIMARY KEY, post_id TEXT NOT NULL, user_id TEXT NOT NULL, body TEXT NOT NULL, created_at TEXT NOT NULL
+  )`).run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_community_posts_created ON community_posts(created_at DESC)").run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_community_comments_post ON community_comments(post_id,created_at)").run();
+}
+async function communityPosts(request,env,user) {
+  await ensureCommunitySchema(env);
+  if(request.method==="GET"){
+    const rows=await env.DB.prepare(`SELECT p.id,p.user_id,p.body,p.created_at,u.username,u.display_name,u.avatar_url,
+      (SELECT COUNT(*) FROM community_likes l WHERE l.post_id=p.id) AS likes,
+      (SELECT COUNT(*) FROM community_comments c WHERE c.post_id=p.id) AS comments,
+      EXISTS(SELECT 1 FROM community_likes mine WHERE mine.post_id=p.id AND mine.user_id=?) AS liked
+      FROM community_posts p JOIN users u ON u.id=p.user_id ORDER BY p.created_at DESC LIMIT 100`).bind(user.id).all();
+    return json({posts:rows.results||[]});
+  }
+  if(request.method==="POST"){
+    let b;try{b=await request.json();}catch{return json({error:"Некорректная публикация"},400);}
+    const body=String(b.body||"").trim();
+    if(!body)return json({error:"Напиши текст публикации"},400);
+    if(body.length>3000)return json({error:"Публикация не должна превышать 3000 символов"},400);
+    const post={id:crypto.randomUUID(),user_id:user.id,body,created_at:new Date().toISOString()};
+    await env.DB.prepare("INSERT INTO community_posts (id,user_id,body,created_at) VALUES (?,?,?,?)").bind(post.id,post.user_id,post.body,post.created_at).run();
+    return json({post:{...post,username:user.username,display_name:user.display_name,likes:0,comments:0,liked:0}},201);
+  }
+  return json({error:"Метод не поддерживается"},405);
+}
+async function communityLike(request,env,user) {
+  let b;try{b=await request.json();}catch{return json({error:"Некорректный запрос"},400);}
+  const postId=String(b.post_id||"");
+  if(!postId)return json({error:"Не указана публикация"},400);
+  await ensureCommunitySchema(env);
+  const post=await env.DB.prepare("SELECT id FROM community_posts WHERE id=?").bind(postId).first();
+  if(!post)return json({error:"Публикация не найдена"},404);
+  const existing=await env.DB.prepare("SELECT 1 AS ok FROM community_likes WHERE post_id=? AND user_id=?").bind(postId,user.id).first();
+  if(existing)await env.DB.prepare("DELETE FROM community_likes WHERE post_id=? AND user_id=?").bind(postId,user.id).run();
+  else await env.DB.prepare("INSERT INTO community_likes (post_id,user_id,created_at) VALUES (?,?,?)").bind(postId,user.id,new Date().toISOString()).run();
+  const count=await env.DB.prepare("SELECT COUNT(*) AS n FROM community_likes WHERE post_id=?").bind(postId).first();
+  return json({liked:!existing,likes:Number(count?.n||0)});
+}
+async function communityComments(request,env,user) {
+  await ensureCommunitySchema(env);
+  const url=new URL(request.url);
+  if(request.method==="GET"){
+    const postId=String(url.searchParams.get("post_id")||"");
+    if(!postId)return json({error:"Не указана публикация"},400);
+    const rows=await env.DB.prepare(`SELECT c.id,c.body,c.created_at,c.user_id,u.username,u.display_name
+      FROM community_comments c JOIN users u ON u.id=c.user_id WHERE c.post_id=?
+      ORDER BY c.created_at ASC LIMIT 100`).bind(postId).all();
+    return json({comments:rows.results||[]});
+  }
+  if(request.method==="POST"){
+    let b;try{b=await request.json();}catch{return json({error:"Некорректный комментарий"},400);}
+    const postId=String(b.post_id||""),body=String(b.body||"").trim();
+    if(!postId||!body)return json({error:"Напиши комментарий"},400);
+    if(body.length>1000)return json({error:"Комментарий не должен превышать 1000 символов"},400);
+    const post=await env.DB.prepare("SELECT id FROM community_posts WHERE id=?").bind(postId).first();
+    if(!post)return json({error:"Публикация не найдена"},404);
+    const comment={id:crypto.randomUUID(),post_id:postId,user_id:user.id,body,created_at:new Date().toISOString()};
+    await env.DB.prepare("INSERT INTO community_comments (id,post_id,user_id,body,created_at) VALUES (?,?,?,?,?)").bind(comment.id,comment.post_id,comment.user_id,comment.body,comment.created_at).run();
+    return json({comment:{...comment,username:user.username,display_name:user.display_name}},201);
+  }
+  return json({error:"Метод не поддерживается"},405);
+}
+
 async function ensureProfileSchema(env) {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS user_profiles (
     user_id TEXT PRIMARY KEY,
@@ -786,6 +860,23 @@ async function handleFetch(request, env) {
     })) });
   }
 
+
+
+  if (path === "/community/posts" && (request.method === "GET" || request.method === "POST")) {
+    const user=await currentUser(request,env);
+    if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return communityPosts(request,env,user);
+  }
+  if (path === "/community/like" && request.method === "POST") {
+    const user=await currentUser(request,env);
+    if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return communityLike(request,env,user);
+  }
+  if (path === "/community/comments" && (request.method === "GET" || request.method === "POST")) {
+    const user=await currentUser(request,env);
+    if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return communityComments(request,env,user);
+  }
 
   if (path === "/profile" && (request.method === "GET" || request.method === "POST")) {
     const user=await currentUser(request,env);
