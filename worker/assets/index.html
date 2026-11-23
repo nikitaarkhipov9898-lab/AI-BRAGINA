@@ -367,6 +367,51 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
 .manager-feature .pill{margin:0;background:#f2bd6920;color:var(--warn);border:1px solid #f2bd6940;font-size:9px}
 :root[data-theme="light"] .manager-feature{background:linear-gradient(155deg,#fff,#f3f6f4);border-color:#d7e3dc}
 @media(max-width:370px){.manager-feature{min-height:190px;padding:12px}.manager-feature .pill{font-size:8px;padding:5px 6px}}
+
+/* HOME APP DASHBOARD — compact product UI, not editorial landing page */
+#page-home{padding:0 0 18px}
+#page-home .home-welcome{display:flex;align-items:center;justify-content:space-between;min-height:104px;margin:0 -2px 15px;padding:17px 19px;background:linear-gradient(112deg,#183b2c 0%,#214d39 62%,#2d5b42 100%);color:#fff;border-left:4px solid #c9a45c;box-shadow:0 9px 22px #183b2c22;position:relative;overflow:hidden}
+#page-home .home-welcome:after{content:"";position:absolute;width:160px;height:160px;right:-60px;top:-80px;border:1px solid #e3c37a55;transform:rotate(35deg);box-shadow:0 0 0 18px #ffffff08,0 0 0 38px #ffffff06;pointer-events:none}
+#page-home .home-kicker{font-size:9px;letter-spacing:1.8px;font-weight:850;color:#e4c780}
+#page-home .home-welcome h2{font-size:23px;line-height:1.15;margin:8px 0 4px;letter-spacing:-.5px;color:#fff}
+#page-home .home-welcome p{font-size:12px;margin:0;color:#d2dfd4}
+#page-home .home-date-mark{width:42px;height:42px;display:grid;place-items:center;color:#e6c77d;font-size:25px;border:1px solid #d8bd7c66;transform:rotate(45deg);margin-right:8px}
+#page-home .home-command{background:#fff;border:1px solid #d7c28e;border-top:3px solid #bd944b;padding:15px 15px 13px;margin:0 0 15px;box-shadow:0 7px 18px #3a301714;color:#26372d}
+#page-home .home-command-title{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+#page-home .home-command-symbol{font-size:25px;color:#99712e;width:34px;text-align:center}
+#page-home .home-command-title strong{display:block;font-size:14px;color:#29392e}
+#page-home .home-command-title small{display:block;font-size:10px;color:#849084;margin-top:3px}
+#page-home .home-command-input{display:flex;gap:7px}
+#page-home .home-command-input input{min-width:0;flex:1;height:46px;border:1px solid #d9dfd4;background:#f7f8f4;padding:0 12px;font:inherit;font-size:12px;color:#26372d;outline:none}
+#page-home .home-command-input input:focus{border-color:#b18a45;box-shadow:0 0 0 2px #bd944b20}
+#page-home .home-command-input button{width:48px;height:46px;border:0;background:#24563f;color:white;font-size:23px;cursor:pointer}
+#page-home .home-launch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 21px}
+#page-home .launch-tile{min-width:0;min-height:106px;padding:11px 10px;border:1px solid #dce2d8;background:#fff;text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:8px;position:relative;box-shadow:0 4px 12px #2b402b0b;cursor:pointer}
+#page-home .launch-icon{width:30px;height:30px;display:grid;place-items:center;font-size:17px;background:#e8efe7;color:#24563f}
+#page-home .launch-tile strong{display:block;font-size:11px;color:#29392e;white-space:nowrap}
+#page-home .launch-tile small{display:block;font-size:9px;color:#829083;margin-top:3px;line-height:1.3}
+#page-home .launch-tile>b{position:absolute;right:9px;top:10px;font-size:12px;color:#a9874c}
+#page-home .launch-chat .launch-icon{background:#f4eadb;color:#946b30}
+#page-home .launch-tasks .launch-icon{background:#e6edf2;color:#4a6d82}
+#page-home .home-section-title{display:flex;align-items:end;justify-content:space-between;margin:0 1px 9px;padding-bottom:8px;border-bottom:1px solid #d9dfd1}
+#page-home .home-section-kicker{font-size:8px;letter-spacing:1.6px;color:#9a7942;font-weight:850}
+#page-home .home-section-title h2{font-size:19px;margin:3px 0 0;color:#29392e}
+#page-home .home-section-title>button{border:0;background:none;color:#356e4c;font-size:10px;font-weight:800;padding:7px 0}
+#page-home .home-section-title>button b{font-size:15px;margin-left:3px}
+#page-home .home-today-surface{min-height:62px;background:#fff;border:1px solid #dce2d8;border-left:3px solid #7e9b79;padding:12px 13px;margin-bottom:16px;box-shadow:0 4px 12px #2b402b09}
+#page-home .home-today-surface .muted{color:#829083}
+#page-home .token-dashboard{border-radius:4px!important;margin:0 0 13px!important}
+#page-home #general-warning{border-radius:3px!important}
+#page-home .home-launch button:active{transform:translateY(1px)}
+:root[data-theme="dark"] #page-home .home-command{background:#1b241e;color:#f2f5ef;border-color:#8c7445}
+:root[data-theme="dark"] #page-home .home-command-title strong,:root[data-theme="dark"] #page-home .home-section-title h2,:root[data-theme="dark"] #page-home .launch-tile strong{color:#f2f5ef}
+:root[data-theme="dark"] #page-home .home-command-title small,:root[data-theme="dark"] #page-home .launch-tile small{color:#a5b3a6}
+:root[data-theme="dark"] #page-home .home-command-input input,:root[data-theme="dark"] #page-home .launch-tile,:root[data-theme="dark"] #page-home .home-today-surface{background:#151f19;color:#f2f5ef;border-color:#354639}
+:root[data-theme="dark"] #page-home .home-section-title{border-color:#354639}
+:root[data-theme="dark"] #page-home .launch-icon{background:#263b2c;color:#b5d8b9}
+@media(max-width:360px){#page-home .home-launch{gap:6px}#page-home .launch-tile{padding:9px 7px}#page-home .launch-tile strong{font-size:10px}}
+@media(prefers-reduced-motion:no-preference){#page-home .home-date-mark{animation:homeMarkFloat 7s ease-in-out infinite}@keyframes homeMarkFloat{0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(49deg) translateY(-3px)}}}
+
 </style>
 </head>
 <body>
@@ -385,9 +430,11 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
 <header class="topbar"><div class="brand"><div class="brandmark"><img src="https://raw.githubusercontent.com/nikitaarkhipov9898-lab/AI-BRAGINA/admin-panel/icon.svg" alt="СВОЁ"></div><div><h1>СВОЁ</h1><small>МЕСТО ДЛЯ СВОИХ · v0.9.0</small></div></div><button class="icon-btn" onclick="showPage('settings')" aria-label="Настройки">⚙</button></header>
 <main>
 <section id="page-home" class="page-home">
- <div class="hero home-hero"><div class="eyebrow">ТВОЁ ПРОСТРАНСТВО</div><h2>Всё нужное.<br>В одном месте.</h2><p>Помощники, общение и повседневные дела — спокойно, удобно и по-своему.</p></div>
- <div class="panel command-panel"><div class="section-head"><h2>Что нужно сделать?</h2><span class="muted">Быстрый доступ</span></div><div class="field"><input id="home-command-input" placeholder="Рецепт, машина, учёт товара, задача..." onkeydown="if(event.key==='Enter')dispatchHomeCommand()"></div><button class="btn" onclick="dispatchHomeCommand()">Найти инструмент</button></div>
- <div class="section-head today-heading"><h2>Сегодня</h2><button class="mini-btn" onclick="showPage('tasks')">Все дела</button></div><div class="panel" id="home-today"><p class="muted">Здесь будут твои задачи и напоминания.</p></div>
+ <div class="home-welcome"><div><span class="home-kicker">СВОЁ · МЕСТО ДЛЯ СВОИХ</span><h2>Добро пожаловать</h2><p>Чем займёмся сегодня?</p></div><div class="home-date-mark">✦</div></div>
+ <div class="home-command"><div class="home-command-title"><span class="home-command-symbol">⌕</span><div><strong>Что нужно сделать?</strong><small>Опиши задачу — подберём инструмент</small></div></div><div class="home-command-input"><input id="home-command-input" placeholder="Например: приготовить ужин..." onkeydown="if(event.key==='Enter')dispatchHomeCommand()"><button onclick="dispatchHomeCommand()" aria-label="Найти инструмент">→</button></div></div>
+ <div class="home-launch"><button class="launch-tile launch-ai" onclick="showPage('helpers')"><span class="launch-icon">✳</span><span><strong>ИИ-помощники</strong><small>Инструменты для задач</small></span><b>↗</b></button><button class="launch-tile launch-chat" onclick="showPage('community')"><span class="launch-icon">▤</span><span><strong>Сообщения</strong><small>Общение и чаты</small></span><b>↗</b></button><button class="launch-tile launch-tasks" onclick="showPage('tasks')"><span class="launch-icon">✓</span><span><strong>Мои дела</strong><small>Планы и напоминания</small></span><b>↗</b></button></div>
+ <div class="home-section-title"><div><span class="home-section-kicker">ВАШ ДЕНЬ</span><h2>Сегодня</h2></div><button onclick="showPage('tasks')">Все дела <b>→</b></button></div>
+ <div class="home-today-surface" id="home-today"><p class="muted">Здесь будут твои задачи и напоминания.</p></div>
  <section class="token-dashboard" id="token-dashboard"><div class="token-dashboard-head"><div><span class="token-kicker">СЧЁТ ИИ</span><h2>Мой баланс</h2><p>Статистика использования помощников</p></div><span class="token-coin">✦</span></div><div class="token-balance" id="token-balance">Загружаем…</div><div class="token-stats" id="token-stats"></div><button class="token-history-toggle" onclick="toggleTokenHistory()">История запросов　⌄</button><div id="token-history" class="token-history hidden"></div></section><div class="notice" id="general-warning">ИИ-помощники могут ошибаться. Важную информацию проверяй перед применением.</div>
 </section>
 <section id="page-helpers" class="hidden page-helpers">
