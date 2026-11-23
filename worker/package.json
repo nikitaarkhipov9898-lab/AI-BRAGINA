@@ -3,5 +3,8 @@
   "private": true,
   "devDependencies": {
     "wrangler": "4.166.0"
+  },
+  "scripts": {
+    "build:frontend": "npm --prefix frontend install && npm --prefix frontend run build"
   }
 }
