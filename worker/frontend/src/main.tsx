@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion } from "motion/react";
 import { Drawer } from "vaul";
@@ -20,6 +20,7 @@ import {
   Flame, UserRound, X, WandSparkles, Zap, CirclePlay
 } from "lucide-react";
 import "./styles.css";
+const RiveAccent = React.lazy(() => import("./components/RiveAccent"));
 import { connectSvoeRealtime, enableSvoePush, type RealtimeStatus } from "./lib/mobile-services";
 
 type Tab = "home" | "feed" | "friends" | "messages" | "video" | "services" | "saved" | "settings";
@@ -197,7 +198,7 @@ function App() {
             </div>
           </motion.section> :
           tab === "home" || tab === "feed" ? <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="feed-page">
-            {tab === "home" && <section className="surface profile-card"><div className="profile-cover"/><div className="profile-summary"><div className="profile-avatar-row"><div className="profile-avatar">Н</div><button className="primary-btn" onClick={() => setToast("Редактирование профиля подключим к вашему аккаунту")}>Редактировать</button></div><h1 className="profile-name">Моя страница</h1><div className="profile-status">Добро пожаловать в своё пространство ✨</div></div></section>}
+            {tab === "home" && <section className="surface profile-card"><div className="profile-cover"><Suspense fallback={null}><RiveAccent/></Suspense></div><div className="profile-summary"><div className="profile-avatar-row"><div className="profile-avatar">Н</div><button className="primary-btn" onClick={() => setToast("Редактирование профиля подключим к вашему аккаунту")}>Редактировать</button></div><h1 className="profile-name">Моя страница</h1><div className="profile-status">Добро пожаловать в своё пространство ✨</div></div></section>}
             {tab === "feed" && <h1 className="section-heading">Новости</h1>}
             <section className="surface stories">{stories.map((s) => <button key={s.name} className={`story ${s.color === "add" ? "add" : ""}`} onClick={() => { setToast(s.name === "Добавить" ? "Создание истории доступно в следующем этапе" : `История: ${s.name}`); }}><span className="story-ring"><span>{s.avatar}</span></span><span>{s.name}</span></button>)}</section>
             <section className="surface feed-composer"><div className="composer-top"><Avatar label="Н"/><button className="soft-action" style={{ flex: 1, justifyContent: "flex-start", background: "#f0f2f5", borderRadius: 22, padding: "11px 15px" }} onClick={() => setDrawerOpen(true)}>Что у вас нового?</button></div><div className="composer-actions"><button className="soft-action" onClick={() => setDrawerOpen(true)}><ImageIcon size={17} color="#4bb34b"/> Фото</button><button className="soft-action" onClick={() => setToast("Видео добавим вместе с медиахранилищем")}><CirclePlay size={17} color="#e64646"/> Видео</button><button className="soft-action" onClick={() => setToast("Музыка появится в медиаразделе")}><Music2 size={17} color="#9b6ad6"/> Музыка</button><button className="soft-action" onClick={() => setToast("Создание события")}><CalendarDays size={17} color="#e3a33a"/> Событие</button></div></section>
