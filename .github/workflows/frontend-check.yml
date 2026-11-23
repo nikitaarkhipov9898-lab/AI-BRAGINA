@@ -1,0 +1,31 @@
+name: Frontend build check
+
+on:
+  push:
+    branches: [admin-panel]
+    paths:
+      - "worker/frontend/**"
+      - "worker/package.json"
+      - ".github/workflows/frontend-check.yml"
+  pull_request:
+    branches: [admin-panel]
+    paths:
+      - "worker/frontend/**"
+      - "worker/package.json"
+      - ".github/workflows/frontend-check.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: worker/frontend/package.json
+      - run: npm install
+      - run: npm run build
