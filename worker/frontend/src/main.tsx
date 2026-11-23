@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import { soyuzDb, soyuzQueryClient, useSoyuzStore } from "./lib/platform";
 import { AnimatePresence, motion } from "motion/react";
 import {
   Activity, ArrowRight, Bell, CalendarDays, Check, ChefHat,
@@ -26,15 +29,18 @@ function Mascot({kind,size="large"}:{kind:string;size?:string}) {
  return <div className={"mascot "+size+" generic-mascot "+kind}><div className="generic-head">{glyph[kind]||"✦"}</div><div className="generic-body"/></div>;
 }
 function App(){
- const [tab,setTab]=useState("home");
+ const tab=useSoyuzStore(state=>state.tab);
+ const setTab=useSoyuzStore(state=>state.setTab);
  const [active,setActive]=useState<Helper|null>(null);
  const [query,setQuery]=useState("");
  const [chat,setChat]=useState("");
  const [sent,setSent]=useState<string[]>([]);
  const [toast,setToast]=useState("");
  const [profile,setProfile]=useState(()=>{try{return JSON.parse(localStorage.getItem("soyuz_personal_dossier")||"{}")}catch{return {}}});
+ useEffect(()=>{let alive=true;soyuzDb.profiles.get("current").then(saved=>{if(alive&&saved)setProfile({firstName:saved.firstName,lastName:saved.lastName,displayName:saved.displayName,about:saved.about})}).catch(()=>undefined);return()=>{alive=false}},[]);
+ useEffect(()=>{const record={id:"current" as const,firstName:profile.firstName||"",lastName:profile.lastName||"",displayName:profile.displayName||"",about:profile.about||"",updatedAt:Date.now()};soyuzDb.profiles.put(record).catch(()=>undefined)},[profile]);
  const notify=(s:string)=>{setToast(s);window.setTimeout(()=>setToast(""),2400)};
- const go=(t:string)=>{setTab(t);setActive(null);window.scrollTo({top:0,behavior:"smooth"});};
+ const go=(t:string)=>{setTab(t);setActive(null);void Haptics.impact({style:ImpactStyle.Light}).catch(()=>undefined);window.scrollTo({top:0,behavior:"smooth"});};
  const openHelper=(h:Helper)=>{setActive(h);setChat("");setSent([]);};
  const visibleHelpers=helpers.filter(h=>(h.name+" "+h.role+" "+h.desc).toLowerCase().includes(query.toLowerCase()));
  const nav=[{id:"home",label:"ГЛАВНАЯ",icon:Home},{id:"helpers",label:"БЮРО",icon:Sparkles},{id:"community",label:"СООБЩЕСТВО",icon:Users},{id:"messages",label:"СВЯЗЬ",icon:MessageCircle},{id:"work",label:"ДЕЛА",icon:ClipboardList},{id:"profile",label:"ЛИЧНОЕ ДЕЛО",icon:UserRound}];
@@ -108,7 +114,7 @@ function App(){
     </AnimatePresence>
    </main>
    <aside className="right-brief">
-    <div className="brief-card"><div className="brief-top"><span>СВОДКА СИСТЕМЫ</span><Activity size={17}/></div><div className="brief-status"><span className="live-dot"/> ВСЕ СЛУЖБЫ НА СВЯЗИ</div><div className="brief-stat"><b>07</b><span>ЦИФРОВЫХ СПЕЦИАЛИСТОВ</span></div><div className="brief-stat"><b>02</b><span>ГОТОВЫ К РАБОТЕ</span></div><div className="brief-stat"><b>04</b><span>В РАЗРАБОТКЕ</span></div><div className="brief-progress"><span/><span/><span/><span/><span/><span/><span/></div><small>РАСШИРЕНИЕ ЭКОСИСТЕМЫ</small></div>
+    <div className="brief-card"><div className="brief-top"><span>СВОДКА СИСТЕМЫ</span><Activity size={17}/></div><div className="brief-status"><span className="live-dot"/> ИНТЕРФЕЙС ПРЕДПРОСМОТРА</div><div className="brief-stat"><b>07</b><span>ЦИФРОВЫХ СПЕЦИАЛИСТОВ</span></div><div className="brief-stat"><b>02</b><span>ГОТОВЫ К РАБОТЕ</span></div><div className="brief-stat"><b>04</b><span>В РАЗРАБОТКЕ</span></div><div className="brief-progress"><span/><span/><span/><span/><span/><span/><span/></div><small>РАСШИРЕНИЕ ЭКОСИСТЕМЫ</small></div>
     <div className="quote-card"><div className="quote-mark">“</div><p>Большие возможности начинаются с простых полезных дел.</p><span>ПРИНЦИП СОЮЗА</span></div>
     <div className="brief-help"><CircleHelp size={18}/><div><b>Нужна помощь?</b><small>Центр поддержки пользователей</small><button onClick={()=>notify("Центр поддержки будет подключён позже")}>ОТКРЫТЬ <ArrowRight size={12}/></button></div></div>
    </aside>
@@ -125,4 +131,4 @@ function HelperCard({h,onClick}:{h:Helper;onClick:()=>void}){
   <div className="helper-card-copy"><div className="helper-role">{h.role.toUpperCase()}</div><h3>{h.name}</h3><p>{h.desc}</p><div className="helper-card-bottom"><span>{h.status==="open"?"ПОСТАВИТЬ ЗАДАЧУ":"ПОДРОБНЕЕ"}</span><span className="card-arrow"><ArrowRight size={16}/></span></div></div>
  </motion.button>;
 }
-createRoot(document.getElementById("root")!).render(<React.StrictMode><App/></React.StrictMode>);
+createRoot(document.getElementById("root")!).render(<React.StrictMode><QueryClientProvider client={soyuzQueryClient}><App/></QueryClientProvider></React.StrictMode>);
