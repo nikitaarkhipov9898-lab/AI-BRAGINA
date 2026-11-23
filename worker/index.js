@@ -814,6 +814,7 @@ async function handleFetch(request, env) {
   }
 
   // React frontend preview route. The legacy /app remains untouched.
+  // Preview deployment is isolated to non-production branches.
   if (env.ASSETS && request.method === "GET" && (url.pathname === "/app-next" || url.pathname === "/app-next/")) {
     const assetUrl = new URL(request.url);
     assetUrl.pathname = "/next/index.html";
