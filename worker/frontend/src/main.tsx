@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion } from "motion/react";
 import { Drawer } from "vaul";
+import { Button as KonstaButton, KonstaProvider } from "konsta/react";
 import { useDrag } from "@use-gesture/react";
 import { registerSW } from "virtual:pwa-register";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -233,7 +234,7 @@ function App() {
           <div style={{ width: 38, height: 4, borderRadius: 5, background: "#d9dfe6", margin: "0 auto 17px" }}/>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><Drawer.Title style={{ fontSize: 18, fontWeight: 750 }}>Новая запись</Drawer.Title><button className="icon-btn" onClick={() => setDrawerOpen(false)}><X size={18}/></button></div>
           <textarea value={postDraft} onChange={(e) => setPostDraft(e.target.value)} placeholder="Расскажите, что у вас нового..." style={{ width: "100%", minHeight: 130, border: 0, resize: "vertical", outline: 0, padding: "16px 0", font: "inherit", fontSize: 15 }}/>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><div style={{ display: "flex", gap: 12, color: "#818c99" }}><ImageIcon size={19}/><Camera size={19}/><Smile size={19}/></div><button className="primary-btn" onClick={publishPost}>Опубликовать</button></div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><div style={{ display: "flex", gap: 12, color: "#818c99" }}><ImageIcon size={19}/><Camera size={19}/><Smile size={19}/></div><KonstaButton onClick={publishPost}>Опубликовать</KonstaButton></div>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
@@ -242,6 +243,6 @@ function App() {
 }
 
 function Root() {
-  return <QueryClientProvider client={queryClient}><App/></QueryClientProvider>;
+  return <QueryClientProvider client={queryClient}><KonstaProvider theme="material"><div className="k-material"><App/></div></KonstaProvider></QueryClientProvider>;
 }
 createRoot(document.getElementById("root")!).render(<React.StrictMode><Root/></React.StrictMode>);
