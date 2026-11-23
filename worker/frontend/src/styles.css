@@ -103,3 +103,8 @@ html,body{background:#101918;color:#e9eee7}
 .mobile-nav button.active{color:#e1bd7c}
 .mobile-nav button.active:after{background:#d05245}
 @media(max-width:760px){.hero-banner:after{background:linear-gradient(90deg,#1b332b 0%,#1b332b 50%,#1b332bb8 100%)}}
+
+
+/* Личное дело участника */
+.dossier-panel{max-width:680px;margin-top:22px;padding:24px}.dossier-panel h2{margin:14px 0 8px;color:#f0f1e8}.dossier-panel>p{color:#aebeb2;line-height:1.6}.dossier-field{display:flex;flex-direction:column;gap:7px;margin:16px 0;color:#d9b875;font-size:12px;letter-spacing:.5px}.dossier-field input,.dossier-field textarea{width:100%;box-sizing:border-box;padding:13px 14px;border:1px solid #405849;border-radius:8px;background:#111d19;color:#eaf0e8;font:inherit;letter-spacing:0}.dossier-field textarea{min-height:100px;resize:vertical}.dossier-panel .demo-note{display:block;margin-top:14px;line-height:1.5}
+@media(max-width:760px){.mobile-nav button{min-width:0;flex:1;font-size:6px}.dossier-panel{padding:16px}}
