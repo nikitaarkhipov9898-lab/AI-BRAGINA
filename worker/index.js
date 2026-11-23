@@ -338,6 +338,7 @@ async function ensureTasksSchema(env) {
     created_at TEXT NOT NULL, updated_at TEXT NOT NULL
   )`).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_user_tasks_user_created ON user_tasks(user_id,created_at DESC)").run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_user_tasks_user_completed_created ON user_tasks(user_id,completed,created_at DESC)").run();
   });
 }
 async function tasksApi(request,env,user) {
@@ -526,7 +527,10 @@ async function ensureChatSchema(env) {
     thread_id TEXT NOT NULL, user_id TEXT NOT NULL, joined_at TEXT NOT NULL,
     last_read_at TEXT, typing_until TEXT, PRIMARY KEY(thread_id,user_id)
   )`).run();
-  try { await env.DB.prepare("ALTER TABLE chat_members ADD COLUMN typing_until TEXT").run(); } catch (e) { /* column already exists */ }
+  const memberColumns = await env.DB.prepare("PRAGMA table_info(chat_members)").all();
+  if (!(memberColumns.results || []).some((column) => column.name === "typing_until")) {
+    await env.DB.prepare("ALTER TABLE chat_members ADD COLUMN typing_until TEXT").run();
+  }
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_messages (
     id TEXT PRIMARY KEY, thread_id TEXT NOT NULL, sender_id TEXT NOT NULL,
     body TEXT NOT NULL, created_at TEXT NOT NULL
@@ -697,6 +701,11 @@ async function handleFetch(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
 
+  // CORS preflight never needs database initialization.
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders(request.headers.get("Origin") || "") });
+  }
+
   if (
     path.startsWith("/auth/") ||
     path.startsWith("/conversations") ||
@@ -746,10 +755,6 @@ async function handleFetch(request, env) {
     headers.set("Cache-Control", "no-store");
     headers.set("X-Robots-Tag", "noindex, nofollow");
     return new Response(response.body, { status: 200, headers });
-  }
-
-  if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: corsHeaders(request.headers.get("Origin") || "") });
   }
 
   // Public video discovery: proxy metadata only, never video streams. Cache upstream responses at the edge.
