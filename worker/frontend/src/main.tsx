@@ -19,6 +19,7 @@ import {
   Flame, UserRound, X, WandSparkles, Zap, CirclePlay
 } from "lucide-react";
 import "./styles.css";
+import { connectSvoeRealtime, enableSvoePush, type RealtimeStatus } from "./lib/mobile-services";
 
 type Tab = "home" | "feed" | "friends" | "messages" | "video" | "services" | "saved" | "settings";
 type ChatMessage = { id: number; chatId: number; mine: boolean; text: string; time: string };
@@ -98,7 +99,7 @@ function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [toast, setToast] = useState("");
   const [likedComments, setLikedComments] = useState<number[]>([]);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [realtimeStatus, setRealtimeStatus] = useState<RealtimeStatus>("disabled");
   const messageParent = useRef<HTMLDivElement>(null);
   const activePerson = people.find((p) => p.id === selectedChat) ?? people[0];
   const filteredPeople = useMemo(() => people.filter((p) => (p.name + " " + p.preview).toLowerCase().includes(chatSearch.toLowerCase())), [chatSearch]);
@@ -130,7 +131,7 @@ function App() {
     if (sx === 1 && tab === "feed") setTab("home");
   }, { axis: "x", filterTaps: true });
 
-  function go(next: Tab) { haptic(); transitionTo(() => setTab(next)); setMobileMenuOpen(false); }
+  function go(next: Tab) { haptic(); transitionTo(() => setTab(next)); }
   function sendMessage(e: React.FormEvent) {
     e.preventDefault();
     if (!draft.trim()) return;
@@ -154,8 +155,8 @@ function App() {
       <button className="brand" onClick={() => go("home")}><span className="brand-mark">с</span> СВОЁ</button>
       <label className="global-search"><Search size={17}/><input value={globalSearch} onChange={(e) => setGlobalSearch(e.target.value)} placeholder="Поиск по СВОЁ"/></label>
       <div className="topbar-actions">
-        <button className="icon-btn" onClick={() => setToast("Уведомления появятся после подключения сервера")} aria-label="Уведомления"><Bell size={19}/></button>
-        <button className="icon-btn" onClick={() => go("messages")} aria-label="Сообщения"><MessageCircle size={19}/></button>
+        <button className="icon-btn" onClick={async () => { try { const permission = await Notification.requestPermission(); if (permission !== "granted") { setToast("Разрешение на уведомления не выдано"); return; } const token = await enableSvoePush(); setToast(token ? "Устройство зарегистрировано для push. Осталось подключить серверную отправку." : "Push не настроен"); } catch (error) { setToast(error instanceof Error ? error.message : "Не удалось включить уведомления"); } }} aria-label="Включить уведомления"><Bell size={19}/></button>
+        <button className="icon-btn" onClick={() => go("messages")} aria-label="Сообщения"><MessageCircle size={19}/></button><span title={realtimeStatus === "connected" ? "Realtime подключён" : "Realtime не настроен"} style={{ width: 7, height: 7, borderRadius: "50%", background: realtimeStatus === "connected" ? "#4bb34b" : "#c5ccd3" }}/>
         <button className="user-mini" onClick={() => go("home")}><Avatar label="Н" size="small"/> <span>Моя страница</span></button>
       </div>
     </div></header>
