@@ -3,8 +3,8 @@ import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion } from "motion/react";
 import {
   Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, ChefHat,
-  CircleHelp, ClipboardList, Home, LockKeyhole, MessageCircle, Package,
-  Plus, Search, Send, ShieldCheck, Sparkles, Users, Wrench
+  CircleHelp, ClipboardList, Compass, Home, LockKeyhole, MessageCircle, Package,
+  Plus, Search, Send, ShieldCheck, Sparkles, Users, Wrench, Archive, Settings, UserRound, Video
 } from "lucide-react";
 import "./styles.css";
 
@@ -16,12 +16,13 @@ const helpers:Helper[] = [
  {id:"builder",name:"СТРОИТЕЛЬ",role:"Ремонт и строительство",desc:"Подскажет технологию работ, материалы, объёмы и последовательность.",status:"soon",icon:"builder",color:"green",skills:["Расчёт материалов","Технология строительных работ","Сметы и планирование","Поиск причин дефектов"],sample:"Хочу утеплить комнату 18 квадратных метров. Что понадобится?"},
  {id:"store",name:"УПРАВЛЯЮЩИЙ",role:"Магазин и торговля",desc:"Каталог, остатки, закупки, приёмка, цены и аналитика в одном рабочем центре.",status:"soon",icon:"store",color:"violet",skills:["Учёт товаров и остатков","Продажи и списания","Заказы поставщикам","Интеграции с кассой и 1С"],sample:"Покажи товары, которые скоро закончатся."},
  {id:"doctor",name:"МЕДИК",role:"Здоровье и самочувствие",desc:"Поможет подготовиться к врачу и разобраться в медицинской информации.",status:"soon",icon:"health",color:"mint",skills:["Подготовка к приёму","Понятное объяснение анализов","Дневник самочувствия","Вопросы врачу"],sample:"Помоги подготовить список вопросов для врача."},
+ {id:"navigator",name:"НАВИГАТОР",role:"Поиск решений и маршрутов",desc:"Поможет разобраться в сложной задаче, найти нужные возможности и выстроить понятный маршрут действий.",status:"soon",icon:"navigator",color:"blue",skills:["Поиск подходящих решений и сервисов","Планирование маршрутов и поездок","Сравнение вариантов и возможностей","Пошаговый план достижения цели"],sample:"Помоги спланировать поездку и сравнить варианты маршрута."},
 ];
 
 function Mascot({kind,size="large"}:{kind:string;size?:string}) {
  if(kind==="chef") return <div className={"mascot "+size+" chef-mascot" }><div className="chef-hat"><i/><i/><i/></div><div className="chef-face"><span className="eye left"/><span className="eye right"/><span className="smile"/></div><div className="chef-body"><span className="scarf"/> <span className="button-dot one"/><span className="button-dot two"/></div><div className="mascot-tool">✦</div></div>;
  if(kind==="mechanic") return <div className={"mascot "+size+" mech-mascot"}><div className="mech-cap"/><div className="mech-face"><span className="eye left"/><span className="eye right"/><span className="smile"/></div><div className="mech-body"><span className="overall-mark">С</span></div><Wrench className="mascot-wrench"/></div>;
- const glyph:Record<string,string>={law:"§",builder:"⌂",store:"▦",health:"✚"};
+ const glyph:Record<string,string>={law:"§",builder:"⌂",store:"▦",health:"✚",navigator:"◎"};
  return <div className={"mascot "+size+" generic-mascot "+kind}><div className="generic-head">{glyph[kind]||"✦"}</div><div className="generic-body"/></div>;
 }
 function App(){
@@ -36,16 +37,17 @@ function App(){
  const openHelper=(h:Helper)=>{setActive(h);setChat("");setSent([]);};
  const visibleHelpers=helpers.filter(h=>(h.name+" "+h.role+" "+h.desc).toLowerCase().includes(query.toLowerCase()));
  const nav=[{id:"home",label:"ГЛАВНАЯ",icon:Home},{id:"helpers",label:"БЮРО",icon:Sparkles},{id:"community",label:"СООБЩЕСТВО",icon:Users},{id:"messages",label:"СВЯЗЬ",icon:MessageCircle},{id:"work",label:"ДЕЛА",icon:ClipboardList}];
+ const systemDate=new Date().toLocaleDateString("ru-RU",{day:"2-digit",month:"long",year:"numeric"}).toUpperCase();
  const send=()=>{if(!chat.trim())return;setSent(v=>[...v,chat.trim()]);setChat("");};
  return <div className="union-app">
   <div className="grain"/>
   <header className="union-header">
    <button className="seal" onClick={()=>go("home")} aria-label="На главную"><span className="seal-star">✦</span><span className="seal-orbit"/></button>
    <div className="brand-lockup"><div className="brand-name">СОЮЗ<span>®</span></div><div className="brand-sub">ЕДИНАЯ ЦИФРОВАЯ СИСТЕМА</div></div>
-   <div className="header-center"><span className="live-dot"/> СИСТЕМА АКТИВНА <b>·</b> 23 НОЯБРЯ 2026</div>
+   <div className="header-center"><span className="live-dot"/> СИСТЕМА АКТИВНА <b>·</b> {systemDate}</div>
    <div className="header-actions"><button className="round-icon" onClick={()=>notify("Новых оповещений пока нет")}><Bell size={18}/><i/></button><button className="profile-chip" onClick={()=>notify("Личный кабинет демонстрационный")}><span className="profile-avatar">Н</span><span>УЧАСТНИК</span></button></div>
   </header>
-  <div className="mobile-status"><span className="live-dot"/> СИСТЕМА АКТИВНА <span>·</span> 23.11.2026</div>
+  <div className="mobile-status"><span className="live-dot"/> СИСТЕМА АКТИВНА <span>·</span> {systemDate}</div>
   <div className="union-layout">
    <aside className="side-rail">
     <div className="rail-label">НАВИГАЦИЯ</div>
@@ -54,7 +56,10 @@ function App(){
     <div className="rail-label">РАЗДЕЛЫ СИСТЕМЫ</div>
     <button className="rail-link" onClick={()=>go("helpers")}><ChefHat size={18}/><span>БЮРО ИНТЕЛЛЕКТА</span></button>
     <button className="rail-link" onClick={()=>go("work")}><CalendarDays size={18}/><span>ПЛАНИРОВАНИЕ</span></button>
-    <button className="rail-link" onClick={()=>notify("Архив будет доступен в следующем этапе")}><BookOpen size={18}/><span>АРХИВ</span><LockKeyhole size={12} className="rail-lock"/></button>
+    <button className="rail-link" onClick={()=>notify("Архив подключим вместе с хранилищем файлов")}><Archive size={18}/><span>АРХИВ</span></button>
+    <button className="rail-link" onClick={()=>notify("Сигналы системы появятся здесь")}><Bell size={18}/><span>СИГНАЛЫ</span></button>
+    <button className="rail-link" onClick={()=>notify("Параметры профиля подключим к учётной записи")}><UserRound size={18}/><span>ПРОФИЛЬ</span></button>
+    <button className="rail-link" onClick={()=>notify("Настройки системы готовятся")}><Settings size={18}/><span>ПАРАМЕТРЫ СИСТЕМЫ</span></button>
     <div className="rail-bottom"><div className="rail-stamp">С</div><div><b>СОЮЗ / 01</b><small>ВЕРСИЯ 0.1 · ПРЕДПРОСМОТР</small></div></div>
    </aside>
    <main className="main-stage">
@@ -82,7 +87,7 @@ function App(){
      <div className="section-head"><div><div className="eyebrow">ЦЕНТР СОЮЗА</div><h2>ВАШЕ ПРОСТРАНСТВО</h2></div><button className="text-link" onClick={()=>go("helpers")}>ВСЕ СЛУЖБЫ <ArrowRight size={15}/></button></div>
      <div className="dashboard-grid">
       <button className="dash-card dispatch" onClick={()=>go("work")}><div className="dash-icon"><CalendarDays/></div><div><small>ПЛАНИРОВАНИЕ</small><h3>Мои задачи</h3><p>Планируйте день и держите важное под контролем.</p></div><span className="dash-arrow"><ArrowRight/></span><b className="card-index">01</b></button>
-      <button className="dash-card comms" onClick={()=>go("messages")}><div className="dash-icon"><MessageCircle/></div><div><small>СИСТЕМА СВЯЗИ</small><h3>Сообщения</h3><p>Личные диалоги и коллективные каналы.</p></div><span className="dash-arrow"><ArrowRight/></span><b className="card-index">02</b></button>
+      <button className="dash-card comms" onClick={()=>go("messages")}><div className="dash-icon"><MessageCircle/></div><div><small>СИСТЕМА СВЯЗИ</small><h3>Личные сообщения</h3><p>Личные диалоги, общие чаты, аудио- и видеосвязь.</p></div><span className="dash-arrow"><ArrowRight/></span><b className="card-index">02</b></button>
       <button className="dash-card people-card" onClick={()=>go("community")}><div className="dash-icon"><Users/></div><div><small>СООБЩЕСТВО СОЮЗА</small><h3>Сообщество</h3><p>Лента событий, люди и общие интересы.</p></div><span className="dash-arrow"><ArrowRight/></span><b className="card-index">03</b></button>
      </div>
      <div className="section-head helper-section-head"><div><div className="eyebrow">ИНТЕЛЛЕКТУАЛЬНЫЕ СЛУЖБЫ</div><h2>ВАШИ БЮРО</h2></div><button className="text-link" onClick={()=>go("helpers")}>ВЕСЬ СОСТАВ <ArrowRight size={15}/></button></div>
@@ -90,18 +95,18 @@ function App(){
      <div className="bottom-motto"><span>✦</span><div>СОЗДАНО ДЛЯ ЛЮДЕЙ.<br/><b>РАБОТАЕТ ДЛЯ БУДУЩЕГО.</b></div><small>СОЮЗ · ЦИФРОВАЯ ЭКОСИСТЕМА</small></div>
     </motion.div> :
     tab==="helpers" ? <motion.div key="helpers" className="catalog-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:8}}>
-      <div className="page-title-row"><div><div className="eyebrow">СОСТАВ БЮРО · 06 СПЕЦИАЛИСТОВ</div><h1>БЮРО ИНТЕЛЛЕКТА</h1><p>Каждый специалист — отдельный инструмент для конкретной задачи.</p></div><div className="catalog-seal">С<span>✦</span></div></div>
+      <div className="page-title-row"><div><div className="eyebrow">СОСТАВ БЮРО · 07 СПЕЦИАЛИСТОВ</div><h1>БЮРО ИНТЕЛЛЕКТА</h1><p>Каждый специалист — отдельный инструмент для конкретной задачи.</p></div><div className="catalog-seal">С<span>✦</span></div></div>
       <label className="catalog-search"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Найти специалиста или направление..."/></label>
       <div className="helper-grid catalog-grid">{visibleHelpers.map(h=><HelperCard key={h.id} h={h} onClick={()=>openHelper(h)}/>)}</div>
       <div className="catalog-foot"><ShieldCheck size={18}/> Состав бюро расширяется. Новые специалисты проходят проверку перед запуском.</div>
     </motion.div> :
     tab==="community" ? <motion.div key="community" className="generic-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}><div className="eyebrow">СООБЩЕСТВО СОЮЗА</div><h1>СООБЩЕСТВО</h1><p className="lead">Пространство людей, идей и полезных открытий.</p><div className="community-compose"><div className="profile-avatar">Н</div><input placeholder="Поделитесь новостью или идеей..."/><button onClick={()=>notify("Публикации появятся после подключения ленты")}><Plus size={18}/> СОЗДАТЬ</button></div><div className="feed-post"><div className="post-top"><div className="post-emblem">С</div><div><b>РЕДАКЦИЯ СОЮЗА</b><small>Центральная лента · 15 минут назад</small></div><span className="verified">✓</span></div><h3>Открываем новое цифровое пространство</h3><p>СОЮЗ объединяет инструменты для повседневных задач, общение и специализированных интеллектуальных помощников. Это только начало большого пути.</p><div className="post-image-graphic"><div className="post-sun"/><div className="post-graphic-text">БУДУЩЕЕ<br/>СОЗДАЁТСЯ<br/><b>ВМЕСТЕ</b></div><div className="post-graphic-star">✦</div></div><div className="post-actions"><button onClick={()=>notify("Отметка добавлена")}>♡ 128</button><button onClick={()=>notify("Комментарии скоро появятся")}>◯ 24 ОТВЕТА</button><button onClick={()=>notify("Ссылка скопирована")}>↗ ПОДЕЛИТЬСЯ</button></div></div></motion.div> :
-    tab==="messages" ? <motion.div key="messages" className="generic-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}><div className="eyebrow">СИСТЕМА СВЯЗИ</div><h1>СООБЩЕНИЯ</h1><p className="lead">Ваш центр личной и коллективной связи.</p><div className="message-placeholder"><div className="signal-icon"><MessageCircle size={32}/></div><h2>КАНАЛ СВЯЗИ ГОТОВИТСЯ</h2><p>В этой концепции предусмотрены личные чаты, групповые каналы, звонки и обмен файлами. Подключение к действующей системе сообщений будет отдельным этапом.</p><button className="outline-btn" onClick={()=>notify("Раздел связи добавлен в список интересов")}>СЛЕДИТЬ ЗА ЗАПУСКОМ <Bell size={15}/></button></div></motion.div> :
+    tab==="messages" ? <motion.div key="messages" className="generic-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}><div className="eyebrow">СИСТЕМА СВЯЗИ</div><h1>ЛИЧНЫЕ СООБЩЕНИЯ</h1><p className="lead">Личные диалоги, общие чаты, контакты, аудио- и видеосвязь.</p><div className="message-placeholder"><div className="signal-icon"><MessageCircle size={32}/></div><h2>КАНАЛ СВЯЗИ ГОТОВИТСЯ</h2><p>Здесь будут личные сообщения, общие чаты, контакты, аудио- и видеозвонки и обмен файлами. Подключение к действующей системе связи — отдельный этап.</p><button className="outline-btn" onClick={()=>notify("Раздел связи добавлен в список интересов")}>СЛЕДИТЬ ЗА ЗАПУСКОМ <Bell size={15}/></button></div></motion.div> :
     <motion.div key="work" className="generic-page" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}><div className="eyebrow">ПЛАНИРОВАНИЕ</div><h1>МОИ ДЕЛА</h1><p className="lead">Задачи, напоминания и рабочие процессы в одном месте.</p><div className="work-grid"><div className="work-card"><CalendarDays/><small>СЕГОДНЯ</small><h2>План дня</h2><p>Соберите важные дела в одном расписании.</p><button onClick={()=>notify("Планировщик будет подключён отдельным модулем")}>ОТКРЫТЬ <ArrowRight size={14}/></button></div><div className="work-card"><Package/><small>УЧЁТ И РЕСУРСЫ</small><h2>Рабочие инструменты</h2><p>Учёт, документы, списки и контроль процессов.</p><button onClick={()=>notify("Рабочие инструменты готовятся")}>ОТКРЫТЬ <ArrowRight size={14}/></button></div></div></motion.div>}
     </AnimatePresence>
    </main>
    <aside className="right-brief">
-    <div className="brief-card"><div className="brief-top"><span>СВОДКА СИСТЕМЫ</span><Activity size={17}/></div><div className="brief-status"><span className="live-dot"/> ВСЕ СЛУЖБЫ НА СВЯЗИ</div><div className="brief-stat"><b>06</b><span>ЦИФРОВЫХ СПЕЦИАЛИСТОВ</span></div><div className="brief-stat"><b>02</b><span>ГОТОВЫ К РАБОТЕ</span></div><div className="brief-stat"><b>04</b><span>В РАЗРАБОТКЕ</span></div><div className="brief-progress"><span/><span/><span/><span/><span/><span/></div><small>РАСШИРЕНИЕ ЭКОСИСТЕМЫ</small></div>
+    <div className="brief-card"><div className="brief-top"><span>СВОДКА СИСТЕМЫ</span><Activity size={17}/></div><div className="brief-status"><span className="live-dot"/> ВСЕ СЛУЖБЫ НА СВЯЗИ</div><div className="brief-stat"><b>07</b><span>ЦИФРОВЫХ СПЕЦИАЛИСТОВ</span></div><div className="brief-stat"><b>02</b><span>ГОТОВЫ К РАБОТЕ</span></div><div className="brief-stat"><b>04</b><span>В РАЗРАБОТКЕ</span></div><div className="brief-progress"><span/><span/><span/><span/><span/><span/><span/></div><small>РАСШИРЕНИЕ ЭКОСИСТЕМЫ</small></div>
     <div className="quote-card"><div className="quote-mark">“</div><p>Большие возможности начинаются с простых полезных дел.</p><span>ПРИНЦИП СОЮЗА</span></div>
     <div className="brief-help"><CircleHelp size={18}/><div><b>Нужна помощь?</b><small>Центр поддержки пользователей</small><button onClick={()=>notify("Центр поддержки будет подключён позже")}>ОТКРЫТЬ <ArrowRight size={12}/></button></div></div>
    </aside>
