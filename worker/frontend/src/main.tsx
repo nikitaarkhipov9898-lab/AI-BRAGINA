@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowUpRight, Bell, CalendarDays, Check, ChevronRight, CircleHelp,
   Command, FileText, Home, Inbox, Menu, MessageCircle, Plus, Search,
-  Settings, Sparkles, Video, WalletCards, X
+  Settings, Sparkles, Video, X
 } from "lucide-react";
 import "./styles.css";
 
