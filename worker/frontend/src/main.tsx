@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, ChefHat,
-  CircleHelp, ClipboardList, Compass, Home, LockKeyhole, MessageCircle, Package,
-  Plus, Search, Send, ShieldCheck, Sparkles, Users, Wrench, Archive, Settings, UserRound, Video
+  Activity, ArrowRight, Bell, CalendarDays, Check, ChefHat,
+  CircleHelp, ClipboardList, Home, LockKeyhole, MessageCircle, Package,
+  Plus, Search, Send, ShieldCheck, Sparkles, Users, Wrench, Archive, Settings, UserRound
 } from "lucide-react";
 import "./styles.css";
 
