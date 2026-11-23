@@ -342,3 +342,21 @@ button{ -webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .video-more{margin:20px auto 0}
 @media(max-width:760px){.video-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.video-card{padding:6px;border-radius:15px}.video-thumb{border-radius:10px}.video-card>b{font-size:11px}}
 @media(max-width:360px){.video-grid{grid-template-columns:1fr 1fr}}
+
+
+.signal-list,.settings-list{max-width:820px;margin-top:22px;border:1px solid var(--stroke);border-radius:20px;overflow:hidden;background:rgba(255,255,255,.025)}
+.signal-row,.setting-row{min-height:78px;display:flex;align-items:center;gap:15px;padding:16px 19px;border-bottom:1px solid rgba(193,216,195,.09)}
+.signal-row:last-child,.setting-row:last-child{border-bottom:0}
+.signal-row>div,.setting-row>span:first-child{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.signal-row b,.setting-row b{font-size:13px;color:#edf2eb}
+.signal-row small,.setting-row small{font-size:11px;line-height:1.5;color:#9cad9f}
+.signal-state{width:30px;height:30px;flex:none;border-radius:50%;display:grid;place-items:center;background:#8eaa8220;color:#d7b97f}
+.signal-state.good{color:#8fce9a;background:#4e966222}
+.signal-row>button{border:1px solid var(--stroke);border-radius:10px;padding:9px 12px;background:rgba(255,255,255,.04);color:#d9bd86;font-size:9px;letter-spacing:.6px}
+.setting-row input[type=checkbox]{appearance:none;width:46px;height:27px;flex:none;border:1px solid #60766a;border-radius:999px;background:#26352d;position:relative;transition:background .2s ease,border-color .2s ease}
+.setting-row input[type=checkbox]:after{content:"";position:absolute;width:19px;height:19px;top:3px;left:3px;border-radius:50%;background:#a8b6aa;transition:transform .2s ease,background .2s ease}
+.setting-row input[type=checkbox]:checked{background:#647f58;border-color:#8fae7e}
+.setting-row input[type=checkbox]:checked:after{transform:translateX(19px);background:#f1e4c5}
+.setting-value{color:#d7b97f;font-size:9px;letter-spacing:1px}
+.setting-row .outline-btn{min-height:38px;font-size:9px}
+html.motion-disabled *,html.motion-disabled *:before,html.motion-disabled *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
