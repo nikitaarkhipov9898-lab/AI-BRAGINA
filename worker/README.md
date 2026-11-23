@@ -43,3 +43,13 @@ Before connecting or deploying, confirm the existing Worker has:
 The Wrangler file intentionally does not contain a fabricated D1 database ID. The existing D1 binding must be represented in the final Wrangler configuration using the real database ID, which must be read from the Cloudflare account. Do not deploy until this is verified.
 
 Never commit secret values, session tokens, password hashes, or private user data.
+
+ 
+## React frontend (new preview)
+
+The new interface is being developed separately in `frontend/` with React, TypeScript and Vite. It builds into `assets/next/`, while the existing application remains available at `/app`.
+
+- Install/build: `npm run build:frontend` from this `worker/` directory.
+- Preview path after the build is deployed: `/app-next`.
+- Cloudflare Workers Builds must run `npm run build:frontend && npx wrangler deploy` so the React bundle exists before Wrangler packages static assets.
+- Do not replace the existing `/app` until authentication, data, navigation and core workflows have been migrated and verified.
