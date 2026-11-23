@@ -40,7 +40,7 @@ Before connecting or deploying, confirm the existing Worker has:
 2. Encrypted secrets `GROQ_API_KEY` and `OWNER_SETUP_CODE`.
 3. The same production Worker name, `chef-api`.
 
-The Wrangler file intentionally does not contain a fabricated D1 database ID. The existing D1 binding must be represented in the final Wrangler configuration using the real database ID, which must be read from the Cloudflare account. Do not deploy until this is verified.
+The Wrangler configuration in this branch contains the verified production D1 ID and a separate Preview D1 ID. Non-production branch previews must use the Preview database binding; do not change the production branch or production database.
 
 Never commit secret values, session tokens, password hashes, or private user data.
 
@@ -51,5 +51,6 @@ The new interface is being developed separately in `frontend/` with React, TypeS
 
 - Install/build: `npm run build:frontend` from this `worker/` directory.
 - Preview path after the build is deployed: `/app-next`.
-- Cloudflare Workers Builds must run `npm run build:frontend && npx wrangler deploy` so the React bundle exists before Wrangler packages static assets.
+- In Cloudflare Workers > `chef-api` > Settings > Builds, set **Root directory** to `worker`, **Build command** to `npm run build:frontend`, **Deploy command** to `npx wrangler deploy`, and enable Preview builds for non-production branches. Workers Builds does not use Wrangler's `[build]` custom-build setting, so the Dashboard Build command is required.
+- The React bundle must exist in `assets/next/` before Wrangler packages static assets. Without the Dashboard Build command, `/app-next` will not be included in the deployment.
 - Do not replace the existing `/app` until authentication, data, navigation and core workflows have been migrated and verified.
