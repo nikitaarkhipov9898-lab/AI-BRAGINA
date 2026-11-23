@@ -14,6 +14,7 @@ export type LocalProfile = {
 export type LocalTask = {
   id?: number;
   title: string;
+  serverId?: string;
   dueAt?: number;
   completed: boolean;
   createdAt: number;
