@@ -413,4 +413,5 @@ html.motion-disabled *,html.motion-disabled *:before,html.motion-disabled *:afte
 .specialist-error{padding:13px 15px;border:1px solid #d65a4c66;border-radius:13px;background:#4b211d55;color:#ffc0b4}
 .specialist-storage-note{color:#829488;line-height:1.6;font-size:10px}
 @media(max-width:560px){.specialist-workspace{padding:13px;border-radius:19px;margin-top:16px}.specialist-form-grid{grid-template-columns:1fr}.specialist-panel{padding:14px}.event-list-row{flex-wrap:wrap}.event-list-row>button:first-child{flex-basis:100%}.specialist-actions{display:grid}.specialist-actions button{width:100%}}
-\n.app-version{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;line-height:1.7;color:var(--muted)}.app-version b{color:var(--ink);letter-spacing:1px}.app-version span{font-size:10px;overflow-wrap:anywhere}.motion-disabled .grain{display:none}\n
+
+.app-version{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;line-height:1.7;color:var(--muted)}.app-version b{color:var(--ink);letter-spacing:1px}.app-version span{font-size:10px;overflow-wrap:anywhere}.motion-disabled .grain{display:none}
