@@ -296,7 +296,7 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
  <div class="notice">Календарь, повторяющиеся напоминания и совместные задачи подключим следующим этапом.</div>
 </section>
 <section id="page-chef" class="hidden">
- <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">ИИ-Шеф</h2><p class="page-sub">Приготовление из продуктов дома, конкретные блюда, точное число порций и ваши пожелания. Отдельно — организация праздников и больших застолий.</p>
+ <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">ИИ-Шеф</h2><p class="page-sub">Приготовление из продуктов дома, конкретные блюда, точное число порций и ваши пожелания.</p><div class="panel"><div class="section-head"><h2>Планируете праздник?</h2></div><p class="muted">Свадьба, юбилей, день рождения или другое событие — соберите гостей, меню, напитки и подготовку в одном проекте.</p><button class="btn" onclick="showPage('chef-events')">Праздник под ключ</button></div>
  <div class="notice">Экспериментальный режим. ИИ может ошибаться в рецептах и пропорциях. Проверяйте состав и готовность продуктов.</div>
  <div class="tabs"><button class="tab active" id="tab-pantry" onclick="chefMode='pantry';renderChefMode()">Что есть дома</button><button class="tab" id="tab-specific" onclick="chefMode='specific';renderChefMode()">Конкретное блюдо</button></div>
  <div id="chef-pantry" class="panel">
@@ -465,6 +465,7 @@ let conversationSyncTimer=null;
 function conversationItems(){
  const items=[];
  for(const entry of (appData.history||[]))items.push({id:String(entry.id),kind:'recipe',title:String(entry.title||'Рецепт'),created_at:entry.date,content:{entry}});
+ for(const ev of (appData.chefEvents||[]))items.push({id:String(ev.id),kind:'chef_event',title:String(ev.name||'Мероприятие'),created_at:ev.createdAt,content:{event:ev}});
  for(const c of (appData.mechanicCases||[])){
   const safe={...c,vehicle:{...(c.vehicle||{}),vin:''}};
   items.push({id:String(c.id),kind:'mechanic',title:String(c.title||'Диагностика'),created_at:c.createdAt,content:{case:safe}});
@@ -482,6 +483,7 @@ async function syncConversations(){
  for(const row of (data.conversations||[])){
   if(row.kind==='recipe'&&row.content?.entry&&!appData.history.some(x=>x.id===row.id)){appData.history.unshift(row.content.entry);changed=true;}
   if(row.kind==='mechanic'&&row.content?.case&&!appData.mechanicCases.some(x=>x.id===row.id)){appData.mechanicCases.unshift(row.content.case);changed=true;}
+  if(row.kind==='chef_event'&&row.content?.event&&!appData.chefEvents.some(x=>x.id===row.id)){appData.chefEvents.unshift(row.content.event);changed=true;}
  }
  if(changed){appData.history=appData.history.slice(0,100);appData.mechanicCases=appData.mechanicCases.slice(0,250);try{localStorage.setItem(APP_KEY,JSON.stringify(appData));}catch(e){}renderHistory();renderMechanicHistory();}
 }
