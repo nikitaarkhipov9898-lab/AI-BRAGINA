@@ -227,7 +227,7 @@ button{ -webkit-tap-highlight-color:transparent;touch-action:manipulation}
  .community-compose input{flex:1 1 65%;min-width:120px}
  .community-compose button{border-radius:12px}
 }
-@media(max-width:370px){.helper-grid,.catalog-grid{grid-template-columns:1fr}.helper-illustration{height:155px}.mobile-nav button{font-size:7px}}
+@media(max-width:370px){.helper-illustration{height:155px}.mobile-nav button{font-size:7px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 @media(hover:none){.dash-card:hover,.helper-card:hover,.rail-link:hover{transform:none}}
 
