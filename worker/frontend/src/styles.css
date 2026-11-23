@@ -383,3 +383,33 @@ html.motion-disabled *,html.motion-disabled *:before,html.motion-disabled *:afte
 .feed-empty b{color:#edf2eb;font-size:14px}
 .feed-empty span{font-size:12px}
 @media(max-width:560px){.community-compose{flex-wrap:wrap;padding:12px}.community-compose textarea{flex-basis:calc(100% - 54px);min-height:75px}.community-compose button{width:100%;justify-content:center}.community-stream .feed-post{padding:15px}}
+
+
+/* Specialist workspaces */
+.specialist-workspace{margin-top:24px;padding:clamp(16px,3vw,28px);border:1px solid rgba(193,216,195,.16);border-radius:26px;background:linear-gradient(145deg,rgba(22,37,29,.96),rgba(12,22,17,.98));box-shadow:0 24px 70px #0003;display:grid;gap:18px}
+.specialist-workspace-head h2{font-size:clamp(22px,3vw,30px);margin:7px 0;color:#f1f3eb}
+.specialist-workspace-head p{color:#aab9ad;line-height:1.6;margin:0}
+.specialist-tabs{display:flex;gap:8px;overflow-x:auto;padding:3px 0 9px;scrollbar-width:thin}
+.specialist-tab{flex:none;border:1px solid rgba(193,216,195,.16);border-radius:999px;padding:11px 15px;background:#ffffff08;color:#b8c5b9;font-size:11px;font-weight:700;transition:all .2s ease}
+.specialist-tab.active{background:linear-gradient(135deg,#d4b779,#9e8150);border-color:#d7bb83;color:#17231c;box-shadow:0 6px 20px #c5a66c24}
+.specialist-panel{display:grid;gap:15px;padding:clamp(15px,2.5vw,22px);border:1px solid rgba(193,216,195,.13);border-radius:20px;background:rgba(255,255,255,.025)}
+.specialist-panel h3{margin:0;color:#f0f2e9;font-size:20px}
+.specialist-panel p{margin:0;color:#aab9ad;line-height:1.65;font-size:13px}
+.specialist-panel label{display:grid;gap:8px;color:#d8c49a;font-size:11px;font-weight:700;letter-spacing:.35px}
+.specialist-panel input,.specialist-panel textarea{width:100%;min-width:0;min-height:48px;padding:13px 14px;border:1px solid rgba(193,216,195,.18);border-radius:13px;background:#0c1711;color:#f2f5ef;font:inherit;font-size:14px;letter-spacing:0;outline:none}
+.specialist-panel textarea{min-height:105px;resize:vertical;line-height:1.55}
+.specialist-panel input:focus,.specialist-panel textarea:focus{border-color:#c9aa70;box-shadow:0 0 0 3px #c9aa7022}
+.specialist-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.specialist-panel .hero-button,.specialist-panel .outline-btn{justify-self:start;min-height:46px}
+.specialist-actions{display:flex;flex-wrap:wrap;gap:10px}
+.specialist-actions button,.event-toolbar button,.event-list-row>button{border:1px solid rgba(193,216,195,.16);border-radius:12px;padding:11px 14px;background:#ffffff08;color:#e8eade;font-size:12px}
+.event-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.event-toolbar b{flex:1;min-width:140px;color:#f2f3ea}
+.event-list-row{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid rgba(193,216,195,.12);border-radius:14px;background:#ffffff05}
+.event-list-row>button:first-child{flex:1;min-width:0;text-align:left;border:0;background:transparent;font-weight:700}
+.event-list-row small{display:block;margin-top:5px;color:#9cac9f;font-weight:400}
+.specialist-result{padding:18px;border:1px solid #c9aa7040;border-radius:18px;background:#c9aa700d;color:#e9eee5;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.specialist-answer{margin:12px 0 16px;font-size:14px}
+.specialist-error{padding:13px 15px;border:1px solid #d65a4c66;border-radius:13px;background:#4b211d55;color:#ffc0b4}
+.specialist-storage-note{color:#829488;line-height:1.6;font-size:10px}
+@media(max-width:560px){.specialist-workspace{padding:13px;border-radius:19px;margin-top:16px}.specialist-form-grid{grid-template-columns:1fr}.specialist-panel{padding:14px}.event-list-row{flex-wrap:wrap}.event-list-row>button:first-child{flex-basis:100%}.specialist-actions{display:grid}.specialist-actions button{width:100%}}
