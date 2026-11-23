@@ -21,8 +21,8 @@ jobs:
       run:
         working-directory: worker/frontend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -31,5 +31,6 @@ jobs:
       - name: Dependency security audit
         run: |
           npm audit --json > audit.json || true
-          node -e "const a=require('./audit.json'); console.log(JSON.stringify(a.vulnerabilities || {}, null, 2))"
+          node -e "const a=require('./audit.json'); console.log(JSON.stringify(a.vulnerabilities || {}, null, 2))
+          npm audit --audit-level=high"
       - run: npm run build
