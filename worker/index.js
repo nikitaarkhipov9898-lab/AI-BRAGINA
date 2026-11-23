@@ -7,9 +7,17 @@ const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const PBKDF2_ITERATIONS = 100000;
 const SESSION_DAYS = 30;
 
+const ALLOWED_ORIGINS = new Set([
+  ALLOWED_ORIGIN,
+  "https://admin-panel-chef-api.bosstayson24.workers.dev",
+  "https://experimental-soyuz-system-chef-api.bosstayson24.workers.dev",
+  "capacitor://localhost",
+  "http://localhost",
+  "https://localhost"
+]);
+
 function corsHeaders(origin = "") {
-  const allowedOrigins = [ALLOWED_ORIGIN, "https://admin-panel-chef-api.bosstayson24.workers.dev", "https://experimental-soyuz-system-chef-api.bosstayson24.workers.dev", "capacitor://localhost", "http://localhost", "https://localhost"];
-  const responseOrigin = allowedOrigins.includes(origin) ? origin : ALLOWED_ORIGIN;
+  const responseOrigin = ALLOWED_ORIGINS.has(origin) ? origin : ALLOWED_ORIGIN;
   return {
     "Access-Control-Allow-Origin": responseOrigin,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -1055,8 +1063,9 @@ async function handleFetch(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    let response;
     try {
-      return await handleFetch(request, env);
+      response = await handleFetch(request, env);
     } catch (e) {
       console.error("WORKER_ERROR", JSON.stringify({
         message: e?.message || String(e),
@@ -1066,7 +1075,21 @@ export default {
         method: request.method,
         timestamp: new Date().toISOString()
       }));
-      return json({ error: { message: "Внутренняя ошибка сервера" } }, 500);
+      response = json({ error: { message: "Внутренняя ошибка сервера" } }, 500);
     }
+
+    // Apply the request's allowed origin to every response, including JSON
+    // endpoints and errors. This keeps Capacitor clients working consistently.
+    const origin = request.headers.get("Origin") || "";
+    if (ALLOWED_ORIGINS.has(origin)) {
+      const headers = new Headers(response.headers);
+      for (const [name, value] of Object.entries(corsHeaders(origin))) headers.set(name, value);
+      response = new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers
+      });
+    }
+    return response;
   }
 };
