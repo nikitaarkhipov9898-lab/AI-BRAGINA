@@ -28,4 +28,8 @@ jobs:
           cache: npm
           cache-dependency-path: worker/frontend/package.json
       - run: npm install
+      - name: Dependency security audit
+        run: |
+          npm audit --json > audit.json || true
+          node -e "const a=require('./audit.json'); console.log(JSON.stringify(a.vulnerabilities || {}, null, 2))"
       - run: npm run build
