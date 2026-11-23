@@ -13,7 +13,6 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg"],
       manifest: {
         id: "/app-next",
         name: "СВОЁ",
