@@ -129,7 +129,6 @@ function SpecialistWorkspace({kind,onNotify}:{kind:"chef"|"mechanic";onNotify:(s
  const [events,setEvents]=useState<PlannerEvent[]>(()=>{try{return JSON.parse(localStorage.getItem("soyuz_chef_events_v1")||"[]")}catch{return[]}});
  const [cases,setCases]=useState<SavedCase[]>(()=>{try{return JSON.parse(localStorage.getItem("soyuz_mechanic_cases_v1")||"[]")}catch{return[]}});
  const [eventName,setEventName]=useState(""),[eventDate,setEventDate]=useState(""),[eventCity,setEventCity]=useState(""),[eventBudget,setEventBudget]=useState("");
- const [guestCount,setGuestCount]=useState(""),[menu,setMenu]=useState(""),[shopping,setShopping]=useState(""),[tasks,setTasks]=useState("");
  const [selected,setSelected]=useState<string|null>(null);
  const [ingredients,setIngredients]=useState(""),[dish,setDish]=useState(""),[servings,setServings]=useState("2");
  const [vehicle,setVehicle]=useState(""),[symptoms,setSymptoms]=useState(""),[codes,setCodes]=useState("");
