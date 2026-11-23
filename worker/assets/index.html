@@ -488,6 +488,7 @@ body[data-page="settings"],body[data-page="admin"]{background-image:radial-gradi
   <button class="btn" onclick="createChefEvent()">Создать проект</button>
  </div>
  <button id="chef-event-archive-launch" class="event-archive-launch" onclick="showPage('chef-event-archive')"><span class="event-archive-icon">▤</span><span><strong>Мои мероприятия</strong><small>Архив праздников, меню и покупок</small></span><b>Открыть →</b></button>
+ <div id="chef-event-list" class="event-project-list" aria-live="polite"></div>
  <div id="chef-event-workspace" class="hidden"></div>
 </section>
 <section id="page-chef-event-archive" class="hidden page-event-archive"><button class="back" onclick="showPage('chef-events')">← Праздник под ключ</button><h2 class="page-title">Мои мероприятия</h2><p class="page-sub">История праздников, меню, рецептов и покупок.</p><div class="panel"><div class="field"><label>Поиск</label><input id="chef-event-search" placeholder="Название, тип или место" oninput="renderChefEventArchive()"></div><div class="field"><label>Сортировка</label><select id="chef-event-sort" onchange="renderChefEventArchive()"><option value="new">Сначала новые</option><option value="old">Сначала старые</option><option value="name">По названию</option></select></div></div><div id="chef-event-archive-list"></div></section>
@@ -1069,7 +1070,26 @@ let activeChefEventId=null;
 function chefEventById(id){return (appData.chefEvents||[]).find(x=>x.id===id)||null;}
 function chefEventCounts(e){const g=e.guests||[],sum=(list)=>list.reduce((n,x)=>n+Math.max(1,Number(x.count)||1),0);return {confirmed:sum(g.filter(x=>x.status==='confirmed')),pending:sum(g.filter(x=>['pending','invited','no_response'].includes(x.status))),declined:sum(g.filter(x=>x.status==='declined')),noShow:sum(g.filter(x=>x.status==='no_show')),maximum:sum(g.filter(x=>!['declined','no_show'].includes(x.status))),adults:sum(g.filter(x=>x.kind!=='child'&&!['declined','no_show'].includes(x.status))),children:sum(g.filter(x=>x.kind==='child'&&!['declined','no_show'].includes(x.status)))};}
 function createChefEvent(){const name=$('event-name').value.trim();if(!name){toast('Укажите название мероприятия.','error');return;}const b=$('event-budget').value;if(b!==''&&(!Number.isFinite(Number(b))||Number(b)<0)){toast('Бюджет должен быть неотрицательным числом.','error');return;}const e={id:'ev_'+Date.now(),name,type:$('event-type').value,date:$('event-date').value,region:$('event-region').value.trim(),budget:b===''?null:Number(b),guests:[],menu:[],tasks:[],createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};appData.chefEvents=appData.chefEvents||[];appData.chefEvents.unshift(e);e.updatedAt=new Date().toISOString();saveData();['event-name','event-date','event-region','event-budget'].forEach(id=>{const el=$(id);if(el)el.value='';});$('event-type').selectedIndex=0;activeChefEventId=e.id;openChefEvent(e.id);}
-function renderChefEvents(){const box=$('chef-event-list');if(box)box.innerHTML='';}
+function renderChefEvents(){
+ const box=$('chef-event-list');if(!box)return;
+ box.innerHTML='';
+ const items=(appData.chefEvents||[]).filter(e=>!e.archived).sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||'')));
+ if(!items.length){const empty=document.createElement('div');empty.className='panel muted';empty.textContent='Пока нет активных мероприятий. Создайте проект выше — здесь появятся гости, меню, рецепты, покупки и задачи.';box.appendChild(empty);return;}
+ const heading=document.createElement('h3');heading.className='section-head';heading.textContent='Активные мероприятия · '+items.length;box.appendChild(heading);
+ items.forEach(e=>{
+  const card=document.createElement('article');card.className='event-archive-card';
+  const info=document.createElement('div'),title=document.createElement('strong'),meta=document.createElement('p');
+  title.textContent=e.name||'Без названия';
+  const counts=chefEventCounts(e);
+  meta.textContent=[e.type,e.date||'Дата не указана',e.region,counts.maximum+' гостей',(e.menu||[]).length+' блюд'].filter(Boolean).join(' · ');
+  info.append(title,meta);
+  const actions=document.createElement('div');actions.className='event-archive-actions';
+  const open=document.createElement('button');open.className='btn';open.textContent='Продолжить';open.onclick=()=>openChefEvent(e.id);
+  const archive=document.createElement('button');archive.className='btn secondary';archive.textContent='В архив';archive.onclick=()=>{e.archived=true;e.updatedAt=new Date().toISOString();saveData();renderChefEvents();};
+  const del=document.createElement('button');del.className='btn secondary';del.textContent='Удалить';del.onclick=()=>{if(!del.dataset.confirmed){del.dataset.confirmed='1';del.textContent='Подтвердить удаление';return;}appData.chefEvents=appData.chefEvents.filter(x=>x.id!==e.id);saveData();renderChefEvents();};
+  actions.append(open,archive,del);card.append(info,actions);box.appendChild(card);
+ });
+}
 function renderChefEventArchive(){const box=$('chef-event-archive-list');if(!box)return;const q=String($('chef-event-search')?.value||'').trim().toLowerCase(),sort=$('chef-event-sort')?.value||'new';let items=[...(appData.chefEvents||[])].filter(e=>[e.name,e.type,e.region,e.date].join(' ').toLowerCase().includes(q));items.sort((x,y)=>sort==='old'?String(x.date||x.createdAt||'').localeCompare(String(y.date||y.createdAt||'')):sort==='name'?String(x.name||'').localeCompare(String(y.name||''),'ru'):String(y.date||y.createdAt||'').localeCompare(String(x.date||x.createdAt||'')));box.innerHTML='';if(!items.length){box.innerHTML='<div class="panel muted">Мероприятия не найдены.</div>';return;}items.forEach(e=>{const card=document.createElement('article');card.className='event-archive-card';const info=document.createElement('div'),title=document.createElement('strong'),meta=document.createElement('p');title.textContent=e.name||'Без названия';meta.textContent=[e.type,e.date||'Дата не указана',e.region].filter(Boolean).join(' · ')+' · '+(e.menu||[]).length+' блюд';info.append(title,meta);const actions=document.createElement('div');actions.className='event-archive-actions';const open=document.createElement('button');open.className='btn';open.textContent='Открыть';open.onclick=()=>{showPage('chef-events');openChefEvent(e.id);};const del=document.createElement('button');del.className='btn secondary';del.textContent='Удалить';del.onclick=()=>{if(!del.dataset.confirmed){del.dataset.confirmed='1';del.textContent='Подтвердить';return;}appData.chefEvents=appData.chefEvents.filter(x=>x.id!==e.id);saveData();renderChefEventArchive();};actions.append(open,del);card.append(info,actions);box.append(card);});}
 function openChefEvent(id){const e=(appData.chefEvents||[]).find(x=>x.id===id);if(!e)return;activeChefEventId=id;$('chef-event-create').classList.add('hidden');$('chef-event-archive-launch').classList.add('hidden');$('chef-event-workspace').classList.remove('hidden');renderChefEventWorkspace(e);restoreChefDraft();}
 function renderChefEventWorkspace(e){
