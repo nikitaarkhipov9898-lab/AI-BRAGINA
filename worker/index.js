@@ -815,9 +815,12 @@ async function handleFetch(request, env) {
     });
   }
 
-  // React frontend preview route. The legacy /app remains untouched.
-  // Preview deployment is isolated to non-production branches.
-  if (env.ASSETS && request.method === "GET" && (url.pathname === "/app-next" || url.pathname === "/app-next/")) {
+  // Experimental СОЮЗ frontend: serve it at the preview root so the preview URL
+  // opens the new concept directly. Keep the canonical production Worker untouched.
+  // The legacy /app route and production hostname continue serving the existing app.
+  const isPreviewHost = url.hostname !== "chef-api.bosstayson24.workers.dev";
+  if (env.ASSETS && request.method === "GET" && isPreviewHost &&
+      (url.pathname === "/" || url.pathname === "/app-next" || url.pathname === "/app-next/")) {
     const assetUrl = new URL(request.url);
     assetUrl.pathname = "/next/index.html";
     return env.ASSETS.fetch(new Request(assetUrl, request));
