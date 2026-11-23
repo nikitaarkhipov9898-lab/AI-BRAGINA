@@ -913,8 +913,6 @@ const ml=$('ev-menu-list');(e.menu||[]).forEach(m=>{const row=document.createEle
 const tl=$('ev-task-list');(e.tasks||[]).forEach(t=>{const row=document.createElement('div');row.className='history-item';const label=document.createElement('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!t.done;cb.onchange=()=>{t.done=cb.checked;e.updatedAt=new Date().toISOString();saveData();};label.append(cb,document.createTextNode(' '+t.title+(t.due?' · '+t.due:'')));row.appendChild(label);tl.appendChild(row);});
 }
 
-const tl=$('ev-task-list');(e.tasks||[]).forEach(t=>{const row=document.createElement('div');row.className='history-item';const label=document.createElement('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!t.done;cb.onchange=()=>{t.done=cb.checked;e.updatedAt=new Date().toISOString();saveData();};label.append(cb,document.createTextNode(' '+t.title+(t.due?' · '+t.due:'')));row.appendChild(label);tl.appendChild(row);});
-}
 
 async function suggestChefEventMenu(id){
  const e=chefEventById(id);if(!e||isBusy)return;const c=chefEventCounts(e);if(!c.maximum){toast('Сначала добавьте гостей или укажите ожидаемое количество.','error');return;}
