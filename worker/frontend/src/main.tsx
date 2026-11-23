@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  Activity, ArrowRight, Bell, BookOpen, BriefcaseBusiness, CalendarDays, Check,
-  ChefHat, ChevronRight, CircleHelp, ClipboardList, Compass, Crown, FileText,
-  Gauge, Globe2, Hammer, HeartPulse, Home, LockKeyhole, MessageCircle, Package,
-  Play, Plus, Search, Send, Settings, ShieldCheck, ShoppingBasket, Sparkles,
-  Star, Stethoscope, Store, Users, Video, Wrench, X, Zap
+  Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, ChefHat,
+  CircleHelp, ClipboardList, Home, LockKeyhole, MessageCircle, Package,
+  Plus, Search, Send, ShieldCheck, Sparkles, Users, Wrench
 } from "lucide-react";
 import "./styles.css";
 
@@ -33,7 +31,6 @@ function App(){
  const [chat,setChat]=useState("");
  const [sent,setSent]=useState<string[]>([]);
  const [toast,setToast]=useState("");
- const [showAll,setShowAll]=useState(false);
  const notify=(s:string)=>{setToast(s);window.setTimeout(()=>setToast(""),2400)};
  const go=(t:string)=>{setTab(t);setActive(null);window.scrollTo({top:0,behavior:"smooth"});};
  const openHelper=(h:Helper)=>{setActive(h);setChat("");setSent([]);};
