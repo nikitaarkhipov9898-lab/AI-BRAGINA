@@ -8,3 +8,98 @@
 @media(max-width:760px){.union-header{height:65px;padding:0 14px;gap:10px}.seal{width:37px;height:37px;flex:none}.brand-lockup{min-width:0}.brand-name{font-size:25px}.brand-sub{font-size:7px;letter-spacing:1px}.header-center{display:none}.header-actions{margin-left:auto}.profile-chip span:last-child{display:none}.round-icon{width:32px;height:32px}.mobile-status{height:28px;display:flex;align-items:center;justify-content:center;background:#223435;color:#c9c0a9;font:600 8px Oswald;letter-spacing:1px}.mobile-status .live-dot{width:6px;height:6px}.union-layout{display:block;padding:13px 12px 85px}.side-rail{display:none}.main-stage{min-height:600px}.mobile-nav{position:fixed;z-index:15;bottom:0;left:0;right:0;height:66px;padding:5px 5px max(5px,env(safe-area-inset-bottom));background:#1b2b2c;border-top:3px solid #b52e27;display:flex;justify-content:space-around}.mobile-nav button{border:0;background:transparent;color:#aeb6a7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:55px;font:600 7px Oswald;letter-spacing:.5px}.mobile-nav button.active{color:#e2bb70}.mobile-nav button.active:after{content:"";height:2px;width:22px;background:#c43b2e;position:absolute;bottom:2px}.hero-banner{min-height:360px}.hero-content{width:100%;padding:28px 20px;z-index:3}.hero-content h1{font-size:34px;max-width:350px}.hero-content p{max-width:290px}.hero-banner:after{background:linear-gradient(90deg,#1b2b2c 0%,#1b2b2c 53%,#1b2b2caa 100%)}.hero-art{width:58%;opacity:.56;right:-35px}.hero-monument{right:60px;transform:scale(.8);transform-origin:bottom}.hero-sun{right:5px;width:180px;height:180px}.hero-ring{right:-25px}.hero-index{right:10px}.ticker{justify-content:flex-start;gap:17px;padding:0 15px}.section-head{margin:25px 0 12px}.section-head h2{font-size:21px}.dashboard-grid{grid-template-columns:1fr}.dash-card{min-height:118px;padding:14px 14px 14px 65px;justify-content:center}.dash-icon{position:absolute;left:14px;top:17px}.dash-card h3{font-size:17px}.dash-card p{max-width:260px}.helper-grid,.catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.helper-illustration{height:120px}.helper-card-copy{padding:10px}.helper-card h3{font-size:16px}.helper-card p{font-size:9px;min-height:62px}.helper-number{font-size:7px}.card-status{font-size:7px}.helper-card-bottom{font-size:7px}.bottom-motto{font-size:13px;flex-wrap:wrap}.bottom-motto small{width:100%;margin-left:47px}.detail-hero{grid-template-columns:1fr}.detail-copy{padding:24px 20px 10px}.detail-copy h1{font-size:34px}.detail-mascot-panel{min-height:190px}.detail-mascot-panel .mascot{transform:scale(1.45)}.detail-grid{grid-template-columns:1fr}.paper-panel{padding:16px}.page-title-row h1,.generic-page h1{font-size:29px}.catalog-seal{width:48px;height:48px;font-size:27px;flex:none}.catalog-search{height:43px}.generic-page{padding:21px 15px}.community-compose{padding:9px;gap:7px}.community-compose input{padding:10px;font-size:10px}.community-compose button{font-size:8px;padding:11px 8px}.work-grid{grid-template-columns:1fr}.union-footer{padding:12px 14px 80px;gap:8px;flex-wrap:wrap;font-size:7px}.union-footer span:nth-child(2){display:none}}
 @media(max-width:390px){.helper-grid,.catalog-grid{grid-template-columns:1fr}.helper-illustration{height:145px}.helper-card p{min-height:0}.hero-content h1{font-size:30px}.brand-sub{letter-spacing:.5px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+
+/* СОЮЗ / технологическая система будущего — обновлённая визуальная основа */
+:root{--red:#c8463d;--red2:#ed6656;--ink:#111b1b;--muted:#9aa9a0;--paper:#e9eee7;--line:#34453e;--gold:#c7a56a;--green:#527d62}
+html,body{background:#101918;color:#e9eee7}
+.union-app{background:radial-gradient(ellipse at 50% -10%,#244438 0,#15221f 48%,#101716 100%);color:#e9eee7}
+.union-header{background:#0d1717;border-bottom:2px solid #bd493d;box-shadow:0 8px 30px #0003}
+.brand-name{font-family:Rubik,Arial,sans-serif;font-weight:800;letter-spacing:2px}
+.brand-sub{color:#9eafa4}
+.seal{border-color:#668b70;color:#d0b77e}
+.seal:before,.seal:after,.seal-orbit{border-color:#668b70}
+.union-layout{gap:20px}
+.side-rail{background:linear-gradient(165deg,#1b2a26,#15211e);border:1px solid #34483d;box-shadow:0 12px 30px #0003}
+.rail-label,.rail-bottom small{color:#8da096}
+.rail-link{color:#c6d2c8;font-family:Rubik,Arial,sans-serif;font-size:10px;letter-spacing:.35px}
+.rail-link svg{color:#8ca995}
+.rail-link:hover,.rail-link.selected{background:#294238;color:#f1e9d8}
+.rail-link.selected:before{background:#d05245}
+.rail-link.selected svg{color:#e2b975}
+.rail-rule,.rail-bottom{border-color:#35483d}
+.rail-stamp{border-color:#c3a36a;color:#e3b96f}
+.main-stage{color:#e9eee7}
+.hero-banner{background:linear-gradient(115deg,#1c342b,#172b27 58%,#152321);box-shadow:0 14px 36px #0004;border:1px solid #385343}
+.hero-banner:after{background:linear-gradient(90deg,#1b332b 0%,#1b332b 45%,#1b332b00 100%)}
+.hero-grid{opacity:.22;background-image:linear-gradient(#82a58b 1px,transparent 1px),linear-gradient(90deg,#82a58b 1px,transparent 1px)}
+.hero-content h1 em{color:#d2b477}
+.hero-art{filter:saturate(.78)}
+.hero-sun{background:#a83c35;box-shadow:0 0 0 18px #a83c3525,0 0 65px #b64c3944}
+.hero-ring{border-color:#b6a16b88}
+.hero-monument{filter:drop-shadow(9px 7px 0 #07100d);transform:perspective(500px) rotateY(-12deg)}
+.monument-pillar{background:linear-gradient(90deg,#6d9b7b,#294c3a 55%,#9bb99a);border:1px solid #b4c5a0}
+.monument-base{background:linear-gradient(90deg,#315a43,#9ab28c,#315a43)}
+.ticker{background:#111c1a;color:#b9c9bd;border-color:#34483d}
+.section-head h2,.page-title-row h1,.generic-page h1,.detail-copy h1{color:#f0f1e8}
+.text-link{color:#d9b875}
+.dash-card,.helper-card,.paper-panel,.brief-card,.quote-card,.brief-help,.feed-post,.work-card,.message-placeholder{background:linear-gradient(145deg,#1b2a25,#17231f);border:1px solid #344a3d;color:#e6eee6;box-shadow:0 10px 26px #0003}
+.dash-card h3,.helper-card h3,.paper-panel h2,.work-card h2,.feed-post h3{color:#f0f1e8}
+.dash-card p,.helper-card p,.chat-intro,.generic-page .lead,.work-card p,.feed-post p{color:#aab9ad}
+.dash-card small,.helper-role,.panel-kicker,.page-title-row .eyebrow{color:#d3b478}
+.dash-icon{background:#2b4839;color:#d8b878}
+.helper-card-top,.helper-card-bottom,.skill-row,.post-actions{border-color:#354a3e}
+.helper-illustration{background:radial-gradient(circle at 50% 35%,#365b46,#1a2c25 72%);border-color:#3d5946}
+.illustration-grid{opacity:.22}
+.illustration-orbit{border-color:#b9a16b66}
+.mascot .chef-face,.mascot .mech-face{box-shadow:0 8px 22px #0005}
+.card-status.open,.status-open{color:#8ed0a0}
+.card-status.locked,.status-locked{color:#dfb875}
+.catalog-search{background:#1a2923;border-color:#3a5142;color:#aebeb2}
+.catalog-search input,.task-input input,.community-compose input{color:#eaf0e8}
+.catalog-search input::placeholder,.task-input input::placeholder{color:#83958a}
+.catalog-foot{color:#aebeb2;border-color:#354a3e}
+.detail-hero{background:#1a2b25;border:1px solid #3b5143}
+.detail-copy p,.detail-status{color:#b2c1b5}
+.detail-mascot-panel{background:radial-gradient(circle at 50% 40%,#355a45,#182a23 70%);border-color:#3d5946}
+.orbit{border-color:#c2a66e66}
+.usage-panel .sample-prompt,.sample-prompt{background:#243a2f;border-color:#49634f;color:#e5d4ad}
+.task-input{background:#111d19;border-color:#405849}
+.task-input button,.hero-button,.community-compose button,.work-card button{background:#b94137;color:#fff}
+.mini-bubble.mine{background:#315c43;color:#f2f5ed}
+.mini-bubble.bot{background:#263a30;color:#d6e0d5}
+.demo-note{color:#a5b4a8}
+.locked-detail{background:#1b2b25;border-color:#3b5143;color:#e5eee4}
+.locked-detail p{color:#aebeb2}
+.catalog-seal{background:#21382c;border-color:#b69a61;color:#d9b875}
+.generic-page{color:#eaf0e8}
+.community-compose{background:#1a2923;border-color:#354a3e}
+.community-compose input{background:#111d19;border-color:#3b5043}
+.post-top small,.work-card small{color:#a4b5a8}
+.post-emblem{background:#345a42;color:#f0d39a}
+.verified{color:#8fc79b}
+.post-image-graphic{background:linear-gradient(120deg,#1b3a2d,#14241f)}
+.post-sun{background:#b34338}
+.post-actions button{color:#e0b875}
+.signal-icon{border-color:#64856d;color:#d9b875}
+.message-placeholder h2{color:#e9eee7}
+.message-placeholder p{color:#aebeb2}
+.work-card>svg{color:#d8b875}
+.brief-top,.brief-stat span,.brief-card>small{color:#aebeb2}
+.brief-stat{border-color:#354a3e}
+.brief-stat b{color:#d8b875}
+.quote-card{background:#101b19;color:#e8eee5}
+.quote-mark{color:#d2b477}
+.quote-card>span{color:#d2b477}
+.brief-help{color:#d8b875}
+.brief-help b{color:#e8eee5}
+.brief-help small{color:#aebeb2}
+.brief-help button{color:#dfb875}
+.union-footer{border-color:#34483d;color:#91a398}
+.union-toast{background:#20372b;border-left-color:#d2b477;color:#f1eee3}
+.mobile-status{background:#15231e;color:#c4d2c6}
+.mobile-nav{background:#101b19;border-top:2px solid #bd493d}
+.mobile-nav button{color:#a8b9ac}
+.mobile-nav button.active{color:#e1bd7c}
+.mobile-nav button.active:after{background:#d05245}
+@media(max-width:760px){.hero-banner:after{background:linear-gradient(90deg,#1b332b 0%,#1b332b 50%,#1b332bb8 100%)}}
