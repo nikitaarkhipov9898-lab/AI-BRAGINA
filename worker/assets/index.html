@@ -935,7 +935,7 @@ function showSavedAutoVideos(button){if(videoLoading)return;document.querySelect
 
 
 
-let activeChatThread=null,activeChatPeer=null,chatPollTimer=null,chatSearchTimer=null,chatLastMessageId="",chatLastMessageAt="";
+let activeChatThread=null,activeChatPeer=null,chatPollTimer=null,chatSearchTimer=null,chatLastMessageId="",chatLastMessageAt="",chatRenderedMessageIds=new Set();
 const chatMessagesLoading=new Set();
 async function chatFetch(path,options={}){
  const r=await fetch(WORKER_URL+path,{...options,headers:{Authorization:"Bearer "+authToken,"Content-Type":"application/json",...(options.headers||{})},cache:"no-store"});
@@ -1002,7 +1002,7 @@ function stopChatTyping(){
  if(chatTypingActive){chatTypingActive=false;sendChatTypingState(false);}
 }
 async function openChatRoom(threadId,peer){
- activeChatThread=threadId;activeChatPeer=peer;chatLastMessageId="";chatLastMessageAt="";
+ activeChatThread=threadId;activeChatPeer=peer;chatLastMessageId="";chatLastMessageAt="";chatRenderedMessageIds=new Set();
  document.body.classList.add("svoe-chat-open");
  $("chat-sidebar").classList.add("hidden");$("chat-room").classList.remove("hidden");
  $("chat-peer-name").textContent=peer?.display_name||peer?.username||"Диалог";
@@ -1035,6 +1035,8 @@ async function loadChatMessages(initial){
   }
   setPeerTypingIndicator(!!d.peer_typing);
   (d.messages||[]).forEach(m=>{
+   if(chatRenderedMessageIds.has(m.id))return;
+   chatRenderedMessageIds.add(m.id);
    const b=document.createElement("div");b.className="chat-bubble"+(m.sender_id===currentUser?.id?" mine":"");
    const body=document.createElement("div");body.textContent=chatDisplayText(m.body);
    const meta=document.createElement("small");meta.textContent=new Date(m.created_at).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
@@ -1047,7 +1049,30 @@ async function loadChatMessages(initial){
 async function sendChatMessage(event){
  event.preventDefault();const input=$("chat-message-input"),body=String(input.value||"").trim();if(!body||!activeChatThread)return;stopChatTyping();
  const btn=event.submitter;if(btn)btn.disabled=true;
- try{await chatFetch("/chat/messages",{method:"POST",body:JSON.stringify({thread_id:activeChatThread,body})});input.value="";await loadChatMessages(false);await loadChatList();}
+ const threadId=activeChatThread;
+ try{
+  const result=await chatFetch("/chat/messages",{method:"POST",body:JSON.stringify({thread_id:threadId,body})});
+  input.value="";
+  if(result.message&&threadId===activeChatThread){
+   const message=result.message;
+   if(!chatRenderedMessageIds.has(message.id)){
+    chatRenderedMessageIds.add(message.id);
+    const box=$("chat-messages");
+    if(box){
+     box.querySelector(".chat-empty")?.remove();
+     const bubble=document.createElement("div");bubble.className="chat-bubble mine";
+     const content=document.createElement("div");content.textContent=chatDisplayText(message.body);
+     const meta=document.createElement("small");meta.textContent=new Date(message.created_at).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+     bubble.append(content,meta);box.appendChild(bubble);box.scrollTop=box.scrollHeight;
+    }
+   }
+   chatLastMessageId=message.id;chatLastMessageAt=message.created_at;
+   await chatFetch("/chat/read",{method:"POST",body:JSON.stringify({thread_id:threadId})}).catch(()=>{});
+  }else{
+   await loadChatMessages(false);
+  }
+  await loadChatList();
+ }
  catch(e){toast(e.message,"error");}finally{if(btn)btn.disabled=false;input.focus();}
 }
 async function loadAdminChatThreads(userId,username){
