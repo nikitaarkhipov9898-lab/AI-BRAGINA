@@ -284,7 +284,7 @@
 
 ## 9. Дополнительная проверка 23.11.2026 — подтверждённые дефекты и новые находки
 
-Проверено на актуальном HEAD ветки experimental-soyuz-system: c0dc7006163b52ff8a663879e7921b1281c8d3ac. Cloudflare Preview deployment подтверждён ботом: commit c0dc700, deployment ID adf1a0d0-e6fc-4332-925b-5629fe915a52, URL https://adf1a0d-chef-api.bosstayson24.workers.dev. Это только подтверждение развёртывания текущего аудиторского коммита, не завершения миграции.
+Проверено на актуальном HEAD ветки experimental-soyuz-system: c0dc7006163b52ff8a663879e7921b1281c8d3ac. Cloudflare Preview deployment подтверждён ботом: commit c0dc700, deployment ID adf1a0d0-e6fc-4332-925b-5629fe915a52, URL https://adf1a0d0-chef-api.bosstayson24.workers.dev. Это только подтверждение развёртывания текущего аудиторского коммита, не завершения миграции.
 
 ### Подтверждённые проблемы при повторной проверке
 - React shell worker/frontend/src/main.tsx: у Шефа и Механика есть общий чат с LLM, но нет полноценных рабочих экранов и моделей данных старых специализированных модулей. Кнопка «Праздник под ключ» сейчас лишь показывает уведомление «ещё не перенесён»; сам модуль не реализован в React shell.
