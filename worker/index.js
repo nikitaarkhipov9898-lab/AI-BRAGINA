@@ -8,7 +8,7 @@ const PBKDF2_ITERATIONS = 100000;
 const SESSION_DAYS = 30;
 
 function corsHeaders(origin = "") {
-  const allowedOrigins = [ALLOWED_ORIGIN, "https://admin-panel-chef-api.bosstayson24.workers.dev"];
+  const allowedOrigins = [ALLOWED_ORIGIN, "https://admin-panel-chef-api.bosstayson24.workers.dev", "https://experimental-soyuz-system-chef-api.bosstayson24.workers.dev", "capacitor://localhost", "http://localhost", "https://localhost"];
   const responseOrigin = allowedOrigins.includes(origin) ? origin : ALLOWED_ORIGIN;
   return {
     "Access-Control-Allow-Origin": responseOrigin,
