@@ -16,8 +16,19 @@ const ALLOWED_ORIGINS = new Set([
   "https://localhost"
 ]);
 
+function isAllowedOrigin(origin) {
+  if (ALLOWED_ORIGINS.has(origin)) return true;
+  try {
+    const parsed = new URL(origin);
+    return (parsed.protocol === "http:" || parsed.protocol === "https:") &&
+      (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1");
+  } catch {
+    return false;
+  }
+}
+
 function corsHeaders(origin = "") {
-  const responseOrigin = ALLOWED_ORIGINS.has(origin) ? origin : ALLOWED_ORIGIN;
+  const responseOrigin = isAllowedOrigin(origin) ? origin : ALLOWED_ORIGIN;
   return {
     "Access-Control-Allow-Origin": responseOrigin,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -1081,7 +1092,7 @@ export default {
     // Apply the request's allowed origin to every response, including JSON
     // endpoints and errors. This keeps Capacitor clients working consistently.
     const origin = request.headers.get("Origin") || "";
-    if (ALLOWED_ORIGINS.has(origin)) {
+    if (isAllowedOrigin(origin)) {
       const headers = new Headers(response.headers);
       for (const [name, value] of Object.entries(corsHeaders(origin))) headers.set(name, value);
       response = new Response(response.body, {
