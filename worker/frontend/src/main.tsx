@@ -124,7 +124,16 @@ function App() {
     const hide = Keyboard.addListener("keyboardWillHide", () => document.body.classList.remove("keyboard-open"));
     return () => { void listener.then((l) => l.remove()); void hide.then((l) => l.remove()); };
   }, []);
-  useEffect(() => {\n    const worker = new Worker(new URL("./workers/search.worker.ts", import.meta.url), { type: "module" });\n    worker.onmessage = (event: MessageEvent<{ ids: number[] }>) => setSearchResultIds(event.data.ids);\n    searchWorker.current = worker;\n    return () => { worker.terminate(); searchWorker.current = null; };\n  }, []);\n  useEffect(() => {\n    if (!globalSearch.trim()) { setSearchResultIds(null); return; }\n    searchWorker.current?.postMessage({ query: globalSearch, items: posts.map((post) => ({ id: post.id, title: post.name, text: post.text })) });\n  }, [globalSearch, posts]);\n  useEffect(() => connectSvoeRealtime(setRealtimeStatus), []);
+  useEffect(() => {
+    const worker = new Worker(new URL("./workers/search.worker.ts", import.meta.url), { type: "module" });
+    worker.onmessage = (event: MessageEvent<{ ids: number[] }>) => setSearchResultIds(event.data.ids);
+    searchWorker.current = worker;
+    return () => { worker.terminate(); searchWorker.current = null; };
+  }, []);
+  useEffect(() => {
+    if (!globalSearch.trim()) { setSearchResultIds(null); return; }
+    searchWorker.current?.postMessage({ query: globalSearch, items: posts.map((post) => ({ id: post.id, title: post.name, text: post.text })) });
+  }, [globalSearch, posts]);
   useEffect(() => connectSvoeRealtime(setRealtimeStatus), []);
   useEffect(() => {
     if (!toast) return;
