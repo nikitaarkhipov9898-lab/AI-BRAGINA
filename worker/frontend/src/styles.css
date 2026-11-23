@@ -108,3 +108,11 @@ html,body{background:#101918;color:#e9eee7}
 /* Личное дело участника */
 .dossier-panel{max-width:680px;margin-top:22px;padding:24px}.dossier-panel h2{margin:14px 0 8px;color:#f0f1e8}.dossier-panel>p{color:#aebeb2;line-height:1.6}.dossier-field{display:flex;flex-direction:column;gap:7px;margin:16px 0;color:#d9b875;font-size:12px;letter-spacing:.5px}.dossier-field input,.dossier-field textarea{width:100%;box-sizing:border-box;padding:13px 14px;border:1px solid #405849;border-radius:8px;background:#111d19;color:#eaf0e8;font:inherit;letter-spacing:0}.dossier-field textarea{min-height:100px;resize:vertical}.dossier-panel .demo-note{display:block;margin-top:14px;line-height:1.5}
 @media(max-width:760px){.mobile-nav button{min-width:0;flex:1;font-size:6px}.dossier-panel{padding:16px}}
+
+/* FIX: dossier form layout — override inherited paper-panel grid */
+.dossier-panel{display:block!important;width:100%;max-width:680px;min-width:0;}
+.dossier-panel>.dossier-field{display:flex!important;flex-direction:column!important;align-items:stretch!important;grid-column:1/-1;width:100%;min-width:0;margin:18px 0;gap:8px;}
+.dossier-panel>.dossier-field input,.dossier-panel>.dossier-field textarea{display:block;width:100%;max-width:100%;min-width:0;min-height:48px;line-height:1.4;border-radius:14px;padding:14px 16px;}
+.dossier-panel>.dossier-field textarea{min-height:112px;}
+.dossier-panel>.hero-button{border-radius:14px;min-height:50px;}
+@media(max-width:760px){.dossier-panel{padding:20px 17px!important;border-radius:22px!important}.dossier-panel>.dossier-field{margin:15px 0}.dossier-panel>.dossier-field input,.dossier-panel>.dossier-field textarea{font-size:16px}}
