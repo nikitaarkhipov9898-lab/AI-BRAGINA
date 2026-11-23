@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   Activity, ArrowRight, Bell, CalendarDays, Check, ChefHat,
   CircleHelp, ClipboardList, Home, LockKeyhole, MessageCircle,
-  Plus, Search, Send, ShieldCheck, Sparkles, Users, Wrench, Archive, Settings, UserRound
+  Play, Plus, Search, Send, ShieldCheck, Sparkles, Users, Wrench, Archive, Settings, UserRound
 } from "lucide-react";
 import "./styles.css";
 
