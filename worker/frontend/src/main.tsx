@@ -107,6 +107,7 @@ function App(){
  const [hapticsEnabled,setHapticsEnabled]=useState(()=>localStorage.getItem("soyuz_haptics")!=="false");
  const [motionEnabled,setMotionEnabled]=useState(()=>localStorage.getItem("soyuz_motion")!=="false");
  useEffect(()=>{fetch("/health",{cache:"no-store"}).then(r=>setServerHealth(r.ok?"online":"offline")).catch(()=>setServerHealth("offline"));},[]);
+ useEffect(()=>{document.documentElement.classList.toggle("motion-disabled",!motionEnabled);},[motionEnabled]);
  useEffect(()=>{const token=localStorage.getItem("ai_bragina_token");if(!token){setAuthReady(true);return;}fetch("/auth/me",{headers:{Authorization:"Bearer "+token},cache:"no-store"}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok||!d.user)throw new Error("session");setSessionUser(d.user);localStorage.setItem("ai_bragina_user",JSON.stringify(d.user));}).catch(()=>{localStorage.removeItem("ai_bragina_token");localStorage.removeItem("ai_bragina_user");}).finally(()=>setAuthReady(true));},[]);
  const handleAuth=(user:SessionUser)=>{setSessionUser(user);};
  const logout=async()=>{const token=localStorage.getItem("ai_bragina_token");try{if(token)await fetch("/auth/logout",{method:"POST",headers:{Authorization:"Bearer "+token}})}catch{}localStorage.removeItem("ai_bragina_token");localStorage.removeItem("ai_bragina_user");setSessionUser(null);setTab("home");setActive(null);};
