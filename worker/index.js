@@ -28,7 +28,28 @@ function json(data, status = 200, origin = "") {
     }
   });
 }
+const schemaInitialization = new WeakMap();
+
+function ensureSchemaOnce(env, key, initialize) {
+  let registry = schemaInitialization.get(env.DB);
+  if (!registry) {
+    registry = new Map();
+    schemaInitialization.set(env.DB, registry);
+  }
+  if (!registry.has(key)) {
+    const pending = Promise.resolve()
+      .then(initialize)
+      .catch((error) => {
+        registry.delete(key);
+        throw error;
+      });
+    registry.set(key, pending);
+  }
+  return registry.get(key);
+}
+
 async function ensureAiUsageSchema(env) {
+  return ensureSchemaOnce(env, "ensureAiUsageSchema", async () => {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS ai_usage_events (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
@@ -40,6 +61,7 @@ async function ensureAiUsageSchema(env) {
     created_at TEXT NOT NULL
   )`).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_ai_usage_user_created ON ai_usage_events(user_id, created_at DESC)").run();
+  });
 }
 async function aiUsageGet(env, user) {
   await ensureAiUsageSchema(env);
@@ -250,6 +272,7 @@ async function login(request, env) {
 
 
 async function ensureAuthSchema(env) {
+  return ensureSchemaOnce(env, "ensureAuthSchema", async () => {
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -301,18 +324,21 @@ async function ensureAuthSchema(env) {
   }
   await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username ON users(username)").run();
   await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_user_sessions_token_hash ON user_sessions(token_hash)").run();
+  });
 }
 
 
 
 
 async function ensureTasksSchema(env) {
+  return ensureSchemaOnce(env, "ensureTasksSchema", async () => {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS user_tasks (
     id TEXT PRIMARY KEY, user_id TEXT NOT NULL, title TEXT NOT NULL,
     due_at TEXT, completed INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL, updated_at TEXT NOT NULL
   )`).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_user_tasks_user_created ON user_tasks(user_id,created_at DESC)").run();
+  });
 }
 async function tasksApi(request,env,user) {
   await ensureTasksSchema(env);
@@ -348,6 +374,7 @@ async function tasksApi(request,env,user) {
 }
 
 async function ensureCommunitySchema(env) {
+  return ensureSchemaOnce(env, "ensureCommunitySchema", async () => {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS community_posts (
     id TEXT PRIMARY KEY, user_id TEXT NOT NULL, body TEXT NOT NULL, created_at TEXT NOT NULL
   )`).run();
@@ -360,6 +387,7 @@ async function ensureCommunitySchema(env) {
   )`).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_community_posts_created ON community_posts(created_at DESC)").run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_community_comments_post ON community_comments(post_id,created_at)").run();
+  });
 }
 async function communityPosts(request,env,user) {
   await ensureCommunitySchema(env);
@@ -421,6 +449,7 @@ async function communityComments(request,env,user) {
 }
 
 async function ensureProfileSchema(env) {
+  return ensureSchemaOnce(env, "ensureProfileSchema", async () => {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS user_profiles (
     user_id TEXT PRIMARY KEY,
     first_name TEXT NOT NULL DEFAULT '',
@@ -429,6 +458,7 @@ async function ensureProfileSchema(env) {
     updated_at TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
   )`).run();
+  });
 }
 async function profileGet(env,user) {
   await ensureProfileSchema(env);
@@ -452,11 +482,13 @@ async function profileSave(request,env,user) {
 }
 
 async function ensureAdminSchema(env) {
+  return ensureSchemaOnce(env, "ensureAdminSchema", async () => {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS admin_audit (
     id TEXT PRIMARY KEY, actor_user_id TEXT, actor_username TEXT,
     action TEXT NOT NULL, target_user_id TEXT, target_username TEXT,
     created_at TEXT NOT NULL
   )`).run();
+  });
 }
 async function writeAdminAudit(env, actor, action, target) {
   await ensureAdminSchema(env);
@@ -467,6 +499,7 @@ async function writeAdminAudit(env, actor, action, target) {
 }
 
 async function ensureConversationSchema(env) {
+  return ensureSchemaOnce(env, "ensureConversationSchema", async () => {
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS conversations (
       id TEXT NOT NULL,
@@ -480,13 +513,12 @@ async function ensureConversationSchema(env) {
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `).run();
+  });
 }
 
 
-let chatSchemaReady = false;
 async function ensureChatSchema(env) {
-  if (chatSchemaReady) return;
-  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_threads (
+  return ensureSchemaOnce(env, "ensureChatSchema", async () => {await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_threads (
     id TEXT PRIMARY KEY, kind TEXT NOT NULL DEFAULT 'direct',
     created_at TEXT NOT NULL, updated_at TEXT NOT NULL
   )`).run();
@@ -501,7 +533,8 @@ async function ensureChatSchema(env) {
   )`).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_chat_members_user ON chat_members(user_id,thread_id)").run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_chat_messages_thread_time ON chat_messages(thread_id,created_at DESC)").run();
-  chatSchemaReady = true;
+
+  });
 }
 async function chatMember(env, threadId, userId) {
   return env.DB.prepare("SELECT 1 AS ok FROM chat_members WHERE thread_id=? AND user_id=?")
