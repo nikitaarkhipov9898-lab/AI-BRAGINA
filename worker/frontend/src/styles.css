@@ -415,3 +415,15 @@ html.motion-disabled *,html.motion-disabled *:before,html.motion-disabled *:afte
 @media(max-width:560px){.specialist-workspace{padding:13px;border-radius:19px;margin-top:16px}.specialist-form-grid{grid-template-columns:1fr}.specialist-panel{padding:14px}.event-list-row{flex-wrap:wrap}.event-list-row>button:first-child{flex-basis:100%}.specialist-actions{display:grid}.specialist-actions button{width:100%}}
 
 .app-version{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;line-height:1.7;color:var(--muted)}.app-version b{color:var(--ink);letter-spacing:1px}.app-version span{font-size:10px;overflow-wrap:anywhere}.motion-disabled .grain{display:none}
+
+/* Reduce GPU compositing cost on phones while keeping the opaque surfaces readable. */
+@media (max-width: 760px) {
+  .union-header,
+  .side-rail,
+  .mobile-nav,
+  .union-toast,
+  .auth-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
