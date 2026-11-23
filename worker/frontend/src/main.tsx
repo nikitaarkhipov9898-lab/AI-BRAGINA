@@ -197,7 +197,7 @@ function App(){
       <button className="back-link" onClick={()=>setActive(null)}>← К БЮРО ИНТЕЛЛЕКТА</button>
       <div className="detail-hero">
        <div className="detail-copy"><div className="eyebrow"><span className="live-dot"/> ПЕРСОНАЛЬНЫЙ ЦИФРОВОЙ СПЕЦИАЛИСТ</div><h1>{active.name}</h1><p>{active.desc}</p><div className="detail-status"><span className={active.status==="open"?"status-open":"status-locked"}>{active.status==="open"?"● ДОСТУПЕН ДЛЯ РАБОТЫ":"▣ ГОТОВИТСЯ К ЗАПУСКУ"}</span><span>ОТДЕЛ: {active.role.toUpperCase()}</span></div>
-        {active.id==="chef"&&<button className="hero-button" onClick={()=>window.location.assign("/app?page=chef-events")}>ПРАЗДНИК ПОД КЛЮЧ <ArrowRight size={16}/></button>}</div>
+        {active.id==="chef"&&<button className="hero-button" onClick={()=>notify("Модуль «Праздник под ключ» ещё не перенесён в новый интерфейс. Старое приложение больше не открываем.")}>ПРАЗДНИК ПОД КЛЮЧ — СКОРО <ArrowRight size={16}/></button>}</div>
        <div className={"detail-mascot-panel "+active.color}><div className="orbit orbit-a"/><div className="orbit orbit-b"/><Mascot kind={active.icon}/><div className="mascot-caption">СПЕЦИАЛИСТ СОЮЗА №{String(helpers.indexOf(active)+1).padStart(2,"0")}</div></div>
       </div>
       <div className="detail-grid">
