@@ -912,18 +912,117 @@ function renderChefEventWorkspace(e){
  const total=()=>Math.max(0,Number($('ev-adults').value)||0)+Math.max(0,Number($('ev-children').value)||0);
  const totalLabel=$('ev-guest-total');totalLabel.textContent='Всего: '+total()+' человек';
  ['ev-adults','ev-children'].forEach(id=>$(id).oninput=()=>{totalLabel.textContent='Всего: '+total()+' человек';});
- $('ev-save-guests').onclick=()=>{const a=Number($('ev-adults').value),ch=Number($('ev-children').value);if(!Number.isInteger(a)||!Number.isInteger(ch)||a<0||ch<0||a+ch<1||a>500||ch>500){toast('Укажите целое количество взрослых и детей. Всего гостей должно быть хотя бы 1.','error');return;}e.plannedAdults=a;e.plannedChildren=ch;e.updatedAt=new Date().toISOString();saveData();renderChefEvents();toast('Количество гостей сохранено.');};
+ $('ev-save-guests').onclick=()=>{const a=Number($('ev-adults').value),ch=Number($('ev-children').value);if(!Number.isInteger(a)||!Number.isInteger(ch)||a<0||ch<0||a+ch<1||a>500||ch>500){toast('Укажите целое количество взрослых и детей. Всего гостей должно быть хотя бы 1.','error');return;}e.plannedAdults=a;e.plannedChildren=ch;e.updatedAt=new Date().toISOString();saveData();renderChefEvents();renderChefEventWorkspace(e);toast('Количество гостей сохранено. Расчёт продуктов обновлён.');};
  const ai=document.createElement('div');ai.className='panel';ai.innerHTML='<h3>Подобрать праздничное меню</h3><p class="muted">Подберём привычные блюда и несколько интересных вариантов с учётом праздника, количества взрослых и детей.</p><div class="field"><label>Какой стол хотите?</label><select id="ev-menu-level"><option value="economy">Экономно — простые доступные продукты</option><option value="standard" selected>Обычный — знакомые блюда и немного праздничных</option><option value="rich">Праздничный — разнообразный и более богатый стол</option></select></div><div class="field"><label>Пожелания (необязательно)</label><textarea id="ev-menu-wishes" rows="2" placeholder="Например: без рыбы, больше курицы, детские блюда отдельно"></textarea></div><label class="muted"><input type="checkbox" id="ev-menu-alcohol"> Добавить идеи алкогольных напитков</label><button class="btn" id="ev-ai-menu">Подобрать меню</button><div id="ev-menu-suggestions"></div>';box.appendChild(ai);
- const selected=document.createElement('div');selected.className='panel';selected.innerHTML='<h3>Выбранное меню</h3><p class="muted">Добавляйте понравившиеся блюда из предложений. Количество продуктов и цены пока не нужны.</p><div id="ev-menu-list"></div>';box.appendChild(selected);
- const locked=document.createElement('div');locked.className='panel';locked.innerHTML='<div class="section-head"><h3>Расчёт стоимости и закупок</h3><span class="badge">Скоро</span></div><p class="muted">Региональные цены, сравнение магазинов, бюджет и точный список покупок появятся в следующем этапе. Сейчас этот раздел закрыт, чтобы не путать вас тестовыми полями.</p><button class="btn secondary" disabled>Скоро будет доступно</button>';box.appendChild(locked);
+ const selected=document.createElement('div');selected.className='panel';selected.innerHTML='<h3>Выбранное меню</h3><p class="muted">Добавляйте блюда, затем одним запросом получите рецептуры и расчёт ингредиентов для всего выбранного меню.</p><div id="ev-menu-list"></div>';box.appendChild(selected);
+ const shopping=document.createElement('div');shopping.className='panel';shopping.innerHTML='<h3>Продукты и закупки</h3><p class="muted">Рецептуры рассчитываются одним запросом для выбранного меню. Изменение количества гостей и пересчёт граммовки дальше выполняются приложением без новых запросов к ИИ.</p><button class="btn" id="ev-build-recipes">Рассчитать рецепты и продукты</button><div id="ev-shopping-result"></div>';box.appendChild(shopping);
  const tasks=document.createElement('div');tasks.className='panel';tasks.innerHTML='<h3>Подготовка к празднику</h3><p class="muted">Короткий список дел, чтобы ничего не забыть.</p><div class="field"><label>Что нужно сделать?</label><input id="ev-task-name" maxlength="160" placeholder="Например: заказать торт"></div><div class="field"><label>Когда?</label><input id="ev-task-date" type="date"></div><button class="btn secondary" id="ev-add-task">Добавить задачу</button><div id="ev-task-list"></div>';box.appendChild(tasks);
  const suggestions=$('ev-menu-suggestions');const renderSuggestions=()=>{suggestions.innerHTML='';if(!Array.isArray(e.menuSuggestions)||!e.menuSuggestions.length)return; if(Array.isArray(e.menuNotes)&&e.menuNotes.length){const note=document.createElement('p');note.className='muted';note.textContent=e.menuNotes.join(' · ');suggestions.appendChild(note);}e.menuSuggestions.forEach(m=>{const row=document.createElement('div');row.className='history-item';const title=document.createElement('strong');title.textContent=m.name;const desc=document.createElement('p');desc.textContent=(m.category||'Блюдо')+' · '+(m.description||'');const add=document.createElement('button');add.className='mini-btn';const exists=(e.menu||[]).some(x=>x.name===m.name);add.textContent=exists?'Уже добавлено':'Добавить в меню';add.disabled=exists;add.onclick=()=>{e.menu=e.menu||[];e.menu.push({id:'m_'+Date.now(),name:m.name,category:m.category||'Другое'});e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);};row.append(title,desc,add);suggestions.appendChild(row);});};
  const ml=$('ev-menu-list');(e.menu||[]).forEach(m=>{const row=document.createElement('div');row.className='history-item';const title=document.createElement('strong');title.textContent=m.name;const desc=document.createElement('p');desc.textContent=m.category||'Блюдо';const del=document.createElement('button');del.className='mini-btn';del.textContent='Убрать';del.onclick=()=>{e.menu=e.menu.filter(x=>x.id!==m.id);e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);};row.append(title,desc,del);ml.appendChild(row);});
  renderSuggestions();
  $('ev-ai-menu').onclick=()=>suggestChefEventMenu(e.id);
+ $('ev-build-recipes').onclick=()=>generateChefEventRecipes(e.id);
+ renderChefEventShopping(e);
  $('ev-add-task').onclick=()=>{const n=$('ev-task-name').value.trim();if(!n){toast('Напишите, что нужно сделать.','error');return;}e.tasks=e.tasks||[];e.tasks.push({id:'t_'+Date.now(),title:n,due:$('ev-task-date').value,done:false});e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);};
  const tl=$('ev-task-list');(e.tasks||[]).forEach(t=>{const row=document.createElement('div');row.className='history-item';const label=document.createElement('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!t.done;cb.onchange=()=>{t.done=cb.checked;e.updatedAt=new Date().toISOString();saveData();};label.append(cb,document.createTextNode(' '+t.title+(t.due?' · '+t.due:'')));row.appendChild(label);const del=document.createElement('button');del.className='mini-btn';del.textContent='Удалить';del.onclick=()=>{e.tasks=e.tasks.filter(x=>x.id!==t.id);e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);};row.appendChild(del);tl.appendChild(row);});
 }
+
+function chefEventGuestUnits(e){
+ const adults=Math.max(0,Number(e.plannedAdults)||0);
+ const children=Math.max(0,Number(e.plannedChildren)||0);
+ return adults+children*.65;
+}
+function chefIngredientUnit(unit){
+ const u=String(unit||'').trim().toLowerCase().replace(/\./g,'');
+ if(['кг','kg'].includes(u))return 'г';
+ if(['л','литр','литра','литров','l'].includes(u))return 'мл';
+ if(['шт','штука','штуки','штук','pcs','pc'].includes(u))return 'шт.';
+ if(['г','гр','грамм','грамма','граммов','g'].includes(u))return 'г';
+ if(['мл','миллилитр','миллилитра','миллилитров','ml'].includes(u))return 'мл';
+ return String(unit||'шт.');
+}
+function chefIngredientAmount(amount,unit){
+ const n=Number(amount);if(!Number.isFinite(n)||n<0)return null;
+ const u=String(unit||'').trim().toLowerCase().replace(/\./g,'');
+ if(['кг','kg'].includes(u))return n*1000;
+ if(['л','литр','литра','литров','l'].includes(u))return n*1000;
+ return n;
+}
+function chefEventShoppingRows(e){
+ const rows=new Map();
+ const base=Math.max(.01,Number(e.recipeBaseGuestUnits)||chefEventGuestUnits(e)||1);
+ const factor=chefEventGuestUnits(e)>0?chefEventGuestUnits(e)/base:1;
+ (e.menu||[]).forEach(dish=>(dish.recipe?.ingredients||[]).forEach(item=>{
+  const unit=chefIngredientUnit(item.unit),amount=chefIngredientAmount(item.amount,item.unit);
+  if(amount===null)return;
+  const key=String(item.name||'').trim().toLocaleLowerCase('ru-RU')+'|'+unit;
+  if(!rows.has(key))rows.set(key,{key,name:String(item.name||'').trim(),unit,baseAmount:0,amount:0});
+  const row=rows.get(key);row.baseAmount+=amount;row.amount+=amount*factor;
+ }));
+ return [...rows.values()].sort((a,b)=>a.name.localeCompare(b.name,'ru'));
+}
+function chefFormatAmount(value){
+ const n=Math.round((Number(value)||0)*100)/100;
+ return n.toLocaleString('ru-RU',{maximumFractionDigits:2});
+}
+function renderChefEventShopping(e){
+ const box=$('ev-shopping-result');if(!box)return;box.innerHTML='';
+ const menu=e.menu||[];
+ if(!menu.length){box.textContent='Сначала добавьте блюда в выбранное меню.';return;}
+ const ready=menu.filter(x=>x.recipe&&Array.isArray(x.recipe.ingredients));
+ const missing=menu.length-ready.length;
+ if(!ready.length){box.innerHTML='<p class="muted">Пока нет рассчитанных рецептов. Нажмите «Рассчитать рецепты и продукты» — рецептуры всех выбранных блюд будут подготовлены одним запросом.</p>';return;}
+ const info=document.createElement('p');info.className='muted';info.textContent='Рассчитано рецептов: '+ready.length+' из '+menu.length+'. '+(missing?'Осталось рассчитать: '+missing+'.':'Все блюда рассчитаны.')+' Количество автоматически масштабируется при изменении числа гостей.';box.appendChild(info);
+ const rows=chefEventShoppingRows(e),list=document.createElement('div');list.className='history-list';
+ if(!rows.length){list.textContent='В рецептах пока нет ингредиентов с корректными количествами.';box.appendChild(list);return;}
+ const stock=e.shoppingStock&&typeof e.shoppingStock==='object'?e.shoppingStock:(e.shoppingStock={});
+ rows.forEach(item=>{
+  const row=document.createElement('div');row.className='history-item';
+  const title=document.createElement('strong');title.textContent=item.name;row.appendChild(title);
+  const need=document.createElement('p');need.className='muted';need.textContent='Нужно: '+chefFormatAmount(item.amount)+' '+item.unit;row.appendChild(need);
+  const field=document.createElement('div');field.className='field';
+  const label=document.createElement('label');label.textContent='Есть дома ('+item.unit+')';
+  const input=document.createElement('input');input.type='number';input.min='0';input.step='any';input.value=stock[item.key]??'0';input.setAttribute('aria-label','Есть дома: '+item.name);
+  const result=document.createElement('p');result.className='muted';
+  const update=()=>{const have=Math.max(0,Number(input.value)||0),left=Math.max(0,item.amount-have);result.textContent=left>0?'Купить: '+chefFormatAmount(left)+' '+item.unit:'Уже хватает дома';stock[item.key]=have;saveData();};
+  input.onchange=update;label.appendChild(input);field.append(label,result);row.appendChild(field);update();list.appendChild(row);
+ });
+ box.appendChild(list);
+ const footer=document.createElement('p');footer.className='muted';footer.textContent='Это расчётная потребность по рецептурам. Перед покупкой проверьте фактические остатки, упаковки и ограничения гостей.';box.appendChild(footer);
+}
+async function generateChefEventRecipes(id){
+ const e=chefEventById(id);if(!e||isBusy)return;
+ const menu=e.menu||[];if(!menu.length){toast('Сначала добавьте блюда в выбранное меню.','error');return;}
+ const missing=menu.filter(x=>!x.recipe||!Array.isArray(x.recipe.ingredients));
+ if(!missing.length){renderChefEventShopping(e);toast('Рецептуры уже сохранены. Пересчёт выполняется без ИИ.');return;}
+ const adults=Math.max(0,Number(e.plannedAdults)||0),children=Math.max(0,Number(e.plannedChildren)||0),guestUnits=adults+children*.65;
+ if(guestUnits<=0){toast('Сначала укажите количество взрослых и детей.','error');return;}
+ const btn=$('ev-build-recipes'),out=$('ev-shopping-result');
+ if(isBusy)return;isBusy=true;if(btn){btn.disabled=true;btn.textContent='Рассчитываю рецептуры…';}
+ if(out)out.textContent='ИИ рассчитывает ингредиенты выбранных блюд одним запросом. После сохранения изменение порций будет бесплатным и мгновенным.';
+ try{
+  const menuContext=menu.map((x,i)=>({id:x.id,name:x.name,category:x.category}));
+  const payload={model:'openai/gpt-oss-120b',temperature:.2,max_tokens:5000,response_format:{type:'json_object'},messages:[
+   {role:'system',content:'Ты профессиональный повар-технолог. Рассчитай практичные домашние рецептуры для всего праздничного меню как единого стола. Верни только JSON вида {"recipes":[{"menuId":"точный id блюда","ingredients":[{"name":"картофель","amount":1200,"unit":"г"}],"steps":["шаг"],"notes":["примечание"]}]}. Верни рецепт для каждого блюда из списка, укажи его точный menuId. Количество ингредиентов должно быть числом, unit — г, кг, мл, л или шт. Не используй диапазоны и текст вместо числа. Учитывай, что блюда подаются одновременно на общем столе: не рассчитывай полную индивидуальную порцию каждого салата/закуски на каждого гостя, распределяй разумные порции по всему меню, избегай чрезмерного избытка. Для горячего, гарнира, салатов, закусок, десертов и напитков учитывай их категорию. Для детей ориентируйся на более небольшие порции и неострые варианты. Не добавляй ингредиенты, которых нет в рецепте, но включай все необходимые для приготовления. Учитывай пищевые ограничения из пожеланий мероприятия. Все количества укажи на указанное число гостей. Инструкции короткие и понятные.'},
+   {role:'user',content:'Мероприятие: '+e.name+' ('+e.type+'). Гости: '+adults+' взрослых и '+children+' детей. Для расчёта используй взрослые единицы '+guestUnits+'. Пожелания к меню: '+String(e.menuWishes||'не указаны')+'. Все блюда меню: '+JSON.stringify(menuContext)+'. Подготовь рецептуры только для блюд: '+JSON.stringify(missing.map(x=>({id:x.id,name:x.name,category:x.category})))+'. Верни полный список ингредиентов для приготовления каждого блюда и краткие шаги.'}
+  ]};
+  const result=await callAI(payload),data=JSON.parse(cleanJson(result.content));
+  if(!Array.isArray(data.recipes))throw new Error('ИИ не вернул список рецептур. Повтори расчёт.');
+  let saved=0;
+  data.recipes.forEach(r=>{
+   const dish=menu.find(x=>x.id===String(r.menuId));
+   if(!dish||!Array.isArray(r.ingredients))return;
+   const ingredients=r.ingredients.map(x=>({name:String(x.name||'').trim(),amount:Number(x.amount),unit:String(x.unit||'г')})).filter(x=>x.name&&Number.isFinite(x.amount)&&x.amount>=0);
+   if(!ingredients.length)return;
+   dish.recipe={version:1,baseAdults:adults,baseChildren:children,baseGuestUnits:guestUnits,ingredients,steps:Array.isArray(r.steps)?r.steps.map(String).slice(0,20):[],notes:Array.isArray(r.notes)?r.notes.map(String).slice(0,10):[],createdAt:new Date().toISOString()};
+   saved++;
+  });
+  if(!saved)throw new Error('Не удалось сохранить рецептуры. Проверьте ответ и повторите запрос.');
+  e.recipeBaseGuestUnits=guestUnits;e.recipeBaseAdults=adults;e.recipeBaseChildren=children;e.updatedAt=new Date().toISOString();saveData();renderChefEventWorkspace(e);toast('Сохранено рецептур: '+saved+'. Расчёт закупок готов.');
+ }catch(err){if(out)out.textContent=err.message||'Не удалось рассчитать рецептуры.';toast(err.message||'Не удалось рассчитать рецептуры.','error');}
+ finally{isBusy=false;if(btn&&btn.isConnected){btn.disabled=false;btn.textContent='Рассчитать рецепты и продукты';}}
+}
+
 async function suggestChefEventMenu(id){
  const e=chefEventById(id);if(!e||isBusy)return;
  const adults=Math.max(0,Number(e.plannedAdults)||0),children=Math.max(0,Number(e.plannedChildren)||0),total=adults+children;
