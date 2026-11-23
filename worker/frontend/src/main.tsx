@@ -12,8 +12,8 @@ import {
 } from "lucide-react";
 import "./styles.css";
 
-const APP_VERSION = "0.2.1";
-const APP_BUILD = import.meta.env.VITE_APP_BUILD || "локальная сборка";
+const APP_VERSION = __APP_VERSION__;
+const APP_BUILD = import.meta.env.VITE_APP_BUILD || (import.meta.env.MODE === "production" ? "production · SHA не передан" : "локальная сборка");
 
 type Helper = { id:string; name:string; role:string; desc:string; status:"open"|"soon"; icon:string; color:string; skills:string[]; sample:string };
 const helpers:Helper[] = [
