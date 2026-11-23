@@ -66,8 +66,8 @@ function App(){
  const [sessionUser,setSessionUser]=useState<SessionUser|null>(null);
  const [authReady,setAuthReady]=useState(false);
  useEffect(()=>{const token=localStorage.getItem("ai_bragina_token");if(!token){setAuthReady(true);return;}fetch("/auth/me",{headers:{Authorization:"Bearer "+token},cache:"no-store"}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok||!d.user)throw new Error("session");setSessionUser(d.user);localStorage.setItem("ai_bragina_user",JSON.stringify(d.user));}).catch(()=>{localStorage.removeItem("ai_bragina_token");localStorage.removeItem("ai_bragina_user");}).finally(()=>setAuthReady(true));},[]);
- const handleAuth=(user:SessionUser)=>{setSessionUser(user);setProfile((p:any)=>({...p,displayName:p.displayName||user.display_name,firstName:p.firstName||user.display_name}));};
- const logout=async()=>{const token=localStorage.getItem("ai_bragina_token");try{if(token)await fetch("/auth/logout",{method:"POST",headers:{Authorization:"Bearer "+token}})}catch{}localStorage.removeItem("ai_bragina_token");localStorage.removeItem("ai_bragina_user");setSessionUser(null);go("home");};
+ const handleAuth=(user:SessionUser)=>{setSessionUser(user);};
+ const logout=async()=>{const token=localStorage.getItem("ai_bragina_token");try{if(token)await fetch("/auth/logout",{method:"POST",headers:{Authorization:"Bearer "+token}})}catch{}localStorage.removeItem("ai_bragina_token");localStorage.removeItem("ai_bragina_user");setSessionUser(null);setTab("home");setActive(null);};
  const [query,setQuery]=useState("");
  const [chat,setChat]=useState("");
  const [sent,setSent]=useState<string[]>([]);
