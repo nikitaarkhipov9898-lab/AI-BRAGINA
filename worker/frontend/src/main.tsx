@@ -120,6 +120,7 @@ function App() {
     const hide = Keyboard.addListener("keyboardWillHide", () => document.body.classList.remove("keyboard-open"));
     return () => { void listener.then((l) => l.remove()); void hide.then((l) => l.remove()); };
   }, []);
+  useEffect(() => connectSvoeRealtime(setRealtimeStatus), []);
   useEffect(() => {
     if (!toast) return;
     const timer = window.setTimeout(() => setToast(""), 2500);
