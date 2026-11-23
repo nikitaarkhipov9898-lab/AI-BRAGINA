@@ -360,3 +360,26 @@ button{ -webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .setting-value{color:#d7b97f;font-size:9px;letter-spacing:1px}
 .setting-row .outline-btn{min-height:38px;font-size:9px}
 html.motion-disabled *,html.motion-disabled *:before,html.motion-disabled *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+
+
+.community-stream{max-width:860px;display:grid;gap:16px;margin-top:20px}
+.community-compose{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid var(--stroke);border-radius:20px;background:rgba(255,255,255,.035)}
+.community-compose textarea{flex:1;min-width:0;min-height:82px;resize:vertical;padding:13px 14px;border:1px solid var(--stroke);border-radius:14px;background:#0e1a15;color:#f2f5ef;font:inherit;font-size:13px;line-height:1.5}
+.community-compose textarea::placeholder{color:#819288}
+.community-compose button{align-self:flex-end;min-height:42px;padding:0 14px;border:0;border-radius:12px;background:linear-gradient(135deg,#d85b4d,#a93630);color:white;font-size:9px;letter-spacing:.5px;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.community-compose button:disabled{opacity:.5}
+.community-stream .feed-post{margin:0;padding:20px;border:1px solid var(--stroke);border-radius:20px;background:linear-gradient(145deg,rgba(27,43,34,.88),rgba(16,27,21,.94))}
+.community-post-body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.7;color:#e7ede6;margin:17px 0}
+.post-actions button.is-liked{color:#ef8c81}
+.comments-panel{margin-top:14px;padding-top:13px;border-top:1px solid var(--stroke);display:grid;gap:11px}
+.comment-row{display:flex;flex-direction:column;gap:4px;padding:9px 11px;border-radius:11px;background:rgba(255,255,255,.035)}
+.comment-row b{font-size:11px;color:#d9bd86}
+.comment-row span{font-size:12px;line-height:1.55;color:#e7ede6;white-space:pre-wrap;overflow-wrap:anywhere}
+.comment-compose{display:flex;gap:8px}
+.comment-compose input{flex:1;min-width:0;height:42px;padding:0 12px;border:1px solid var(--stroke);border-radius:12px;background:#0e1a15;color:#f2f5ef;font-size:12px}
+.comment-compose button{width:42px;border:0;border-radius:12px;background:#314b39;color:#e7cf9f;display:grid;place-items:center}
+.feed-empty{min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:1px dashed var(--stroke);border-radius:20px;color:#9aac9e;text-align:center}
+.feed-empty svg{color:#d6b77e}
+.feed-empty b{color:#edf2eb;font-size:14px}
+.feed-empty span{font-size:12px}
+@media(max-width:560px){.community-compose{flex-wrap:wrap;padding:12px}.community-compose textarea{flex-basis:calc(100% - 54px);min-height:75px}.community-compose button{width:100%;justify-content:center}.community-stream .feed-post{padding:15px}}
