@@ -1,5 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import worker from "../index.js";
 
 test("OPTIONS preflight skips database initialization and allows Capacitor", async () => {
@@ -70,4 +73,11 @@ test("D1 schemas initialize once per binding and are shared by concurrent reques
     /CREATE TABLE IF NOT EXISTS|CREATE UNIQUE INDEX IF NOT EXISTS|ALTER TABLE/.test(sql)
   ).length;
   assert.equal(after, before);
+});
+
+test("GitHub Pages and Worker service-worker copies stay identical", () => {
+  const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+  const pagesWorker = readFileSync(resolve(root, "sw.js"), "utf8");
+  const cloudflareWorker = readFileSync(resolve(root, "worker/assets/sw.js"), "utf8");
+  assert.equal(cloudflareWorker, pagesWorker);
 });
