@@ -1,6 +1,6 @@
 import { Centrifuge } from "centrifuge";
-import { getApps, initializeApp } from "firebase/app";
-import { getMessaging, getToken, isSupported, onMessage } from "firebase/messaging";
+import { getApps, initializeApp } from "@firebase/app";
+import { getMessaging, getToken, isSupported, onMessage } from "@firebase/messaging";
 
 export type RealtimeStatus = "disabled" | "connecting" | "connected" | "error";
 
