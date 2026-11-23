@@ -244,7 +244,7 @@ function App(){
     <button className={"rail-link "+(tab==="signals"?"selected":"")} onClick={()=>go("signals")}><Bell size={18}/><span>СИГНАЛЫ</span></button>
     <button className={"rail-link "+(tab==="profile"?"selected":"")} onClick={()=>go("profile")}><UserRound size={18}/><span>ЛИЧНОЕ ДЕЛО</span></button>
     <button className={"rail-link "+(tab==="settings"?"selected":"")} onClick={()=>go("settings")}><Settings size={18}/><span>ПАРАМЕТРЫ СИСТЕМЫ</span></button>
-    <div className="rail-bottom"><div className="rail-stamp">С</div><div><b>СОЮЗ / 01</b><small>ВЕРСИЯ 0.1 · ПРЕДПРОСМОТР</small></div></div>
+    <div className="rail-bottom"><div className="rail-stamp">С</div><div><b>СОЮЗ / 01</b><small>ВЕРСИЯ {APP_VERSION} · ПРЕДПРОСМОТР</small></div></div>
    </aside>
    <main className="main-stage">
     <AnimatePresence mode="wait">
