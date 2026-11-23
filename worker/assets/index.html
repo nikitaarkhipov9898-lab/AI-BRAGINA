@@ -451,7 +451,7 @@ function activateUserStorage(user){
  if(!localStorage.getItem(key)&&oldData)localStorage.setItem(key,oldData);
  if(oldData)localStorage.removeItem(legacy);
  APP_KEY=key;
- appData={version:4,tasks:[],history:[],favorites:[],mechanicCases:[],maintenance:{vehicle:{name:'',odometer:''},items:[]},kitchen:{staples:['соль','чёрный перец','сахар','растительное масло','вода'],custom:''}};
+ appData={version:5,tasks:[],history:[],favorites:[],chefEvents:[],mechanicCases:[],maintenance:{vehicle:{name:'',odometer:''},items:[]},kitchen:{staples:['соль','чёрный перец','сахар','растительное масло','вода'],custom:''}};
  loadData();
  renderMechanicHistory();
  renderMaintenance();
@@ -474,9 +474,8 @@ function conversationItems(){
 }
 async function syncConversations(){
  if(!authToken||!currentUser)return;
+ appData.chefEvents=Array.isArray(appData.chefEvents)?appData.chefEvents:[];
  const headers={'Content-Type':'application/json',Authorization:'Bearer '+authToken};
- const r=await fetch(WORKER_URL+'/conversations/sync',{method:'POST',headers,body:JSON.stringify({items:conversationItems()})});
- if(!r.ok)throw new Error('Не удалось сохранить переписки на сервере.');
  const get=await fetch(WORKER_URL+'/conversations',{headers:{Authorization:'Bearer '+authToken}});
  if(!get.ok)throw new Error('Не удалось загрузить серверную историю.');
  const data=await get.json();let changed=false;
@@ -486,8 +485,9 @@ async function syncConversations(){
   if(row.kind==='chef_event'&&row.content?.event){const local=appData.chefEvents.find(x=>x.id===row.id);if(!local){appData.chefEvents.unshift(row.content.event);changed=true;}else if(new Date(row.content.event.updatedAt||row.content.event.createdAt||0)>new Date(local.updatedAt||local.createdAt||0)){Object.assign(local,row.content.event);changed=true;}}
  }
  if(changed){appData.history=appData.history.slice(0,100);appData.mechanicCases=appData.mechanicCases.slice(0,250);try{localStorage.setItem(APP_KEY,JSON.stringify(appData));}catch(e){}renderHistory();renderMechanicHistory();}
-}
-function queueConversationSync(){
+ const r=await fetch(WORKER_URL+'/conversations/sync',{method:'POST',headers,body:JSON.stringify({items:conversationItems()})});
+ if(!r.ok)throw new Error('Не удалось сохранить переписки и проекты на сервере.');
+}function queueConversationSync(){
  if(!authToken||!currentUser)return;
  clearTimeout(conversationSyncTimer);
  conversationSyncTimer=setTimeout(()=>syncConversations().catch(e=>console.warn('conversation sync',e)),900);
