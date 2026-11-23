@@ -305,6 +305,48 @@ async function ensureAuthSchema(env) {
 
 
 
+
+async function ensureTasksSchema(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS user_tasks (
+    id TEXT PRIMARY KEY, user_id TEXT NOT NULL, title TEXT NOT NULL,
+    due_at TEXT, completed INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+  )`).run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_user_tasks_user_created ON user_tasks(user_id,created_at DESC)").run();
+}
+async function tasksApi(request,env,user) {
+  await ensureTasksSchema(env);
+  if(request.method==="GET"){
+    const rows=await env.DB.prepare("SELECT id,title,due_at,completed,created_at,updated_at FROM user_tasks WHERE user_id=? ORDER BY completed ASC,created_at DESC LIMIT 500").bind(user.id).all();
+    return json({tasks:rows.results||[]});
+  }
+  let b;try{b=await request.json();}catch{return json({error:"Некорректный запрос к задачам"},400);}
+  const action=String(b.action||"create"),now=new Date().toISOString();
+  if(action==="create"){
+    const title=String(b.title||"").trim();
+    if(!title)return json({error:"Название задачи пустое"},400);
+    if(title.length>300)return json({error:"Название задачи слишком длинное"},400);
+    const task={id:crypto.randomUUID(),title,due_at:b.due_at?String(b.due_at).slice(0,40):null,completed:0,created_at:now,updated_at:now};
+    await env.DB.prepare("INSERT INTO user_tasks (id,user_id,title,due_at,completed,created_at,updated_at) VALUES (?,?,?,?,?,?,?)").bind(task.id,user.id,task.title,task.due_at,0,now,now).run();
+    return json({task},201);
+  }
+  const id=String(b.id||"");
+  if(!id)return json({error:"Не указан идентификатор задачи"},400);
+  const existing=await env.DB.prepare("SELECT id FROM user_tasks WHERE id=? AND user_id=?").bind(id,user.id).first();
+  if(!existing)return json({error:"Задача не найдена"},404);
+  if(action==="update"){
+    const title=String(b.title||"").trim();
+    if(!title||title.length>300)return json({error:"Проверь название задачи"},400);
+    await env.DB.prepare("UPDATE user_tasks SET title=?,completed=?,due_at=?,updated_at=? WHERE id=? AND user_id=?").bind(title,b.completed?1:0,b.due_at?String(b.due_at).slice(0,40):null,now,id,user.id).run();
+    return json({success:true});
+  }
+  if(action==="delete"){
+    await env.DB.prepare("DELETE FROM user_tasks WHERE id=? AND user_id=?").bind(id,user.id).run();
+    return json({success:true});
+  }
+  return json({error:"Неизвестное действие"},400);
+}
+
 async function ensureCommunitySchema(env) {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS community_posts (
     id TEXT PRIMARY KEY, user_id TEXT NOT NULL, body TEXT NOT NULL, created_at TEXT NOT NULL
@@ -861,6 +903,13 @@ async function handleFetch(request, env) {
   }
 
 
+
+
+  if (path === "/tasks" && (request.method === "GET" || request.method === "POST")) {
+    const user=await currentUser(request,env);
+    if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return tasksApi(request,env,user);
+  }
 
   if (path === "/community/posts" && (request.method === "GET" || request.method === "POST")) {
     const user=await currentUser(request,env);
