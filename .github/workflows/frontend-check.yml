@@ -6,12 +6,18 @@ on:
     paths:
       - "worker/frontend/**"
       - "worker/package.json"
+      - "worker/index.js"
+      - "worker/wrangler.toml"
+      - "worker/assets/index.html"
       - ".github/workflows/frontend-check.yml"
   pull_request:
     branches: [admin-panel, experimental-soyuz-future]
     paths:
       - "worker/frontend/**"
       - "worker/package.json"
+      - "worker/index.js"
+      - "worker/wrangler.toml"
+      - "worker/assets/index.html"
       - ".github/workflows/frontend-check.yml"
 
 jobs:
