@@ -401,7 +401,7 @@ export default function App() {
       </AnimatePresence>
       {authenticated && authChecked && (
         <nav className="soyuz-dock" aria-label="Основная навигация">
-          {navItems.map(({ id, label, Icon }) => <button key={id} type="button" className={`soyuz-dock__item ${(id === active || (id === "helpers" && legacyHelper)) ? "is-active" : ""}`} onClick={() => openPage(id)} aria-current={id === active ? "page" : undefined}>
+          {navItems.map(({ id, label, Icon }) => <button key={id} type="button" className={`soyuz-dock__item ${(id === active || (id === "helpers" && (legacyHelper || active === "chef" || active === "mechanic"))) ? "is-active" : ""}`} onClick={() => openPage(id)} aria-current={id === active ? "page" : undefined}>
             {(id === active || (id === "helpers" && legacyHelper)) && <motion.span className="soyuz-dock__indicator" layoutId="soyuz-active-tab" transition={{ type: "spring", stiffness: 520, damping: 38 }} />}
             <motion.span className="soyuz-dock__icon" whileTap={{ scale: .86 }}><Icon size={19} strokeWidth={id === active ? 2.2 : 1.7} /></motion.span><span className="soyuz-dock__label">{label}</span>
           </button>)}
