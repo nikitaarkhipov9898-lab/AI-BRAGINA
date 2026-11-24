@@ -5,11 +5,21 @@ import { fileURLToPath } from "node:url";
 
 const frontendRoot = fileURLToPath(new URL("../frontend/", import.meta.url));
 const assetsOutput = fileURLToPath(new URL("./assets/", import.meta.url));
+const workerModules = fileURLToPath(new URL("./node_modules/", import.meta.url));
 
 export default defineConfig({
   root: frontendRoot,
   base: "/",
   plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: [
+      { find: "react", replacement: workerModules + "react" },
+      { find: "framer-motion", replacement: workerModules + "framer-motion" },
+      { find: "lucide-react", replacement: workerModules + "lucide-react" },
+      { find: "vaul", replacement: workerModules + "vaul" },
+      { find: "tailwindcss", replacement: workerModules + "tailwindcss" },
+    ],
+  },
   publicDir: false,
   build: {
     outDir: assetsOutput,
