@@ -158,7 +158,7 @@
 <section id="page-admin" class="hidden">
  <button class="back" onclick="showPage('settings')">← Настройки</button>
  <h2 class="page-title">Центр управления</h2>
- <p class="page-sub">Управление пользователями, доступами и работой платформы СВОЁ.</p>
+ <p class="page-sub">Управление пользователями, доступами и работой платформы СОЮЗ.</p>
  <div class="panel"><div class="section-head"><h2>Обзор платформы</h2><button class="mini-btn" onclick="loadAdminOverview()">Обновить</button></div><div id="admin-overview" class="admin-stats"><p class="muted">Загрузка статистики…</p></div></div>
  <div class="panel"><div class="section-head"><h2>Управление пользователями</h2><button class="mini-btn" onclick="loadAdminUsers()">Обновить</button></div><input id="admin-user-search" class="field-input" placeholder="Поиск по логину или имени" oninput="filterAdminUsers()"><div id="admin-users"><p class="muted">Загрузка аккаунтов…</p></div></div>
  <div class="panel"><div class="section-head"><h2 id="admin-chat-title">Переписки пользователей</h2></div><div id="admin-conversations"><p class="muted">Выбери аккаунт, чтобы открыть его переписки.</p></div></div>
@@ -169,7 +169,7 @@
 
 <section id="page-video" class="hidden page-video">
  <button class="back" onclick="showPage('home')">← Главная</button>
- <div class="video-heading"><div><div class="eyebrow">СВОЁ · ЛЕНТА</div><h2 class="page-title">Видео для своих</h2><p class="page-sub">Открывай раздел и листай подборку. Ничего искать и копировать не нужно.</p></div><span class="video-mark">▶</span></div>
+ <div class="video-heading"><div><div class="eyebrow">СОЮЗ · ВИДЕО</div><h2 class="page-title">Видео для тебя</h2><p class="page-sub">Открывай раздел и листай подборку. Ничего искать и копировать не нужно.</p></div><span class="video-mark">▶</span></div>
  <div class="video-discovery-tabs" id="video-discovery-tabs">
   <button class="active" data-topic="trending" onclick="selectVideoTopic('trending',this)">Популярное</button>
   <button data-topic="fun" onclick="selectVideoTopic('fun',this)">Юмор</button>
@@ -179,10 +179,10 @@
   <button data-topic="saved" onclick="showSavedAutoVideos(this)">Избранное</button>
  </div>
  <button class="video-focus-close" type="button" aria-label="Закрыть полноэкранную ленту" onclick="closeVideoFocus()">×</button>
- <div id="video-feed" class="video-feed"><div class="video-empty"><div class="video-empty-icon">▶</div><strong>Собираем ленту</strong><p>Загружаем открытые ролики. Видео не проходит через сервер СВОЁ.</p></div></div>
+ <div id="video-feed" class="video-feed"><div class="video-empty"><div class="video-empty-icon">▶</div><strong>Собираем ленту</strong><p>Загружаем открытые ролики. Видео не проходит через сервер СОЮЗ.</p></div></div>
  <div id="video-feed-status" class="muted" style="text-align:center;padding:10px 4px"></div>
  <button id="video-more-btn" class="btn secondary hidden" onclick="loadMoreAutoVideos()">Показать ещё</button>
- <p class="video-footnote">Лента собрана в СВОЁ из открытых роликов внешнего источника. Сейчас доступен RUTUBE; видео воспроизводится напрямую у источника и не хранится на наших серверах.</p>
+ <p class="video-footnote">Лента собрана в СОЮЗ из открытых роликов внешнего источника. Сейчас доступен RUTUBE; видео воспроизводится напрямую у источника и не хранится на наших серверах.</p>
 </section>
 
 <section id="page-profile" class="hidden page-profile">
