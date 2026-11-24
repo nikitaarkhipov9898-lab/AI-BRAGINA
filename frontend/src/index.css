@@ -324,3 +324,7 @@ body > .app > main > #page-chef,body > .app > main > #page-mechanic {display:non
 
 .soyuz-plus-badge{display:inline-flex;vertical-align:middle;margin-left:4px;padding:2px 5px;border:1px solid #e0c09766;border-radius:5px;background:#e0c09717;color:#f1d6a8;font-size:7px;font-style:normal;font-weight:800;letter-spacing:.04em}
 .soyuz-thread-main strong{display:block}
+
+.soyuz-sparks{position:relative;overflow:visible}
+.soyuz-sparks:active:after{content:"";position:absolute;inset:-8px;border-radius:18px;pointer-events:none;background:radial-gradient(circle at 12% 20%,#ffe5a8 0 1px,transparent 2px),radial-gradient(circle at 85% 12%,#e63946 0 1px,transparent 2px),radial-gradient(circle at 82% 85%,#ffe5a8 0 1px,transparent 2px),radial-gradient(circle at 18% 86%,#e63946 0 1px,transparent 2px);animation:soyuz-spark-burst .45s ease-out forwards}
+@keyframes soyuz-spark-burst{0%{opacity:1;transform:scale(.65)}100%{opacity:0;transform:scale(1.45)}}
