@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+<div id="react-mount"></div>
 <div id="auth-screen" class="auth-screen hidden"><div class="auth-card">
 <div class="brand" style="margin-bottom:18px"><div class="brandmark"><img src="/icon.svg" alt="СОЮЗ"></div><div><h1>СОЮЗ</h1><small>ТВОЙ АККАУНТ</small></div></div>
 <h2 id="auth-title">Рады видеть тебя!</h2><p id="auth-hint">Твоя цифровая среда. Войди, чтобы продолжить.</p>
@@ -231,5 +232,6 @@
  <button class="nav" id="nav-settings" onclick="showPage('profile')"><span>◉</span>Профиль</button>
 </div></nav>
 <script src="/app.js" defer></script>
+<script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
