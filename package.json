@@ -3,7 +3,8 @@
   "private": true,
   "version": "2.6.0",
   "scripts": {
-    "build": "npm --prefix worker install --no-audit --no-fund && npm --prefix worker run build"
+    "build": "npm --prefix worker install --no-audit --no-fund && npm --prefix worker run build",
+    "start": "node netrun-test/server.mjs"
   },
   "engines": {
     "node": ">=22"
