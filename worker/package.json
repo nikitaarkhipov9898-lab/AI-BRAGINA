@@ -2,7 +2,7 @@
   "name": "ai-bragina-worker",
   "private": true,
   "scripts": {
-    "build": "vite build --config vite.config.ts"
+    "build": "node -e \"require('node:fs').rmSync('assets/build',{recursive:true,force:true})\" && vite build --config vite.config.ts"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
