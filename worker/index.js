@@ -444,7 +444,7 @@ async function chatMarkRead(request,env,user) {
   const threadId=String(b.thread_id||"");
   await ensureChatSchema(env);
   if(!threadId||!await chatMember(env,threadId,user.id))return json({error:"Нет доступа к этому диалогу"},403);
-  if(user.invisible_until && Date.parse(user.invisible_until)>Date.now())return json({success:true,invisible:true});
+  if(user.invisible_enabled && ((user.soyuz_plus_until&&Date.parse(user.soyuz_plus_until)>Date.now())||(user.invisible_until&&Date.parse(user.invisible_until)>Date.now())))return json({success:true,invisible:true});
   await env.DB.prepare("UPDATE chat_members SET last_read_at=? WHERE thread_id=? AND user_id=?").bind(new Date().toISOString(),threadId,user.id).run();
   return json({success:true});
 }
@@ -500,7 +500,7 @@ async function adminUpdateEntitlements(request,env,actor) {
     await env.DB.prepare("UPDATE users SET soyuz_plus_until=NULL,invisible_enabled=CASE WHEN invisible_until IS NOT NULL AND invisible_until>? THEN invisible_enabled ELSE 0 END WHERE id=?").bind(new Date().toISOString(),id).run();
   } else return json({error:"Неизвестное действие"},400);
   await writeAdminAudit(env,actor,"entitlement_"+action,target);
-  const updated=await env.DB.prepare("SELECT sparks,soyuz_plus_until,invisible_until FROM users WHERE id=?").bind(id).first();
+  const updated=await env.DB.prepare("SELECT sparks,soyuz_plus_until,invisible_until,invisible_enabled FROM users WHERE id=?").bind(id).first();
   return json({success:true,user_id:id,...entitlementPayload(updated)});
 }
 
