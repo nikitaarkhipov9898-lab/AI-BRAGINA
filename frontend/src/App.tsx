@@ -452,6 +452,14 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (!authenticated || !authChecked) return;
+    const beat = () => api("/account/entitlements", token).catch(() => {});
+    beat();
+    const timer = window.setInterval(beat, 45000);
+    return () => window.clearInterval(timer);
+  }, [authenticated, authChecked, token]);
+
+  useEffect(() => {
     const observer = new MutationObserver(() => {
       const page = document.body.dataset.page;
       if (page) setActive(page);
