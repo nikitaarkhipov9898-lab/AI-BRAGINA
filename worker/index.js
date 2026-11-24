@@ -366,6 +366,7 @@ async function chatCreateDirect(request, env, user) {
 }
 async function chatList(env,user) {
   await ensureChatSchema(env);
+  await env.DB.prepare("UPDATE users SET last_seen_at=? WHERE id=?").bind(new Date().toISOString(),user.id).run();
   const rows=await env.DB.prepare(`SELECT t.id,t.kind,t.created_at,t.updated_at,
     u.id AS peer_id,u.username AS peer_username,u.display_name AS peer_display_name,u.avatar_url AS peer_avatar,
     (SELECT body FROM chat_messages m WHERE m.thread_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS last_message,
@@ -427,6 +428,7 @@ async function chatSetTyping(request,env,user) {
   const threadId=String(b.thread_id||"");
   await ensureChatSchema(env);
   if(!threadId||!await chatMember(env,threadId,user.id))return json({error:"Нет доступа к этому диалогу"},403);
+  if(user.invisible_until && Date.parse(user.invisible_until)>Date.now())return json({success:true,invisible:true});
   const until=b.typing?new Date(Date.now()+7000).toISOString():null;
   await env.DB.prepare("UPDATE chat_members SET typing_until=? WHERE thread_id=? AND user_id=?").bind(until,threadId,user.id).run();
   return json({success:true});
@@ -436,6 +438,7 @@ async function chatMarkRead(request,env,user) {
   const threadId=String(b.thread_id||"");
   await ensureChatSchema(env);
   if(!threadId||!await chatMember(env,threadId,user.id))return json({error:"Нет доступа к этому диалогу"},403);
+  if(user.invisible_until && Date.parse(user.invisible_until)>Date.now())return json({success:true,invisible:true});
   await env.DB.prepare("UPDATE chat_members SET last_read_at=? WHERE thread_id=? AND user_id=?").bind(new Date().toISOString(),threadId,user.id).run();
   return json({success:true});
 }
@@ -499,6 +502,8 @@ async function handleFetch(request, env) {
     path.startsWith("/auth/") ||
     path.startsWith("/conversations") ||
     path.startsWith("/chat/") ||
+    path.startsWith("/account/") ||
+    path.startsWith("/plus/") ||
     path.startsWith("/admin/")
   ) {
     await ensureAuthSchema(env);
@@ -700,7 +705,7 @@ async function handleFetch(request, env) {
     if (auth.error) return auth.error;
     await ensureConversationSchema(env);
     const rows = await env.DB.prepare(`
-      SELECT u.id,u.username,u.display_name,u.role,u.status,u.created_at,
+      SELECT u.id,u.username,u.display_name,u.role,u.status,u.created_at,u.sparks,u.soyuz_plus_until,u.invisible_until,
         (SELECT COUNT(*) FROM conversations c WHERE c.user_id=u.id) AS conversations_count
       FROM users u ORDER BY u.rowid DESC LIMIT 500
     `).all();
