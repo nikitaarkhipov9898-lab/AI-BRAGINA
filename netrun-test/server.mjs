@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { gzipSync } from "node:zlib";
 
 const PORT = Number(process.env.PORT || 3000);
 const WORKER_ORIGIN = "https://chef-api.bosstayson24.workers.dev";
@@ -106,12 +107,21 @@ async function serveAsset(req, res, pathname) {
       html = html.replace(oldApi, newApi);
       data = Buffer.from(html);
     }
-    res.writeHead(200, {
-      "content-type": MIME[extname(relative).toLowerCase()] || "application/octet-stream",
+    const contentType = MIME[extname(relative).toLowerCase()] || "application/octet-stream";
+    const compressible = /^(text\/|application\/(javascript|json|manifest\+json))/.test(contentType);
+    const acceptsGzip = /(?:^|,)\\s*gzip\\s*(?:,|$)/i.test(req.headers["accept-encoding"] || "");
+    if (compressible && acceptsGzip && data.length > 1024) {
+      data = gzipSync(data, { level: 6 });
+    }
+    const headers = {
+      "content-type": contentType,
       "content-length": String(data.length),
       "cache-control": relative === "index.html" ? "no-store" : "public, max-age=300",
-      "x-content-type-options": "nosniff"
-    });
+      "x-content-type-options": "nosniff",
+      "vary": "Accept-Encoding"
+    };
+    if (compressible && acceptsGzip && data.length > 0) headers["content-encoding"] = "gzip";
+    res.writeHead(200, headers);
     res.end(req.method === "HEAD" ? undefined : data);
   } catch (error) {
     if (error?.code === "ENOENT") return sendJson(res, 404, { error: "Asset not found" });
