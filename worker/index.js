@@ -401,8 +401,10 @@ async function chatGetMessages(request,env,user) {
     rows=await env.DB.prepare("SELECT id,sender_id,body,created_at FROM chat_messages WHERE thread_id=? ORDER BY created_at DESC LIMIT ?").bind(threadId,limit).all();
   }
   const messages=after?(rows.results||[]):(rows.results||[]).reverse();
-  const peer=await env.DB.prepare(`SELECT u.id,u.username,u.display_name,u.avatar_url,m.typing_until FROM chat_members m JOIN users u ON u.id=m.user_id WHERE m.thread_id=? AND m.user_id<>? LIMIT 1`).bind(threadId,user.id).first();
-  const peerTyping=!!(peer?.typing_until && Date.parse(peer.typing_until)>Date.now());
+  const peer=await env.DB.prepare(`SELECT u.id,u.username,u.display_name,u.avatar_url,u.invisible_until,u.last_seen_at,m.typing_until FROM chat_members m JOIN users u ON u.id=m.user_id WHERE m.thread_id=? AND m.user_id<>? LIMIT 1`).bind(threadId,user.id).first();
+  const peerInvisible=!!(peer?.invisible_until && Date.parse(peer.invisible_until)>Date.now());
+  const peerTyping=!peerInvisible && !!(peer?.typing_until && Date.parse(peer.typing_until)>Date.now());
+  if(peer)peer.is_invisible=peerInvisible;
   return json({messages,peer,peer_typing:peerTyping,has_more:messages.length===limit});
 }
 async function chatSendMessage(request,env,user) {
