@@ -1,0 +1,57 @@
+name: Deploy Soyuz frontend to Tuqo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: soyuz-tuqo-frontend-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Tuqo API key
+        env:
+          TUQO_API_KEY: ${{ secrets.TUQO_API_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$TUQO_API_KEY" || { echo "::error::GitHub secret TUQO_API_KEY is missing"; exit 1; }
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build production frontend
+        run: npm run build
+      - name: Package static site
+        run: |
+          set -euo pipefail
+          test -s worker/assets/index.html
+          test -s worker/assets/app.js
+          test -s worker/assets/manifest.webmanifest
+          tar -czf "$RUNNER_TEMP/soyuz-site.tar.gz" -C worker/assets .
+          ls -lh "$RUNNER_TEMP/soyuz-site.tar.gz"
+      - name: Publish frontend to Tuqo
+        env:
+          TUQO_API_KEY: ${{ secrets.TUQO_API_KEY }}
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl --fail-with-body --silent --show-error \
+            -X POST "https://api.tuqo.ru/api/v1/sites/06d66853-973a-42d2-959f-b91b5bc1ae0d/deploys" \
+            -H "Authorization: Bearer ${TUQO_API_KEY}" \
+            -H "Content-Type: application/gzip" \
+            --data-binary @"$RUNNER_TEMP/soyuz-site.tar.gz")"
+          echo "$RESPONSE" | jq .
+          DEPLOY_ID="$(printf '%s' "$RESPONSE" | jq -r '.id // .deploy_id // .deploy.id // empty')"
+          if [ -z "$DEPLOY_ID" ]; then
+            echo "::error::Tuqo accepted no identifiable deployment ID. Inspect API response above."
+            exit 1
+          fi
+          echo "Deployment ID: $DEPLOY_ID" >> "$GITHUB_STEP_SUMMARY"
+          echo "Site: https://soyuz-platform.tuqo.app" >> "$GITHUB_STEP_SUMMARY"
+          echo "Wait for status active and then test API login before using the new site." >> "$GITHUB_STEP_SUMMARY"
