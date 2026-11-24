@@ -1,6 +1,6 @@
 
 'use strict';
-const WORKER_URL=location.hostname.endsWith('.workers.dev')?location.origin:'https://chef-api.bosstayson24.workers.dev';
+const WORKER_URL=location.hostname.endsWith('.workers.dev')?location.origin:location.hostname.endsWith('.netrun.io')?location.origin+'/proxy':'https://chef-api.bosstayson24.workers.dev';
 let APP_KEY='ai_bragina_data_v2';
 const SETTINGS_KEY='ai_bragina_settings_v1';
 let authMode='login',authToken=localStorage.getItem('ai_bragina_token')||'',currentUser=null;
