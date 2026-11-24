@@ -218,7 +218,7 @@ function App(){
  const go=(t:string)=>{setTab(t);setActive(null);setWorkspace(null);if(hapticsEnabled)void Haptics.impact({style:ImpactStyle.Light}).catch(()=>undefined);window.scrollTo(0,0);};
  const openHelper=(h:Helper)=>{setActive(h);setWorkspace(null);setChat("");setAssistantLog([]);setAiBusy(false);};
  const visibleHelpers=helpers.filter(h=>(h.name+" "+h.role+" "+h.desc).toLowerCase().includes(query.toLowerCase()));
- const nav=[{id:"home",label:"Главная",icon:Home},{id:"helpers",label:"Помощники",icon:Sparkles},{id:"community",label:"Сообщество",icon:Users},{id:"messages",label:"Чаты",icon:MessageCircle},{id:"work",label:"Дела",icon:ClipboardList},{id:"profile",label:"Профиль",icon:UserRound}];
+ const nav=[{id:"home",label:"Главная",icon:Home},{id:"helpers",label:"ИИ",icon:Sparkles},{id:"community",label:"Лента",icon:Users},{id:"video",label:"Видео",icon:Play},{id:"messages",label:"Чаты",icon:MessageCircle},{id:"profile",label:"Профиль",icon:UserRound}];
  const systemDate=new Date().toLocaleDateString("ru-RU",{day:"2-digit",month:"long",year:"numeric"}).toUpperCase();
  const send=async()=>{const prompt=chat.trim();if(!prompt||!active||aiBusy)return;setChat("");setAssistantLog(v=>[...v,{role:"user",content:prompt}]);setAiBusy(true);try{const system="Ты — "+active.name+" («СОЮЗ»), специализированный цифровой помощник по направлению: "+active.role+". "+active.desc+"\nТвои компетенции: "+active.skills.join("; ")+". Отвечай на русском языке, структурированно и практично. Сначала уточняй критически важные недостающие данные. Не выдумывай факты, цены, законы или диагнозы. В вопросах здоровья не ставь диагноз и рекомендуй врача при тревожных симптомах. В правовых вопросах отмечай юрисдикцию и дату актуальности. Давай безопасные пошаговые рекомендации.";const response=await apiFetch("/",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(localStorage.getItem("ai_bragina_token")||"")},body:JSON.stringify({model:"openai/gpt-oss-120b",messages:[{role:"system",content:system},...assistantLog.slice(-8),{role:"user",content:prompt}],temperature:0.35,max_tokens:1600})});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error?.message||data.error||"Сервис ИИ временно недоступен");const answer=data.choices?.[0]?.message?.content;if(!answer)throw new Error("ИИ вернул пустой ответ");setAssistantLog(v=>[...v,{role:"assistant",content:answer}]);if(data.usage)void apiFetch("/usage",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(localStorage.getItem("ai_bragina_token")||"")},body:JSON.stringify({usage:data.usage,model:"openai/gpt-oss-120b",page:"helper-"+active.id})}).catch(()=>undefined);}catch(e){setAssistantLog(v=>[...v,{role:"assistant",content:e instanceof Error?e.message:"Не удалось получить ответ. Попробуйте позже."}]);}finally{setAiBusy(false);}};
  if(!authReady)return <div className="auth-loading"><span className="live-dot"/> ПОДКЛЮЧЕНИЕ К СОЮЗУ…</div>;
@@ -268,6 +268,13 @@ function App(){
       <div className="hero-art"><div className="hero-sun"/><div className="hero-ring r1"/><div className="hero-ring r2"/><div className="hero-monument"><div className="monument-star">✦</div><div className="monument-pillar p1"/><div className="monument-pillar p2"/><div className="monument-pillar p3"/><div className="monument-base"/></div><div className="hero-art-label">ПРОЕКТ<br/>БУДУЩЕГО</div></div>
       <div className="hero-index">СОЮЗ / 001</div>
      </div>
+     <div className="social-shortcuts" aria-label="Быстрый доступ">
+      <button onClick={()=>go("helpers")}><span className="shortcut-orb"><Sparkles size={22}/></span><b>Помощники</b></button>
+      <button onClick={()=>go("community")}><span className="shortcut-orb"><Users size={22}/></span><b>Сообщество</b></button>
+      <button onClick={()=>go("video")}><span className="shortcut-orb"><Play size={22}/></span><b>Видео</b></button>
+      <button onClick={()=>go("work")}><span className="shortcut-orb"><ClipboardList size={22}/></span><b>Мои дела</b></button>
+      <button onClick={()=>go("messages")}><span className="shortcut-orb"><MessageCircle size={22}/></span><b>Сообщения</b></button>
+     </div>
      <div className="ticker"><span>✦</span> ЗНАНИЯ <i/> ВОЗМОЖНОСТИ <i/> ВЗАИМОПОМОЩЬ <i/> СОЗИДАНИЕ <i/> БУДУЩЕЕ <i/> <span>✦</span> ЗНАНИЯ <i/> ВОЗМОЖНОСТИ</div>
      <div className="section-head"><div><div className="eyebrow">ЦЕНТР СОЮЗА</div><h2>Всё для вашего дня</h2></div><button className="text-link" onClick={()=>go("helpers")}>Все помощники <ArrowRight size={15}/></button></div>
      <div className="dashboard-grid">
@@ -301,7 +308,7 @@ function App(){
     <div className="brief-help"><CircleHelp size={18}/><div><b>Нужна помощь?</b><small>Центр поддержки пользователей</small><button onClick={()=>notify("Центр поддержки будет подключён позже")}>ОТКРЫТЬ <ArrowRight size={12}/></button></div></div>
    </aside>
   </div>
-  <nav className="mobile-nav">{nav.map(n=><button key={n.id} className={tab===n.id&&!active?"active":""} onClick={()=>go(n.id)}><n.icon size={19}/><span>{({"Главная":"Главная","Помощники":"ИИ","Сообщество":"Люди","Чаты":"Чаты","Дела":"Дела","Профиль":"Профиль"} as Record<string,string>)[n.label] ?? n.label}</span></button>)}</nav>
+  <nav className="mobile-nav">{nav.map(n=><button key={n.id} className={tab===n.id&&!active?"active":""} onClick={()=>go(n.id)}><n.icon size={19}/><span>{n.label}</span></button>)}</nav>
   <footer className="union-footer"><span>СОЮЗ © 2026</span><span>ЕДИНСТВО · ЗНАНИЯ · ВОЗМОЖНОСТИ</span><span>v{APP_VERSION} · {APP_BUILD.slice(0,7)}</span></footer>
   <AnimatePresence>{toast&&<motion.div className="union-toast" initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} exit={{opacity:0,y:8}}>{toast}</motion.div>}</AnimatePresence>
  </div>;
