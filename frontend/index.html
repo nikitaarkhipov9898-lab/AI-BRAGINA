@@ -113,7 +113,7 @@
   <button class="btn" id="chef-generate2" onclick="generateChef()">Создать рецепт</button>
  </div>
  <div id="chef-result" class="panel hidden"><div class="section-head"><h2>Результат</h2><span class="pill warn">ПРОВЕРЯЙТЕ</span></div><div id="chef-output"></div><div class="row"><button class="btn secondary" onclick="copyResult('chef-output')">Копировать</button><button class="btn secondary" onclick="generateChef(true)">Другой вариант</button></div></div>
- <div class="panel"><div class="section-head"><h2>Мои рецепты</h2><button class="tab" onclick="renderHistory()">Обновить</button></div><div id="recipe-history"><p class="muted">Сохранённые рецепты появятся здесь.</p></div></div>
+ <div id="recipe-history" class="hidden" aria-hidden="true"></div>
 </section>
 <section id="page-mechanic" class="hidden">
  <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">ИИ-Механик</h2><p class="page-sub">Не просто ответ, а сопровождение от первых симптомов до проверки ремонта.</p>
