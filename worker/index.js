@@ -365,7 +365,7 @@ async function chatList(env,user) {
     FROM chat_members me JOIN chat_threads t ON t.id=me.thread_id
     JOIN chat_members other ON other.thread_id=t.id AND other.user_id<>me.user_id
     JOIN users u ON u.id=other.user_id
-    WHERE me.user_id=? ORDER BY COALESCE(last_message_at,t.updated_at) DESC LIMIT 100`)
+    WHERE me.user_id=? ORDER BY COALESCE((SELECT m2.created_at FROM chat_messages m2 WHERE m2.thread_id=t.id ORDER BY m2.created_at DESC LIMIT 1),t.updated_at) DESC LIMIT 100`)
     .bind(user.id,user.id).all();
   return json({chats:rows.results||[]});
 }
