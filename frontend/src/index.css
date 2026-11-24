@@ -206,3 +206,72 @@ body > .app > main > #page-chef,body > .app > main > #page-mechanic {display:non
 .soyuz-followup-questions>div {padding:10px 0;border-top:1px solid var(--soyuz-line)}
 .soyuz-followup-questions label {display:block;font-size:11px;line-height:1.5;margin-bottom:7px;color:#e9e2d8}
 .soyuz-followup-questions select,.soyuz-followup-questions textarea {width:100%;border:1px solid var(--soyuz-line);border-radius:10px;background:#0b0b0e;color:#eee;padding:9px;font:inherit;font-size:11px;margin-top:5px}
+
+/* React Stage 2 — messenger, Reels, profile and settings */
+.soyuz-chat-list-head{display:flex;align-items:center;justify-content:space-between;margin:16px 0 12px;font-size:13px}
+.soyuz-primary{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:12px;background:linear-gradient(135deg,#e63946,#a8212d);color:white;padding:11px 14px;font:inherit;font-size:11px;font-weight:650}
+.soyuz-new-chat{padding:9px 12px}
+.soyuz-thread-list{display:flex;flex-direction:column;gap:5px}
+.soyuz-thread{display:flex;align-items:center;gap:12px;width:100%;padding:12px 10px;text-align:left;border:1px solid transparent;border-bottom-color:#ffffff10;border-radius:14px;background:transparent;color:#eee}
+.soyuz-thread:active{background:#ffffff0b}
+.soyuz-avatar{width:46px;height:46px;flex:0 0 46px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#7b2832,#33222a 58%,#9a784d);border:1px solid #e0c09755;color:#f8e7d4;font-size:13px;font-weight:700}
+.soyuz-avatar.small{width:36px;height:36px;flex-basis:36px;font-size:11px}
+.soyuz-thread-main,.soyuz-room-title{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}
+.soyuz-thread-main strong,.soyuz-room-title strong{font-size:12px}
+.soyuz-thread-main small{font-size:10px;color:#aaa3ad;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.soyuz-thread-meta{display:flex;align-items:flex-end;flex-direction:column;gap:7px;color:#8d8790;font-size:9px}
+.soyuz-thread-meta b{display:grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:20px;background:#e63946;color:white;font-size:9px}
+.soyuz-chat-room{display:flex;flex-direction:column;height:calc(100dvh - 190px);min-height:380px}
+.soyuz-chat-room>header{display:flex;align-items:center;gap:10px;padding:8px 0 13px;border-bottom:1px solid #ffffff12}
+.soyuz-back{border:0;background:none;color:#e0c097;font-size:27px}
+.soyuz-room-title small{font-size:10px;color:#b69a79}
+.soyuz-room-messages{flex:1;overflow:auto;display:flex;flex-direction:column;gap:9px;padding:15px 2px;overscroll-behavior:contain}
+.soyuz-chat-bubble{align-self:flex-start;max-width:84%;padding:10px 12px;border:1px solid #ffffff12;border-radius:16px 16px 16px 5px;background:#1b1a20;color:#eee;font-size:12px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.soyuz-chat-bubble.mine{align-self:flex-end;border-color:#e6394655;border-radius:16px 16px 5px 16px;background:linear-gradient(145deg,#63242c,#371b22)}
+.soyuz-chat-bubble small{display:block;margin-top:5px;text-align:right;color:#b5a6a6;font-size:8px}
+.soyuz-peer-typing{align-self:flex-start;color:#e0c097;font-size:10px;padding:5px 10px}
+.soyuz-chat-room .soyuz-chat-compose{flex-shrink:0}
+.soyuz-search-input{width:100%;box-sizing:border-box;border:1px solid #ffffff20;border-radius:13px;background:#111115;color:white;padding:13px;font:inherit;font-size:12px;outline:none}
+.soyuz-search-results{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.soyuz-search-results button{display:flex;align-items:center;gap:10px;text-align:left;border:0;border-radius:13px;background:#ffffff08;color:#eee;padding:10px}
+.soyuz-search-results button>span:nth-child(2){display:flex;flex:1;flex-direction:column;gap:4px}
+.soyuz-search-results small{color:#aaa;font-size:10px}
+.soyuz-video-top{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+.soyuz-video-top h1{font-size:24px;margin:5px 0}
+.soyuz-video-top>button{border:1px solid #ffffff18;border-radius:12px;background:#ffffff0b;color:#e0c097;padding:10px}
+.soyuz-video-topics{display:flex;gap:7px;overflow:auto;padding:5px 0 13px;scrollbar-width:none}
+.soyuz-video-topics button{white-space:nowrap;border:1px solid #ffffff18;border-radius:20px;background:#ffffff08;color:#aaa;padding:8px 11px;font:inherit;font-size:10px}
+.soyuz-video-topics button.active{border-color:#e6394666;background:#e6394620;color:#fff}
+.soyuz-reel{position:relative;height:min(68dvh,690px);min-height:390px;overflow:hidden;border:1px solid #ffffff20;border-radius:22px;background:#050506}
+.soyuz-reel iframe{width:100%;height:100%;border:0;background:#050506}
+.soyuz-reel-overlay{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:38px 14px 14px;background:linear-gradient(transparent,#050506e8);pointer-events:none}
+.soyuz-reel-overlay>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.soyuz-reel-overlay strong{font-size:12px;color:white}
+.soyuz-reel-overlay small{font-size:9px;color:#ddd}
+.soyuz-reel-actions{pointer-events:auto;align-items:flex-end}
+.soyuz-reel-actions button,.soyuz-reel-actions a{border:1px solid #ffffff55;border-radius:16px;background:#08080ab8;color:white;padding:7px 9px;font-size:9px;text-decoration:none;white-space:nowrap}
+.soyuz-reel-nav{position:absolute;right:10px;top:45%;display:flex;flex-direction:column;gap:8px}
+.soyuz-reel-nav button{width:32px;height:32px;border:1px solid #ffffff55;border-radius:50%;background:#08080a99;color:white}
+.soyuz-reel-nav button:disabled{opacity:.3}
+.soyuz-video-empty{height:100%;display:grid;place-items:center;padding:20px;text-align:center;color:#b5a6a6;font-size:12px}
+.soyuz-profile-card{display:flex;align-items:center;gap:13px;padding:17px;border:1px solid #e0c09735;border-radius:19px;background:linear-gradient(130deg,#292127aa,#121216dd);box-shadow:inset 0 1px #ffffff0a}
+.soyuz-profile-avatar{width:58px;height:58px;display:grid;place-items:center;border-radius:18px;background:linear-gradient(145deg,#9a303a,#3d202a 65%,#9a784d);border:1px solid #e0c09766;color:#fff;font-size:18px;font-weight:700}
+.soyuz-profile-card h2{font-size:15px;margin:0 0 5px}.soyuz-profile-card small{font-size:10px;color:#b9a99a}
+.soyuz-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:13px 0 22px}
+.soyuz-stat-grid>div{display:flex;flex-direction:column;gap:5px;padding:13px 9px;border:1px solid #ffffff12;border-radius:14px;background:#ffffff07}
+.soyuz-stat-grid strong{font-size:19px;color:#e0c097}.soyuz-stat-grid small{font-size:9px;color:#a9a1a8}
+.soyuz-settings-title{font-size:14px;font-weight:700;margin:20px 0 10px}
+.soyuz-settings-group{padding:5px 13px;margin:9px 0;border:1px solid #ffffff12;border-radius:16px;background:#ffffff06}
+.soyuz-settings-group h3{font-size:10px;color:#e0c097;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 5px}
+.soyuz-setting-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:46px;border-top:1px solid #ffffff0c;font-size:11px}
+.soyuz-setting-row>button{display:flex;align-items:center;gap:5px;border:0;background:none;color:#cbb18e;font:inherit;font-size:10px}
+.soyuz-toggle{width:42px;height:24px;border:0;border-radius:20px;background:#4b4850;padding:3px;transition:background .2s}
+.soyuz-toggle i{display:block;width:18px;height:18px;border-radius:50%;background:#eee;transition:transform .2s}
+.soyuz-toggle.on{background:#a72d38}.soyuz-toggle.on i{transform:translateX(18px)}
+.soyuz-setting-link{display:flex;align-items:center;gap:9px;width:100%;min-height:44px;border:0;border-top:1px solid #ffffff0c;background:transparent;color:#eee;text-align:left;font:inherit;font-size:11px}
+.soyuz-setting-link.danger{color:#ff8189}
+.soyuz-admin-panel h3{font-size:11px;color:#e0c097;margin:18px 0 8px}
+.soyuz-admin-user{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-top:1px solid #ffffff12}
+.soyuz-admin-user>span{display:flex;flex-direction:column;gap:4px}.soyuz-admin-user strong{font-size:11px}.soyuz-admin-user small,.soyuz-audit-row{font-size:9px;color:#aaa}
+.soyuz-admin-user button{border:1px solid #e6394640;border-radius:10px;background:#e6394615;color:#f2a1a6;padding:7px;font-size:9px}
+.soyuz-audit-row{padding:8px 0;border-bottom:1px solid #ffffff0c}
