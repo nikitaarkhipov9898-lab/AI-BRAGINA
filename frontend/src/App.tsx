@@ -243,7 +243,7 @@ function HistoryDrawer({ open, onOpenChange, token }: { open: boolean; onOpenCha
           {loading && <p className="soyuz-muted">Загружаем историю…</p>}
           {error && <p className="soyuz-error">{error}</p>}
           {!loading && !error && !items.length && <p className="soyuz-muted">Сохранённых диалогов пока нет. Новые рецепты и диагностики появятся здесь автоматически.</p>}
-          <div className="soyuz-history-list">{items.map(item => <button key={item.id} onClick={() => { onOpenChange(false); openPage(item.kind === "mechanic" ? "mechanic" : "chef"); }}><span className="soyuz-history-list__icon">{item.kind === "mechanic" ? <Wrench size={17} /> : <ChefHat size={17} />}</span><span><strong>{item.title || "Диалог"}</strong><small>{item.kind === "mechanic" ? "ИИ-Механик" : item.kind === "recipe" ? "ИИ-Шеф" : "Диалог"} · {item.updated_at ? new Date(item.updated_at).toLocaleString("ru-RU") : "Дата не указана"}</small></span><ArrowRight size={15} /></button>)}</div>
+          <div className="soyuz-history-list">{items.map(item => <button key={item.id} onClick={() => { sessionStorage.setItem("soyuz_restore_conversation", JSON.stringify(item)); onOpenChange(false); openPage(item.kind === "mechanic" ? "mechanic" : "chef"); }}><span className="soyuz-history-list__icon">{item.kind === "mechanic" ? <Wrench size={17} /> : <ChefHat size={17} />}</span><span><strong>{item.title || "Диалог"}</strong><small>{item.kind === "mechanic" ? "ИИ-Механик" : item.kind === "recipe" ? "ИИ-Шеф" : "Диалог"} · {item.updated_at ? new Date(item.updated_at).toLocaleString("ru-RU") : "Дата не указана"}</small></span><ArrowRight size={15} /></button>)}</div>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
@@ -268,6 +268,10 @@ function AgentWorkspace({ agent, onBack }: { agent: "chef" | "mechanic"; onBack:
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [notes, setNotes] = useState<Record<number, string>>({});
 
+  useEffect(() => {
+    const saved = sessionStorage.getItem("soyuz_restore_conversation");
+    if (saved) { try { const row = JSON.parse(saved); const data = row.content || {}; const record = data.case || data.entry || data; const summary = typeof record === "string" ? record : JSON.stringify(record, null, 2); setMessages([{ role: "assistant", text: "Восстановленный диалог: " + (row.title || "Без названия") + "\n\n" + summary }]); if (row.kind === "mechanic" && data.case) window.restoreConversation?.(row); } catch {} sessionStorage.removeItem("soyuz_restore_conversation"); }
+  }, [agent]);
   useEffect(() => {
     const pending = sessionStorage.getItem("soyuz_pending_prompt");
     if (pending) { setPrompt(pending); sessionStorage.removeItem("soyuz_pending_prompt"); }
