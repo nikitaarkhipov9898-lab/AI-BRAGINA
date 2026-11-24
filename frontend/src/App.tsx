@@ -377,7 +377,6 @@ function AgentWorkspace({ agent, onBack }: { agent: "chef" | "mechanic"; onBack:
   );
 }
 
-export default 
 type ChatThread={id:string;peer_id:string;peer_username:string;peer_display_name?:string;last_message?:string;last_message_at?:string;unread?:number};
 type ChatMessage={id:string;sender_id:string;body:string;created_at:string};
 async function api(path:string,token:string,options:RequestInit={}){const r=await fetch(WORKER_URL+path,{...options,headers:{...(options.body?{"Content-Type":"application/json"}:{}),...(token?{Authorization:"Bearer "+token}:{}),...(options.headers||{})},cache:"no-store"});const d=await r.json().catch(()=>({}));if(!r.ok){const e=d.error??"Ошибка запроса";throw new Error(typeof e==="string"?e:e.message||JSON.stringify(e))}return d}
@@ -469,3 +468,5 @@ function App() {
     </>
   );
 }
+
+export default App;
