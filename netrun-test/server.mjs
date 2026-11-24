@@ -56,6 +56,38 @@ const server = createServer((req, res) => {
     }));
     return;
   }
+  if (req.method === "GET" && path === "/cloudflare-health") {
+    const started = Date.now();
+    try {
+      const upstream = await fetch("https://chef-api.bosstayson24.workers.dev/health", {
+        headers: { "accept": "application/json" },
+        signal: AbortSignal.timeout(8000),
+        cache: "no-store"
+      });
+      const body = await upstream.text();
+      res.writeHead(200, {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      });
+      res.end(JSON.stringify({
+        reachable: upstream.ok,
+        upstream_status: upstream.status,
+        elapsed_ms: Date.now() - started,
+        response: body.slice(0, 1000)
+      }));
+    } catch (error) {
+      res.writeHead(200, {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      });
+      res.end(JSON.stringify({
+        reachable: false,
+        elapsed_ms: Date.now() - started,
+        error: String(error?.message || error)
+      }));
+    }
+    return;
+  }
   if (req.method === "GET" && (path === "/" || path === "/index.html")) {
     res.writeHead(200, {
       "content-type": "text/html; charset=utf-8",
