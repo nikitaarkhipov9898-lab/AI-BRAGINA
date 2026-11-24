@@ -28,7 +28,7 @@
 <header class="topbar"><div class="brand"><div class="brandmark"><img src="/icon.svg" alt="СОЮЗ"></div><div><h1>СОЮЗ</h1><small>ЛЮДИ · ИДЕИ · ДЕЙСТВИЯ</small></div></div><button class="icon-btn" onclick="showPage('settings')" aria-label="Настройки">⚙</button></header>
 <main>
 <section id="page-home" class="page-home">
- <div class="home-intro"><div><span class="eyebrow">ТВОЁ ПРОСТРАНСТВО</span><h2>Добро пожаловать</h2><p>Всё важное — в одном месте.</p></div><button class="icon-btn" onclick="showPage('profile')" aria-label="Профиль">◉</button></div>
+ <div class="home-intro"><div><span class="eyebrow">СОЮЗ · ТВОЯ СРЕДА</span><h2>Твоя главная</h2><p>Люди, идеи и инструменты — рядом.</p></div><button class="icon-btn" onclick="showPage('profile')" aria-label="Профиль">◉</button></div>
  <div class="stories-strip" aria-label="Быстрый доступ">
   <button class="story-item story-create" onclick="showPage('helpers')"><span class="story-ring"><span class="story-core">＋</span></span><small>AI-Агенты</small></button>
   <button class="story-item" onclick="showPage('chef')"><span class="story-ring chef-ring"><span class="story-core">🍳</span></span><small>Шеф</small></button>
@@ -167,7 +167,7 @@
 
 <section id="page-video" class="hidden page-video">
  <button class="back" onclick="showPage('home')">← Главная</button>
- <div class="video-heading"><div><div class="eyebrow">СОЮЗ · ВИДЕО</div><h2 class="page-title">Видео для тебя</h2><p class="page-sub">Открывай раздел и листай подборку. Ничего искать и копировать не нужно.</p></div><span class="video-mark">▶</span></div>
+ <div class="video-heading"><div><div class="eyebrow">СОЮЗ · SHORTS</div><h2 class="page-title">Короткие видео</h2><p class="page-sub">Вертикальная лента открытых роликов.</p></div><span class="video-mark">▶</span></div>
  <div class="video-discovery-tabs" id="video-discovery-tabs">
   <button class="active" data-topic="trending" onclick="selectVideoTopic('trending',this)">Популярное</button>
   <button data-topic="fun" onclick="selectVideoTopic('fun',this)">Юмор</button>
@@ -184,7 +184,7 @@
 </section>
 
 <section id="page-profile" class="hidden page-profile">
- <div class="profile-cover"><div class="profile-avatar-large">С</div><div><span class="eyebrow">АККАУНТ</span><h2 id="profile-display-name">Твой профиль</h2><p id="profile-username">@username</p></div></div>
+ <div class="profile-cover"><div class="profile-avatar-large">С</div><div><span class="eyebrow">ТВОЙ ПРОФИЛЬ</span><h2 id="profile-display-name">Твой профиль</h2><p id="profile-username">@username</p></div></div>
  <div class="profile-stats"><div><strong id="profile-task-count">0</strong><small>Задачи</small></div><div><strong id="profile-recipe-count">0</strong><small>Рецепты</small></div><div><strong id="profile-case-count">0</strong><small>Диагностики</small></div></div>
  <div class="profile-menu">
   <button onclick="showPage('settings')"><span class="profile-menu-icon">⚙</span><span><strong>Настройки</strong><small>Интерфейс, уведомления и данные</small></span><b>›</b></button>
@@ -194,7 +194,7 @@
  <div class="panel profile-account-panel"><strong>Аккаунт</strong><p class="muted" id="account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div>
 </section>
 <section id="page-settings" class="hidden page-settings">
- <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">Настройки</h2><p class="page-sub">Управляй интерфейсом, уведомлениями и данными.</p>
+ <div class="settings-heading"><span class="eyebrow">ПЕРСОНАЛИЗАЦИЯ</span><h2 class="page-title">Настройки</h2><p class="page-sub">Настрой приложение под себя.</p></div>
  <div class="panel"><div class="section-head"><h2>Интерфейс</h2></div>
   <div class="setting-row"><div><strong>Тема оформления</strong><small>Выбери удобный вариант</small></div><select class="select-small" id="set-theme" onchange="updateSetting('theme',this.value)"><option value="warm">Стандартная</option><option value="dark">Тёмная</option><option value="light">Светлая</option><option value="system">Как на устройстве</option></select></div>
   <div class="setting-row"><div><strong>Компактный интерфейс</strong><small>Меньше отступов и выше плотность</small></div><input class="switch" type="checkbox" id="set-compact" onchange="updateSetting('compact',this.checked)"></div>
@@ -220,7 +220,7 @@
 Приёмка товара — в разработке</div></div>
 <div class="panel hidden" id="admin-entry"><strong>Управление платформой</strong><p class="muted">Доступ владельца к аккаунтам и серверным перепискам.</p><button class="btn" onclick="showPage('admin');loadAdminOverview();loadAdminUsers();loadAdminAudit()">Открыть админ-панель</button></div>
  <div class="panel"><strong>Аккаунт</strong><p class="muted" id="settings-account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div></section>
-</main><div class="footer-note">СОЮЗ · Твоя цифровая среда</div>
+</main><div class="footer-note">СОЮЗ</div>
 </div>
 <nav class="bottom" aria-label="Основная навигация"><div class="bottom-inner">
  <button class="nav active" id="nav-home" onclick="showPage('home')"><span>⌂</span>Главная</button>
