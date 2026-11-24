@@ -26,7 +26,7 @@ declare global {
 
 const WORKER_URL = location.hostname.endsWith(".workers.dev")
   ? location.origin
-  : "https://admin-panel-chef-api.bosstayson24.workers.dev";
+  : "https://chef-api.bosstayson24.workers.dev";
 
 const navItems = [
   { id: "home", label: "Главная", Icon: Home },
