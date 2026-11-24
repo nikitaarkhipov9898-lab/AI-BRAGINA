@@ -153,20 +153,9 @@ function HomeScreen({ user }: { user: User | null }) {
   function launch() {
     const page = classifyQuery(query);
     if (page === "helpers") { openPage("helpers"); return; }
-    if (page === "chef") {
-      openPage("chef");
-      window.setTimeout(() => {
-        document.getElementById("tab-specific")?.click();
-        const input = document.getElementById("chef-dish") as HTMLInputElement | null;
-        if (input) { input.value = query; input.dispatchEvent(new Event("input", { bubbles: true })); }
-      }, 80);
-    } else if (page === "mechanic") {
-      openPage("mechanic");
-      window.setTimeout(() => {
-        document.getElementById("mechanic-mode-quick")?.click();
-        const input = document.getElementById("quick-problem") as HTMLTextAreaElement | null;
-        if (input) { input.value = query; input.dispatchEvent(new Event("input", { bubbles: true })); }
-      }, 80);
+    if (page === "chef" || page === "mechanic") {
+      sessionStorage.setItem("soyuz_pending_prompt", query);
+      openPage(page);
     } else openPage(page);
   }
 
@@ -278,6 +267,11 @@ function AgentWorkspace({ agent, onBack }: { agent: "chef" | "mechanic"; onBack:
   const [questions, setQuestions] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [notes, setNotes] = useState<Record<number, string>>({});
+
+  useEffect(() => {
+    const pending = sessionStorage.getItem("soyuz_pending_prompt");
+    if (pending) { setPrompt(pending); sessionStorage.removeItem("soyuz_pending_prompt"); }
+  }, [agent]);
 
   const quickCommands = agent === "chef"
     ? ["Быстрый ужин", "Из того, что есть", "Что приготовить на завтрак?"]
