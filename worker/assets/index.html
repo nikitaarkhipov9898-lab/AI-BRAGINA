@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#24563f">
+<meta name="theme-color" content="#0a0a0a">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="СВОЁ">
-<title>СВОЁ</title>
+<meta name="apple-mobile-web-app-title" content="СОЮЗ">
+<title>СОЮЗ</title>
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <div id="auth-screen" class="auth-screen hidden"><div class="auth-card">
-<div class="brand" style="margin-bottom:18px"><div class="brandmark"><img src="https://raw.githubusercontent.com/nikitaarkhipov9898-lab/AI-BRAGINA/admin-panel/icon.svg" alt="СОЮЗ"></div><div><h1>СОЮЗ</h1><small>ТВОЙ АККАУНТ</small></div></div>
-<h2 id="auth-title">Рады видеть тебя!</h2><p id="auth-hint">Место, где всё своё. Войди, чтобы продолжить.</p>
-<button id="install-app-btn" type="button" onclick="installSvoeApp()"><span class="install-icon">↓</span><span class="install-copy"><strong id="install-app-label">Установить СВОЁ</strong><small>Добавить своё пространство на телефон</small></span></button>
+<div class="brand" style="margin-bottom:18px"><div class="brandmark"><img src="/icon.svg" alt="СОЮЗ"></div><div><h1>СОЮЗ</h1><small>ТВОЙ АККАУНТ</small></div></div>
+<h2 id="auth-title">Рады видеть тебя!</h2><p id="auth-hint">Твоя цифровая среда. Войди, чтобы продолжить.</p>
+<button id="install-app-btn" type="button" onclick="installSvoeApp()"><span class="install-icon">↓</span><span class="install-copy"><strong id="install-app-label">Установить СОЮЗ</strong><small>Добавить своё пространство на телефон</small></span></button>
 <label class="muted" for="auth-username">Логин</label><input id="auth-username" autocomplete="username" maxlength="24" placeholder="Например, sever_27">
 <div id="auth-name-wrap" class="hidden"><label class="muted" for="auth-display">Как тебя показывать</label><input id="auth-display" maxlength="50" placeholder="Имя"></div>
 <label class="muted" for="auth-password">Пароль</label><input id="auth-password" type="password" autocomplete="current-password" minlength="8" maxlength="128" placeholder="Не менее 8 символов">
@@ -25,7 +25,7 @@
 <div id="auth-status" class="status hidden"></div>
 </div></div>
 <div class="app">
-<header class="topbar"><div class="brand"><div class="brandmark"><img src="https://raw.githubusercontent.com/nikitaarkhipov9898-lab/AI-BRAGINA/admin-panel/icon.svg" alt="СОЮЗ"></div><div><h1>СОЮЗ</h1><small>ЛЮДИ · ИДЕИ · ДЕЙСТВИЯ</small></div></div><button class="icon-btn" onclick="showPage('settings')" aria-label="Настройки">⚙</button></header>
+<header class="topbar"><div class="brand"><div class="brandmark"><img src="/icon.svg" alt="СОЮЗ"></div><div><h1>СОЮЗ</h1><small>ЛЮДИ · ИДЕИ · ДЕЙСТВИЯ</small></div></div><button class="icon-btn" onclick="showPage('settings')" aria-label="Настройки">⚙</button></header>
 <main>
 <section id="page-home" class="page-home">
  <div class="stories-strip" aria-label="Быстрый доступ">
