@@ -884,8 +884,21 @@ async function handleFetch(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const origin = request.headers.get("Origin") || "";
+    const addCors = (response) => {
+      const headers = new Headers(response.headers);
+      for (const [key, value] of Object.entries(corsHeaders(origin))) {
+        headers.set(key, value);
+      }
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers
+      });
+    };
     try {
-      return await handleFetch(request, env);
+      const response = await handleFetch(request, env);
+      return addCors(response);
     } catch (e) {
       console.error("WORKER_ERROR", JSON.stringify({
         message: e?.message || String(e),
@@ -895,7 +908,7 @@ export default {
         method: request.method,
         timestamp: new Date().toISOString()
       }));
-      return json({ error: { message: "Внутренняя ошибка сервера" } }, 500);
+      return addCors(json({ error: { message: "Внутренняя ошибка сервера" } }, 500, origin));
     }
   }
 };
