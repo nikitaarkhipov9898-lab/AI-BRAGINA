@@ -375,12 +375,13 @@ async function chatList(env,user) {
     (SELECT created_at FROM chat_messages m WHERE m.thread_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS last_message_at,
     (SELECT COUNT(*) FROM chat_messages m WHERE m.thread_id=t.id AND m.sender_id<>? AND m.created_at>COALESCE(me.last_read_at,'1970-01-01T00:00:00.000Z')) AS unread,
     CASE WHEN u.invisible_enabled=1 AND ((u.soyuz_plus_until IS NOT NULL AND u.soyuz_plus_until>?) OR (u.invisible_until IS NOT NULL AND u.invisible_until>?)) THEN 1 ELSE 0 END AS peer_invisible,
+    CASE WHEN u.soyuz_plus_until IS NOT NULL AND u.soyuz_plus_until>? THEN 1 ELSE 0 END AS peer_plus,
     CASE WHEN u.last_seen_at IS NOT NULL AND u.last_seen_at>? THEN 1 ELSE 0 END AS peer_online
     FROM chat_members me JOIN chat_threads t ON t.id=me.thread_id
     JOIN chat_members other ON other.thread_id=t.id AND other.user_id<>me.user_id
     JOIN users u ON u.id=other.user_id
     WHERE me.user_id=? ORDER BY COALESCE((SELECT m2.created_at FROM chat_messages m2 WHERE m2.thread_id=t.id ORDER BY m2.created_at DESC LIMIT 1),t.updated_at) DESC LIMIT 100`)
-    .bind(user.id,new Date().toISOString(),new Date().toISOString(),new Date(Date.now()-90000).toISOString(),user.id).all();
+    .bind(user.id,new Date().toISOString(),new Date().toISOString(),new Date().toISOString(),new Date(Date.now()-90000).toISOString(),user.id).all();
   return json({chats:rows.results||[]});
 }
 async function chatUnread(env,user) {
