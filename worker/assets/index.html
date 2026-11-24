@@ -157,14 +157,14 @@
 
 <section id="page-admin" class="hidden">
  <button class="back" onclick="showPage('settings')">← Настройки</button>
- <h2 class="page-title">Центр управления</h2>
- <p class="page-sub">Управление пользователями, доступами и работой платформы СОЮЗ.</p>
+ <h2 class="page-title">Панель администратора</h2>
+ <p class="page-sub">Пользователи, доступы и состояние платформы.</p>
  <div class="panel"><div class="section-head"><h2>Обзор платформы</h2><button class="mini-btn" onclick="loadAdminOverview()">Обновить</button></div><div id="admin-overview" class="admin-stats"><p class="muted">Загрузка статистики…</p></div></div>
- <div class="panel"><div class="section-head"><h2>Управление пользователями</h2><button class="mini-btn" onclick="loadAdminUsers()">Обновить</button></div><input id="admin-user-search" class="field-input" placeholder="Поиск по логину или имени" oninput="filterAdminUsers()"><div id="admin-users"><p class="muted">Загрузка аккаунтов…</p></div></div>
+ <div class="panel"><div class="section-head"><h2>Пользователи</h2><button class="mini-btn" onclick="loadAdminUsers()">Обновить</button></div><input id="admin-user-search" class="field-input" placeholder="Поиск по логину или имени" oninput="filterAdminUsers()"><div id="admin-users"><p class="muted">Загрузка аккаунтов…</p></div></div>
  <div class="panel"><div class="section-head"><h2 id="admin-chat-title">Переписки пользователей</h2></div><div id="admin-conversations"><p class="muted">Выбери аккаунт, чтобы открыть его переписки.</p></div></div>
  <div class="panel hidden" id="admin-conversation-view"><div class="section-head"><h2 id="admin-view-title">Диалог</h2></div><pre id="admin-view-content" style="white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.55 monospace;color:var(--text);max-height:60vh;overflow:auto"></pre></div>
  <div class="panel"><div class="section-head"><h2>Личные чаты пользователей</h2></div><p class="muted">История личных сообщений. Доступна только владельцу платформы.</p><div id="admin-chat-threads"><p class="muted">Выбери аккаунт в списке пользователей.</p></div><div id="admin-chat-message-view" class="hidden" style="max-height:55vh;overflow:auto;margin-top:12px"></div></div>
- <div class="panel"><div class="section-head"><h2>Журнал действий владельца</h2><button class="mini-btn" onclick="loadAdminAudit()">Обновить</button></div><div id="admin-audit"><p class="muted">Загрузка журнала…</p></div></div>
+ <div class="panel"><div class="section-head"><h2>Активность администратора</h2><button class="mini-btn" onclick="loadAdminAudit()">Обновить</button></div><div id="admin-audit"><p class="muted">Загрузка журнала…</p></div></div>
 </section>
 
 <section id="page-video" class="hidden page-video">
@@ -198,7 +198,7 @@
 <section id="page-settings" class="hidden page-settings">
  <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">Настройки</h2><p class="page-sub">Управляй интерфейсом, уведомлениями и данными.</p>
  <div class="panel"><div class="section-head"><h2>Интерфейс</h2></div>
-  <div class="setting-row"><div><strong>Тема оформления</strong><small>Выбери удобный вариант</small></div><select class="select-small" id="set-theme" onchange="updateSetting('theme',this.value)"><option value="warm">Фирменная</option><option value="dark">Тёмная</option><option value="light">Светлая</option><option value="system">Как на устройстве</option></select></div>
+  <div class="setting-row"><div><strong>Тема оформления</strong><small>Выбери удобный вариант</small></div><select class="select-small" id="set-theme" onchange="updateSetting('theme',this.value)"><option value="warm">Стандартная</option><option value="dark">Тёмная</option><option value="light">Светлая</option><option value="system">Как на устройстве</option></select></div>
   <div class="setting-row"><div><strong>Компактный интерфейс</strong><small>Меньше отступов и выше плотность</small></div><input class="switch" type="checkbox" id="set-compact" onchange="updateSetting('compact',this.checked)"></div>
   <div class="setting-row"><div><strong>Анимации</strong><small>Плавные переходы и эффекты</small></div><input class="switch" type="checkbox" id="set-animations" onchange="updateSetting('animations',this.checked)"></div>
   <div class="setting-row"><div><strong>Уменьшенное движение</strong><small>Отключить анимации загрузки</small></div><input class="switch" type="checkbox" id="set-reduced" onchange="updateSetting('reduced',this.checked)"></div>
@@ -221,7 +221,7 @@
 ИИ-Механик — ранняя версия
 Приёмка товара — в разработке</div></div>
 <div class="panel hidden" id="admin-entry"><strong>Управление платформой</strong><p class="muted">Доступ владельца к аккаунтам и серверным перепискам.</p><button class="btn" onclick="showPage('admin');loadAdminOverview();loadAdminUsers();loadAdminAudit()">Открыть админ-панель</button></div>
- <div class="panel"><strong>Аккаунт</strong><p class="muted" id="account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div></section>
+ <div class="panel"><strong>Аккаунт</strong><p class="muted" id="settings-account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div></section>
 </main><div class="footer-note">СОЮЗ · Твоя цифровая среда</div>
 </div>
 <nav class="bottom" aria-label="Основная навигация"><div class="bottom-inner">
