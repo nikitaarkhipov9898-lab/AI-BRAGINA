@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="СОЮЗ">
+<title>СОЮЗ</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div id="react-mount"></div>
+<div id="auth-screen" class="auth-screen hidden"><div class="auth-card">
+<div class="brand" style="margin-bottom:18px"><div class="brandmark"><img src="/icon.svg" alt="СОЮЗ"></div><div><h1>СОЮЗ</h1><small>ТВОЙ АККАУНТ</small></div></div>
+<h2 id="auth-title">Рады видеть тебя!</h2><p id="auth-hint">Твоя цифровая среда. Войди, чтобы продолжить.</p>
+<button id="install-app-btn" type="button" onclick="installSvoeApp()"><span class="install-icon">↓</span><span class="install-copy"><strong id="install-app-label">Установить СОЮЗ</strong><small>Добавить своё пространство на телефон</small></span></button>
+<label class="muted" for="auth-username">Логин</label><input id="auth-username" autocomplete="username" maxlength="24" placeholder="Например, sever_27">
+<div id="auth-name-wrap" class="hidden"><label class="muted" for="auth-display">Как тебя показывать</label><input id="auth-display" maxlength="50" placeholder="Имя"></div>
+<label class="muted" for="auth-password">Пароль</label><input id="auth-password" type="password" autocomplete="current-password" minlength="8" maxlength="128" placeholder="Не менее 8 символов">
+<div id="auth-code-wrap" class="hidden"><label class="muted" for="auth-code">Код первого владельца</label><input id="auth-code" type="password" autocomplete="off" placeholder="Код, созданный в Cloudflare"><p>Нужен только при создании самого первого аккаунта. Не отправляй его никому.</p></div>
+<button id="auth-submit" class="btn" onclick="submitAuth()">Войти</button><button id="auth-toggle" class="auth-toggle" onclick="toggleAuthMode()">Присоединиться</button>
+<div id="auth-status" class="status hidden"></div>
+</div></div>
+<div class="app">
+<header class="topbar"><div class="brand"><div class="brandmark"><img src="/icon.svg" alt="СОЮЗ"></div><div><h1>СОЮЗ</h1><small>ЛЮДИ · ИДЕИ · ДЕЙСТВИЯ</small></div></div><button class="icon-btn" onclick="showPage('settings')" aria-label="Настройки">⚙</button></header>
+<main>
+<section id="page-home" class="page-home">
+ <div class="home-intro"><div><span class="eyebrow">СОЮЗ · ТВОЯ СРЕДА</span><h2>Твоя главная</h2><p>Люди, идеи и инструменты — рядом.</p></div><button class="icon-btn" onclick="showPage('profile')" aria-label="Профиль">◉</button></div>
+ <div class="stories-strip" aria-label="Быстрый доступ">
+  <button class="story-item story-create" onclick="showPage('helpers')"><span class="story-ring"><span class="story-core">＋</span></span><small>AI-Агенты</small></button>
+  <button class="story-item" onclick="showPage('chef')"><span class="story-ring chef-ring"><span class="story-core">🍳</span></span><small>Шеф</small></button>
+  <button class="story-item" onclick="showPage('mechanic')"><span class="story-ring mech-ring"><span class="story-core">🔧</span></span><small>Механик</small></button>
+  <button class="story-item" onclick="showPage('video')"><span class="story-ring video-ring"><span class="story-core">▶</span></span><small>Видео</small></button>
+  <button class="story-item" onclick="showPage('community')"><span class="story-ring chat-ring"><span class="story-core">✉</span></span><small>Чаты</small></button>
+ </div>
+ <section class="home-command">
+  <div class="home-command-head"><span class="command-mark">✦</span><div><strong>Что нужно сделать?</strong><small>Опиши задачу — подберём помощника</small></div></div>
+  <div class="home-command-input"><input id="home-command-input" placeholder="Спроси о чём угодно…" onkeydown="if(event.key==='Enter')dispatchHomeCommand()"><button onclick="dispatchHomeCommand()" aria-label="Отправить запрос">↑</button></div>
+  <div class="home-command-links"><button onclick="showPage('helpers')">✧ Все AI-агенты</button><button onclick="showPage('tasks')">＋ Новая задача</button></div>
+ </section>
+ <div class="home-section-title"><div><span class="eyebrow">ТВОЙ ДЕНЬ</span><h2>Сегодня</h2></div><button class="text-action" onclick="showPage('tasks')">Все задачи <span>→</span></button></div>
+ <div class="today-feed-card" id="home-today"><p class="muted">Здесь будут твои задачи и напоминания.</p></div>
+ <div class="home-section-title"><div><span class="eyebrow">БЫСТРЫЙ СТАРТ</span><h2>Чем займёмся?</h2></div></div>
+ <div class="home-action-grid">
+  <button class="home-action-card home-action-ai" onclick="showPage('helpers')"><span class="home-action-icon">✦</span><span><strong>AI-Агенты</strong><small>Помощь в делах и работе</small></span><i>↗</i></button>
+  <button class="home-action-card" onclick="showPage('community')"><span class="home-action-icon">✉</span><span><strong>Сообщения</strong><small>Личные диалоги</small></span><i>↗</i></button>
+  <button class="home-action-card" onclick="showPage('video')"><span class="home-action-icon">▣</span><span><strong>Видео</strong><small>Смотри и открывай новое</small></span><i>↗</i></button>
+  <button class="home-action-card" onclick="showPage('tasks')"><span class="home-action-icon">✓</span><span><strong>Мои задачи</strong><small>Планы и напоминания</small></span><i>↗</i></button>
+ </div>
+ <div class="home-feature-card"><div><span class="eyebrow">УМНЫЕ ИНСТРУМЕНТЫ</span><h3>Меньше рутины.<br>Больше результата.</h3><p>Выбирай специализированного помощника и решай задачу в диалоге.</p><button onclick="showPage('helpers')">Найти помощника <span>→</span></button></div><div class="feature-orbit" aria-hidden="true">✳</div></div>
+ <div class="notice" id="general-warning">ИИ-помощники могут ошибаться. Важную информацию проверяй перед применением.</div>
+</section>
+<section id="page-helpers" class="hidden page-helpers">
+ <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">AI-Агенты</h2><p class="page-sub">Умные помощники для работы, дома и повседневных задач.</p>
+ <div class="section-head"><h2>Доступны сейчас</h2></div><div class="grid helper-grid">
+  <button class="tool" onclick="showPage('chef')"><span class="tool-icon">🍳</span><strong>ИИ-Шеф</strong><small>Рецепты, меню, питание и список покупок</small><span class="pill warn">ЭКСПЕРИМЕНТАЛЬНЫЙ</span></button>
+  <button class="tool" onclick="showPage('mechanic')"><span class="tool-icon">🔧</span><strong>ИИ-Механик</strong><small>Диагностика, ремонт и обслуживание автомобиля</small><span class="pill good">РАННЯЯ ВЕРСИЯ</span></button>
+  <button class="tool" onclick="showPage('invoice')"><span class="tool-icon">📦</span><strong>Учёт и инвентаризация</strong><small>Приёмка, товары, остатки, имущество и недостачи</small><span class="pill warn">В РАЗРАБОТКЕ</span></button>
+ </div>
+ <div class="section-head"><h2>В планах</h2><span class="muted">Добавляем постепенно</span></div><div class="grid">
+  <div class="tool"><span class="tool-icon">🛠️</span><strong>ИИ-Мастер</strong><small>Ремонт дома, сантехника, электрика и строительство</small><span class="pill">В ПЛАНАХ</span></div>
+  <div class="tool"><span class="tool-icon">🌱</span><strong>ИИ-Дачник</strong><small>Огород, растения, теплицы и урожай</small><span class="pill">В ПЛАНАХ</span></div>
+  <div class="tool"><span class="tool-icon">💰</span><strong>ИИ-Финансист</strong><small>Доходы, расходы, бюджет и накопления</small><span class="pill">В ПЛАНАХ</span></div>
+  <div class="tool"><span class="tool-icon">⚖️</span><strong>ИИ-Юрист</strong><small>Разбор документов и подготовка черновиков</small><span class="pill">В ПЛАНАХ</span></div>
+  <div class="tool"><span class="tool-icon">📄</span><strong>ИИ по документам</strong><small>Распознавание, объяснение и организация файлов</small><span class="pill">В ПЛАНАХ</span></div>
+ </div><div class="notice">Пометка «В планах» означает, что инструмент ещё не работает.</div>
+</section>
+<section id="page-community" class="hidden page-community">
+ <div class="chat-page-heading"><div><span class="eyebrow">СОЕДИНЯЙСЯ</span><h2 class="page-title">Сообщения</h2><p class="page-sub">Личные диалоги и общение без лишнего.</p></div><span class="chat-heading-icon">✉</span></div>
+ <div class="chat-workspace">
+  <aside id="chat-sidebar" class="chat-sidebar">
+   <div class="chat-search-wrap"><label for="chat-user-search">Найти человека</label><div class="chat-search"><span>⌕</span><input id="chat-user-search" maxlength="40" placeholder="Имя или логин…" oninput="searchChatUsers()"></div><div id="chat-search-results"></div></div>
+   <div class="chat-list-heading"><div><strong>Ваши диалоги</strong><small>Личные сообщения</small></div><button class="mini-btn" onclick="loadChatList()" aria-label="Обновить чаты">↻</button></div>
+   <div id="chat-list"><p class="muted">Загрузка диалогов…</p></div>
+  </aside>
+  <div id="chat-room" class="chat-room hidden">
+   <div class="chat-room-head"><button class="mini-btn" onclick="closeChatRoom()">←</button><div class="chat-peer-avatar">✦</div><div class="chat-peer-meta"><strong id="chat-peer-name">Диалог</strong><small id="chat-peer-login"></small></div></div>
+   <div id="chat-messages" class="chat-messages"><p class="muted">Выбери диалог.</p></div>
+   <form class="chat-compose" onsubmit="sendChatMessage(event)"><textarea id="chat-message-input" maxlength="4000" rows="2" placeholder="Написать сообщение…" oninput="chatTypingChanged()" onblur="stopChatTyping()" required></textarea><button class="btn" type="submit" aria-label="Отправить сообщение">↑</button></form>
+  </div>
+ </div>
+</section>
+<section id="page-tasks" class="hidden page-tasks">
+ <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">Задачи</h2><p class="page-sub">Планы, сроки и задачи на каждый день.</p>
+ <div class="panel"><div class="field"><label>Новая задача</label><input id="task-title" maxlength="160" placeholder="Что нужно сделать?"></div><div class="field"><label>Срок (необязательно)</label><input id="task-due" type="date"></div><button class="btn" onclick="addTask()">Добавить задачу</button></div>
+ <div class="section-head"><h2>Список задач</h2><span class="muted" id="task-count">0 задач</span></div><div id="task-list"></div>
+ <div class="notice">Календарь, повторяющиеся напоминания и совместные задачи подключим следующим этапом.</div>
+</section>
+<section id="page-chef" class="hidden">
+ <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">ИИ-Шеф</h2><p class="page-sub">Подберём блюдо или составим рецепт из того, что есть дома.</p>
+ <div class="notice">Экспериментальный режим. ИИ может ошибаться в рецептах и пропорциях. Проверяйте состав и готовность продуктов.</div>
+ <div class="tabs"><button class="tab active" id="tab-pantry" onclick="chefMode='pantry';renderChefMode()">Что есть дома</button><button class="tab" id="tab-specific" onclick="chefMode='specific';renderChefMode()">Конкретное блюдо</button></div>
+ <div id="chef-pantry" class="panel">
+  <div class="field"><label>Основные продукты — каждый с новой строки или через запятую</label><textarea id="chef-products" placeholder="Картофель, курица, лук"></textarea></div>
+  <div class="field"><label>Дополнительные продукты (необязательно)</label><input id="chef-extras" placeholder="Например: сыр, сливки"></div>
+  <div class="field" style="border:1px solid var(--line);border-radius:13px;padding:12px;background:var(--bg2)">
+   <label style="display:flex;align-items:center;gap:9px;color:var(--text);font-size:12px"><input id="chef-use-staples" type="checkbox" checked style="width:18px;height:18px;accent-color:var(--accent)"> Разрешить домашние продукты по желанию</label>
+   <div class="muted" style="margin:7px 0 0 27px">Соль, чёрный перец, сахар и растительное масло. Шеф предложит их отдельно — добавлять необязательно.</div>
+  </div>
+  <div class="field"><label>Что приготовить?</label><select id="chef-type"><option>На усмотрение ИИ-Шефа</option><option>Завтрак</option><option>Обед или ужин</option><option>Закуска или салат</option><option>Выпечка или десерт</option></select></div>
+  <div class="field"><label>Количество порций</label><select id="chef-servings"><option>2</option><option selected>4</option><option>6</option><option>8</option></select></div>
+  <div class="field"><label>Пожелания</label><textarea id="chef-wishes" placeholder="Например: быстро, не слишком жирно"></textarea></div>
+  <button class="btn" id="chef-generate" onclick="generateChef()">Создать рецепт</button>
+ </div>
+ <div id="chef-specific" class="panel hidden">
+  <div class="field"><label>Какое блюдо приготовить?</label><input id="chef-dish" placeholder="Например: плов с курицей"></div>
+  <div class="field"><label>Количество порций</label><select id="chef-servings2"><option>2</option><option selected>4</option><option>6</option><option>8</option></select></div>
+  <div class="field"><label>Пожелания</label><textarea id="chef-wishes2" placeholder="Например: рассыпчатый рис"></textarea></div>
+  <button class="btn" id="chef-generate2" onclick="generateChef()">Создать рецепт</button>
+ </div>
+ <div id="chef-result" class="panel hidden"><div class="section-head"><h2>Результат</h2><span class="pill warn">ПРОВЕРЯЙТЕ</span></div><div id="chef-output"></div><div class="row"><button class="btn secondary" onclick="copyResult('chef-output')">Копировать</button><button class="btn secondary" onclick="generateChef(true)">Другой вариант</button></div></div>
+ <div class="panel"><div class="section-head"><h2>Мои рецепты</h2><button class="tab" onclick="renderHistory()">Обновить</button></div><div id="recipe-history"><p class="muted">Сохранённые рецепты появятся здесь.</p></div></div>
+</section>
+<section id="page-mechanic" class="hidden">
+ <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">ИИ-Механик</h2><p class="page-sub">Не просто ответ, а сопровождение от первых симптомов до проверки ремонта.</p>
+ <div class="notice">Экспериментальный помощник. Это предварительная консультация, а не подтверждённый диагноз. При проблемах с тормозами, рулевым управлением, давлением масла, перегреве, дыме, запахе топлива или сильном стуке безопасно остановитесь и обратитесь за профессиональной помощью.</div>
+ <div class="tabbar"><button id="mech-tab-new" class="active" onclick="showMechanicTab('new')">Диагностика</button><button id="mech-tab-history" onclick="showMechanicTab('history')">История ремонта</button><button id="mech-tab-maint" onclick="showMechanicTab('maint')">ТО и напоминания</button></div>
+ <div id="mech-new">
+  <div class="mode-switch"><button type="button" id="mechanic-mode-quick" onclick="showMechanicMode('quick')">⚡ Быстрая диагностика</button><button type="button" id="mechanic-mode-deep" class="active" onclick="showMechanicMode('deep')">🔍 Глубокая диагностика</button></div>
+  <div class="panel hidden" id="mechanic-quick-form">
+   <h3 style="margin:0 0 8px;font-size:14px">Опиши неисправность</h3>
+   <p class="muted">Напиши одним сообщением, что именно не работает. Например: «двигатель заводится, но машина не едет», «горит Check Engine», «не включается дальний свет».</p>
+   <div class="field"><label>Что случилось?</label><textarea id="quick-problem" placeholder="Опиши проблему своими словами…"></textarea></div>
+   <button class="btn" id="quick-mechanic-btn" onclick="askQuickMechanic()">Показать возможные причины</button>
+  </div>
+  <div class="panel" id="mechanic-start-form">
+   <h3 style="margin:0 0 8px;font-size:14px">Данные автомобиля</h3>
+   <div class="field"><label>Марка автомобиля</label><input id="car-brand" placeholder="Например: Volkswagen"></div>
+   <div class="row"><div class="field"><label>Модель</label><input id="car-model" placeholder="Golf"></div><div class="field"><label>Год выпуска</label><input id="car-year" inputmode="numeric" placeholder="2014"></div></div>
+   <div class="row"><div class="field"><label>Двигатель</label><input id="car-engine" placeholder="1.6 бензин"></div><div class="field"><label>Пробег, км</label><input id="car-mileage" inputmode="numeric" placeholder="180000"></div></div>
+   <div class="field"><label>VIN (необязательно, последние 6–8 символов можно скрыть)</label><input id="car-vin" placeholder="Для точного подбора деталей"></div>
+   <div class="field"><label>Опиши неисправность</label><textarea id="car-problem" placeholder="Что случилось? Какие звуки, запахи, лампочки? Когда проявляется?"></textarea></div>
+   <div class="field"><label>Когда проявляется?</label><select id="car-when"><option>Постоянно</option><option>На холодном двигателе</option><option>После прогрева</option><option>При разгоне</option><option>На холостом ходу</option><option>При торможении</option><option>На неровной дороге</option><option>Периодически</option><option>Впервые проявилось только что</option></select></div>
+   <div class="field"><label>Есть ли код ошибки или предупреждение?</label><input id="car-code" placeholder="Например: Check Engine, P0301"></div>
+   <button class="btn" id="mechanic-btn" onclick="askMechanic()">Начать диагностику</button>
+  </div>
+  <div id="mechanic-result" class="panel hidden"><div class="section-head"><h2>Карточка неисправности</h2><span id="mechanic-status" class="status-chip open">✕ Не решена</span></div><div id="mechanic-output"></div><div id="mechanic-followup" class="hidden"></div><div id="mechanic-actions" class="hidden"></div></div>
+ </div>
+ <div id="mech-history" class="hidden"><div class="panel"><div class="section-head"><h2>История неисправностей</h2><span class="muted" id="case-count">0 записей</span></div><button class="btn" onclick="startNewMechanic()">＋ Начать новую диагностику</button><p class="muted">Каждая проблема хранится отдельно. Можно продолжить диагностику, записать ожидание запчасти или отметить ремонт завершённым.</p><div id="mechanic-history-list"></div></div></div>
+ <div id="mech-maint" class="hidden">
+  <div class="panel"><h3 style="font-size:14px;margin:0 0 8px">Автомобиль и текущий пробег</h3><div class="field"><label>Название автомобиля</label><input id="maint-car-name" placeholder="Например: Volkswagen Golf 2014"></div><div class="field"><label>Текущий пробег, км</label><input id="maint-odometer" type="number" min="0" inputmode="numeric" placeholder="180000"></div><button class="btn secondary" onclick="saveMaintenanceVehicle()">Сохранить автомобиль</button></div>
+  <div class="panel"><div class="section-head"><h2>Добавить обслуживание</h2></div><p class="inline-note">Укажи сроки из руководства автомобиля или заказ-наряда. Интервалы зависят от двигателя, условий эксплуатации и рекомендаций производителя. Напоминания сохраняются в приложении и показываются при его открытии; push-уведомления при закрытом сайте пока не подключены.</p><div class="field"><label>Что нужно сделать?</label><input id="maint-title" placeholder="Например: заменить моторное масло"></div><div class="row"><div class="field"><label>К какому пробегу, км</label><input id="maint-due-km" type="number" min="0" placeholder="Следующая отметка"></div><div class="field"><label>К какой дате</label><input id="maint-due-date" type="date"></div></div><div class="field"><label>Комментарий / нужные материалы</label><textarea id="maint-note" placeholder="Марка масла, фильтр, артикул, что купить..."></textarea></div><button class="btn" onclick="addMaintenance()">Добавить напоминание</button></div>
+  <div class="panel"><div class="section-head"><h2>План обслуживания</h2><span class="muted" id="maint-count">0 записей</span></div><div id="maintenance-list"></div></div>
+ </div>
+</section>
+<section id="page-invoice" class="hidden">
+ <button class="back" onclick="showPage('home')">← Главная</button><div class="panel"><div class="tool-icon">📦</div><span class="pill warn">В РАЗРАБОТКЕ</span><h2 class="page-title">Учёт и инвентаризация</h2><p class="page-sub">Помощник для приёмки товара, учёта остатков, имущества, инвентаризации и выявления расхождений.</p><div class="status">Почему инструмент недоступен?
+Проводится техническая доработка, чтобы снизить количество ошибок при распознавании наименований, количества и цен.
+
+Существующие данные и настройки приложения не затрагиваются.</div></div>
+</section>
+
+<section id="page-admin" class="hidden">
+ <button class="back" onclick="showPage('settings')">← Настройки</button>
+ <h2 class="page-title">Панель администратора</h2>
+ <p class="page-sub">Пользователи, доступы и состояние платформы.</p>
+ <div class="panel"><div class="section-head"><h2>Обзор платформы</h2><button class="mini-btn" onclick="loadAdminOverview()">Обновить</button></div><div id="admin-overview" class="admin-stats"><p class="muted">Загрузка статистики…</p></div></div>
+ <div class="panel"><div class="section-head"><h2>Пользователи</h2><button class="mini-btn" onclick="loadAdminUsers()">Обновить</button></div><input id="admin-user-search" class="field-input" placeholder="Поиск по логину или имени" oninput="filterAdminUsers()"><div id="admin-users"><p class="muted">Загрузка аккаунтов…</p></div></div>
+ <div class="panel"><div class="section-head"><h2 id="admin-chat-title">Переписки пользователей</h2></div><div id="admin-conversations"><p class="muted">Выбери аккаунт, чтобы открыть его переписки.</p></div></div>
+ <div class="panel hidden" id="admin-conversation-view"><div class="section-head"><h2 id="admin-view-title">Диалог</h2></div><pre id="admin-view-content" style="white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.55 monospace;color:var(--text);max-height:60vh;overflow:auto"></pre></div>
+ <div class="panel"><div class="section-head"><h2>Личные чаты пользователей</h2></div><p class="muted">История личных сообщений. Доступна только владельцу платформы.</p><div id="admin-chat-threads"><p class="muted">Выбери аккаунт в списке пользователей.</p></div><div id="admin-chat-message-view" class="hidden" style="max-height:55vh;overflow:auto;margin-top:12px"></div></div>
+ <div class="panel"><div class="section-head"><h2>Активность администратора</h2><button class="mini-btn" onclick="loadAdminAudit()">Обновить</button></div><div id="admin-audit"><p class="muted">Загрузка журнала…</p></div></div>
+</section>
+
+<section id="page-video" class="hidden page-video">
+ <button class="back" onclick="showPage('home')">← Главная</button>
+ <div class="video-heading"><div><div class="eyebrow">СОЮЗ · SHORTS</div><h2 class="page-title">Короткие видео</h2><p class="page-sub">Вертикальная лента открытых роликов.</p></div><span class="video-mark">▶</span></div>
+ <div class="video-discovery-tabs" id="video-discovery-tabs">
+  <button class="active" data-topic="trending" onclick="selectVideoTopic('trending',this)">Популярное</button>
+  <button data-topic="fun" onclick="selectVideoTopic('fun',this)">Юмор</button>
+  <button data-topic="animals" onclick="selectVideoTopic('animals',this)">Животные</button>
+  <button data-topic="auto" onclick="selectVideoTopic('auto',this)">Авто</button>
+  <button data-topic="useful" onclick="selectVideoTopic('useful',this)">Полезное</button>
+  <button data-topic="saved" onclick="showSavedAutoVideos(this)">Избранное</button>
+ </div>
+ <button class="video-focus-close" type="button" aria-label="Закрыть полноэкранную ленту" onclick="closeVideoFocus()">×</button>
+ <div id="video-feed" class="video-feed"><div class="video-empty"><div class="video-empty-icon">▶</div><strong>Собираем ленту</strong><p>Загружаем открытые ролики. Видео не проходит через сервер СОЮЗ.</p></div></div>
+ <div id="video-feed-status" class="muted" style="text-align:center;padding:10px 4px"></div>
+ <button id="video-more-btn" class="btn secondary hidden" onclick="loadMoreAutoVideos()">Показать ещё</button>
+ <p class="video-footnote">Лента собрана в СОЮЗ из открытых роликов внешнего источника. Сейчас доступен RUTUBE; видео воспроизводится напрямую у источника и не хранится на наших серверах.</p>
+</section>
+
+<section id="page-profile" class="hidden page-profile">
+ <div class="profile-cover"><div class="profile-avatar-large">С</div><div><span class="eyebrow">ТВОЙ ПРОФИЛЬ</span><h2 id="profile-display-name">Твой профиль</h2><p id="profile-username">@username</p></div></div>
+ <div class="profile-stats"><div><strong id="profile-task-count">0</strong><small>Задачи</small></div><div><strong id="profile-recipe-count">0</strong><small>Рецепты</small></div><div><strong id="profile-case-count">0</strong><small>Диагностики</small></div></div>
+ <div class="profile-menu">
+  <button onclick="showPage('settings')"><span class="profile-menu-icon">⚙</span><span><strong>Настройки</strong><small>Интерфейс, уведомления и данные</small></span><b>›</b></button>
+  <button onclick="showPage('admin');loadAdminOverview();loadAdminUsers();loadAdminAudit()" id="profile-admin-link" class="hidden"><span class="profile-menu-icon">⌘</span><span><strong>Управление платформой</strong><small>Пользователи и инструменты владельца</small></span><b>›</b></button>
+  <button onclick="exportData()"><span class="profile-menu-icon">⇩</span><span><strong>Экспорт данных</strong><small>Сохранить личные данные</small></span><b>›</b></button>
+ </div>
+ <div class="panel profile-account-panel"><strong>Аккаунт</strong><p class="muted" id="account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div>
+</section>
+<section id="page-settings" class="hidden page-settings">
+ <div class="settings-heading"><span class="eyebrow">ПЕРСОНАЛИЗАЦИЯ</span><h2 class="page-title">Настройки</h2><p class="page-sub">Настрой приложение под себя.</p></div>
+ <div class="panel"><div class="section-head"><h2>Интерфейс</h2></div>
+  <div class="setting-row"><div><strong>Тема оформления</strong><small>Выбери удобный вариант</small></div><select class="select-small" id="set-theme" onchange="updateSetting('theme',this.value)"><option value="warm">Стандартная</option><option value="dark">Тёмная</option><option value="light">Светлая</option><option value="system">Как на устройстве</option></select></div>
+  <div class="setting-row"><div><strong>Компактный интерфейс</strong><small>Меньше отступов и выше плотность</small></div><input class="switch" type="checkbox" id="set-compact" onchange="updateSetting('compact',this.checked)"></div>
+  <div class="setting-row"><div><strong>Анимации</strong><small>Плавные переходы и эффекты</small></div><input class="switch" type="checkbox" id="set-animations" onchange="updateSetting('animations',this.checked)"></div>
+  <div class="setting-row"><div><strong>Уменьшенное движение</strong><small>Отключить анимации загрузки</small></div><input class="switch" type="checkbox" id="set-reduced" onchange="updateSetting('reduced',this.checked)"></div>
+ </div>
+ <div class="panel"><div class="section-head"><h2>Звуки и уведомления</h2></div>
+  <div class="setting-row"><div><strong>Звуки интерфейса</strong><small>Короткий звук при нажатии</small></div><input class="switch" type="checkbox" id="set-tap" onchange="updateSetting('tap',this.checked)"></div>
+  <div class="setting-row"><div><strong>Звук начала работы ИИ</strong><small>Короткий сигнал при запуске запроса</small></div><input class="switch" type="checkbox" id="set-start" onchange="updateSetting('start',this.checked)"></div>
+  <div class="setting-row"><div><strong>Звуки завершения</strong><small>Сигнал после успешного ответа</small></div><input class="switch" type="checkbox" id="set-done" onchange="updateSetting('done',this.checked)"></div>
+  <div class="setting-row"><div><strong>Звук ошибок</strong><small>Отдельный сигнал при сбое</small></div><input class="switch" type="checkbox" id="set-error" onchange="updateSetting('error',this.checked)"></div>
+  <div class="setting-row"><div><strong>Громкость сигналов</strong><small>Уровень системных звуков</small></div><input type="range" min="0" max="100" value="25" id="set-volume" style="max-width:125px" oninput="updateSetting('volume',Number(this.value))"></div>
+  <button class="btn secondary" onclick="playTone('done')">Проверить звук</button>
+ </div>
+ <div class="panel"><div class="section-head"><h2>Поведение</h2></div>
+  <div class="setting-row"><div><strong>Показывать предупреждения</strong><small>О статусе экспериментальных инструментов</small></div><input class="switch" type="checkbox" id="set-warnings" onchange="updateSetting('warnings',this.checked)"></div>
+  <div class="setting-row"><div><strong>Сохранять историю рецептов</strong><small>История синхронизируется с аккаунтом на сервере</small></div><input class="switch" type="checkbox" id="set-history" onchange="updateSetting('history',this.checked)"></div>
+  <div class="setting-row"><div><strong>Подтверждать удаление</strong><small>Защита от случайной очистки</small></div><input class="switch" type="checkbox" id="set-confirm" onchange="updateSetting('confirm',this.checked)"></div>
+ </div>
+ <div class="panel"><div class="section-head"><h2>Данные и безопасность</h2></div><p class="muted">Настройки и личные данные инструментов хранятся на устройстве. История рецептов и диалоги помощников синхронизируются с сервером и доступны в аккаунте.</p><button class="btn secondary" onclick="exportData()">Экспортировать данные</button><button class="btn secondary" onclick="document.getElementById('import-data').click()">Импортировать данные</button><input id="import-data" class="hidden" type="file" accept="application/json" onchange="importData(event)"><button class="btn secondary" onclick="resetSettings()">Сбросить настройки</button><div class="status">СОЮЗ · Версия приложения
+ИИ-Шеф — экспериментальный режим
+ИИ-Механик — ранняя версия
+Приёмка товара — в разработке</div></div>
+<div class="panel hidden" id="admin-entry"><strong>Управление платформой</strong><p class="muted">Доступ владельца к аккаунтам и серверным перепискам.</p><button class="btn" onclick="showPage('admin');loadAdminOverview();loadAdminUsers();loadAdminAudit()">Открыть админ-панель</button></div>
+ <div class="panel"><strong>Аккаунт</strong><p class="muted" id="settings-account-label">Вход выполнен</p><button class="btn secondary" onclick="logout()">Выйти из аккаунта</button></div></section>
+</main><div class="footer-note">СОЮЗ</div>
+</div>
+<nav class="bottom" aria-label="Основная навигация"><div class="bottom-inner">
+ <button class="nav active" id="nav-home" onclick="showPage('home')"><span>⌂</span>Главная</button>
+ <button class="nav" id="nav-tools" onclick="showPage('helpers')"><span>✦</span>AI</button>
+ <button class="nav" id="nav-video" onclick="showPage('video')"><span>▣</span>Видео</button>
+ <button class="nav" id="nav-community" onclick="showPage('community')"><span>✉</span><i class="nav-badge hidden" id="chat-nav-badge">0</i>Чаты</button>
+ <button class="nav" id="nav-tasks" onclick="showPage('tasks')"><span>✓</span>Задачи</button>
+ <button class="nav" id="nav-settings" onclick="showPage('profile')"><span>◉</span>Профиль</button>
+</div></nav>
+<script src="/app.js" defer></script>
+<script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
