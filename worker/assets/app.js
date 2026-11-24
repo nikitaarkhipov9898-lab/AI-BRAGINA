@@ -522,6 +522,26 @@ let activeCaseId=null,mechanicLastUsage=null,mechanicMode="deep";
 function showMechanicMode(mode){mechanicMode=mode;$(`mechanic-quick-form`).classList.toggle("hidden",mode!=="quick");$("mechanic-start-form").classList.toggle("hidden",mode!=="deep");$("mechanic-mode-quick").classList.toggle("active",mode==="quick");$("mechanic-mode-deep").classList.toggle("active",mode==="deep");}
 function showMechanicTab(tab){['new','history','maint'].forEach(t=>{$('mech-'+t).classList.toggle('hidden',t!==tab);$('mech-tab-'+t).classList.toggle('active',t===tab);});if(tab==='history')renderMechanicHistory();if(tab==='maint')renderMaintenance();}
 function activeCase(){return appData.mechanicCases.find(x=>x.id===activeCaseId)||null;}
+window.restoreConversation=function(row){
+ const content=row&&row.content||{};
+ if(row?.kind==='mechanic'&&content.case){
+  const item=content.case;
+  appData.mechanicCases=Array.isArray(appData.mechanicCases)?appData.mechanicCases:[];
+  const index=appData.mechanicCases.findIndex(x=>String(x.id)===String(item.id));
+  if(index>=0)appData.mechanicCases[index]=item;else appData.mechanicCases.unshift(item);
+  activeCaseId=item.id;
+  try{localStorage.setItem(APP_KEY,JSON.stringify(appData));}catch(e){}
+  return true;
+ }
+ if(row?.kind==='recipe'&&content.entry){
+  appData.history=Array.isArray(appData.history)?appData.history:[];
+  const item=content.entry;
+  if(!appData.history.some(x=>String(x.id)===String(item.id)))appData.history.unshift(item);
+  try{localStorage.setItem(APP_KEY,JSON.stringify(appData));}catch(e){}
+  return true;
+ }
+ return false;
+};
 function startNewMechanic(){activeCaseId=null;showMechanicMode('deep');$('mechanic-start-form').classList.remove('hidden');$('mechanic-quick-form').classList.add('hidden');$('mechanic-result').classList.add('hidden');['car-brand','car-model','car-year','car-engine','car-mileage','car-vin','car-problem','car-code','quick-problem'].forEach(id=>$(id).value='');$('car-when').selectedIndex=0;showMechanicTab('new');window.scrollTo({top:0,behavior:'smooth'});}
 function statusInfo(status){return status==='resolved'?{cls:'solved',icon:'🔩',label:'Решена'}:status==='in_progress'?{cls:'progress',icon:'⚠',label:'В процессе'}:{cls:'open',icon:'✕',label:'Не решена'};}
 function setCaseStatus(id,status){const c=appData.mechanicCases.find(x=>x.id===id);if(!c)return;c.status=status;c.updatedAt=new Date().toISOString();saveData();if(activeCaseId===id)renderActiveCase(c,c.lastUsage);renderMechanicHistory();toast('Статус неисправности обновлён.');}
