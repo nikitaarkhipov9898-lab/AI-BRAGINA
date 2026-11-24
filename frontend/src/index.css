@@ -321,3 +321,6 @@ body > .app > main > #page-chef,body > .app > main > #page-mechanic {display:non
 .soyuz-admin-user>button{font-size:8px}
 .soyuz-profile-version+.soyuz-error{margin-top:10px}
 @media(max-width:390px){.soyuz-top-actions{gap:4px}.soyuz-sparks,.soyuz-presence{padding:0 6px;font-size:7px}.soyuz-agent-card{grid-template-columns:42px minmax(0,1fr) auto;gap:3px 8px;padding:10px}.soyuz-agent-card__icon{width:38px;height:38px}.soyuz-agent-card__action{font-size:8px}}
+
+.soyuz-plus-badge{display:inline-flex;vertical-align:middle;margin-left:4px;padding:2px 5px;border:1px solid #e0c09766;border-radius:5px;background:#e0c09717;color:#f1d6a8;font-size:7px;font-style:normal;font-weight:800;letter-spacing:.04em}
+.soyuz-thread-main strong{display:block}
