@@ -200,3 +200,9 @@ body[data-page="chef"] .back,body[data-page="mechanic"] .back {display:none}
 .soyuz-chat-footnote {font-size:9px;line-height:1.5;color:#77727b;text-align:center;margin:9px 8px}
 .soyuz-error {padding:10px 12px;border-radius:12px;background:#e6394618;color:#ff9ba1;font-size:11px}
 body > .app > main > #page-chef,body > .app > main > #page-mechanic {display:none!important}
+
+.soyuz-followup-questions {padding:13px;border:1px solid #e0c09730;border-radius:16px;background:#e0c09709;margin:10px 0}
+.soyuz-followup-questions>strong {display:block;color:var(--soyuz-titanium);font-size:11px;margin-bottom:10px}
+.soyuz-followup-questions>div {padding:10px 0;border-top:1px solid var(--soyuz-line)}
+.soyuz-followup-questions label {display:block;font-size:11px;line-height:1.5;margin-bottom:7px;color:#e9e2d8}
+.soyuz-followup-questions select,.soyuz-followup-questions textarea {width:100%;border:1px solid var(--soyuz-line);border-radius:10px;background:#0b0b0e;color:#eee;padding:9px;font:inherit;font-size:11px;margin-top:5px}
