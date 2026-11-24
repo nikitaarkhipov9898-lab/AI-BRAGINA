@@ -1,0 +1,73 @@
+name: Create Soyuz site on Tuqo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  create-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create site if it does not already exist
+        env:
+          TUQO_API_KEY: ${{ secrets.TUQO_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${TUQO_API_KEY:-}" ]; then
+            echo "::error::GitHub secret TUQO_API_KEY is missing."
+            exit 1
+          fi
+
+          API="https://api.tuqo.ru/api/v1"
+          SITES="$(curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer ${TUQO_API_KEY}" \
+            "${API}/sites")"
+
+          EXISTING="$(printf '%s' "$SITES" | jq -c '
+            [.. | objects |
+              select(
+                ((.subdomain? // "") == "soyuz-platform") or
+                ((.url? // "") | contains("soyuz-platform.tuqo.app"))
+              )
+            ][0] // empty
+          ')"
+
+          if [ -n "$EXISTING" ]; then
+            SITE="$EXISTING"
+            echo "Site already exists; reusing it."
+          else
+            RESPONSE="$(curl --fail-with-body --silent --show-error \
+              -X POST "${API}/sites" \
+              -H "Authorization: Bearer ${TUQO_API_KEY}" \
+              -H "Content-Type: application/json" \
+              --data '{"name":"СОЮЗ","subdomain":"soyuz-platform"}')"
+            SITE="$RESPONSE"
+            echo "Created a new Tuqo site."
+          fi
+
+          SITE_ID="$(printf '%s' "$SITE" | jq -r '
+            [.. | objects | .id? // .site_id? // empty] | map(select(type == "string" or type == "number")) | .[0] // empty
+          ')"
+          SITE_URL="$(printf '%s' "$SITE" | jq -r '
+            [.. | objects | .url? // empty] | map(select(type == "string")) | .[0] // "https://soyuz-platform.tuqo.app"
+          ')"
+
+          if [ -z "$SITE_ID" ]; then
+            echo "::error::Tuqo returned a response, but a site ID could not be identified. Check the API response in this run."
+            printf '%s\n' "$SITE" | jq .
+            exit 1
+          fi
+
+          {
+            echo "## Tuqo site for СОЮЗ"
+            echo ""
+            echo "- Site ID: `$SITE_ID`"
+            echo "- Address: $SITE_URL"
+            echo ""
+            echo "The site has been created or found. The current application has not yet been deployed here; backend/API compatibility must be handled before switching users."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "Tuqo site ID: $SITE_ID"
+          echo "Tuqo site URL: $SITE_URL"
