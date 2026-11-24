@@ -1,4 +1,4 @@
-const CACHE_NAME = "soyuz-shell-v2026-new";
+const CACHE_NAME = "soyuz-shell-v2026-clean";
 const APP_URL = "/app";
 const SHELL = [APP_URL, "/manifest.webmanifest", "/icon.svg"];
 
