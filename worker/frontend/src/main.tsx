@@ -301,7 +301,7 @@ function App(){
     <div className="brief-help"><CircleHelp size={18}/><div><b>Нужна помощь?</b><small>Центр поддержки пользователей</small><button onClick={()=>notify("Центр поддержки будет подключён позже")}>ОТКРЫТЬ <ArrowRight size={12}/></button></div></div>
    </aside>
   </div>
-  <nav className="mobile-nav">{nav.map(n=><button key={n.id} className={tab===n.id&&!active?"active":""} onClick={()=>go(n.id)}><n.icon size={19}/><span>{n.label==="СООБЩЕСТВО"?"ЛЮДИ":n.label==="БЮРО"?"ИИ":n.label==="ГЛАВНАЯ"?"ГЛАВНАЯ":n.label==="СВЯЗЬ"?"ЧАТЫ":n.label==="ЛИЧНОЕ ДЕЛО"?"ПРОФИЛЬ":"ДЕЛА"}</span></button>)}</nav>
+  <nav className="mobile-nav">{nav.map(n=><button key={n.id} className={tab===n.id&&!active?"active":""} onClick={()=>go(n.id)}><n.icon size={19}/><span>{({"Главная":"Главная","Помощники":"ИИ","Сообщество":"Люди","Чаты":"Чаты","Дела":"Дела","Профиль":"Профиль"} as Record<string,string>)[n.label] ?? n.label}</span></button>)}</nav>
   <footer className="union-footer"><span>СОЮЗ © 2026</span><span>ЕДИНСТВО · ЗНАНИЯ · ВОЗМОЖНОСТИ</span><span>v{APP_VERSION} · {APP_BUILD.slice(0,7)}</span></footer>
   <AnimatePresence>{toast&&<motion.div className="union-toast" initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} exit={{opacity:0,y:8}}>{toast}</motion.div>}</AnimatePresence>
  </div>;
