@@ -444,6 +444,61 @@ async function chatMarkRead(request,env,user) {
   await env.DB.prepare("UPDATE chat_members SET last_read_at=? WHERE thread_id=? AND user_id=?").bind(new Date().toISOString(),threadId,user.id).run();
   return json({success:true});
 }
+
+function entitlementPayload(user) {
+  const now=Date.now(), plusUntil=user.soyuz_plus_until||null, invisibleUntil=user.invisible_until||null;
+  const plusActive=!!(plusUntil&&Date.parse(plusUntil)>now);
+  return {sparks:Number(user.sparks||0),plus_active:plusActive,plus_until:plusUntil,invisible_active:plusActive||!!(invisibleUntil&&Date.parse(invisibleUntil)>now),invisible_until:invisibleUntil};
+}
+async function accountEntitlements(env,user) {
+  const row=await env.DB.prepare("SELECT sparks,soyuz_plus_until,invisible_until FROM users WHERE id=?").bind(user.id).first();
+  return json(entitlementPayload(row||user));
+}
+async function accountSetInvisible(request,env,user) {
+  let body;try{body=await request.json()}catch{return json({error:"Некорректный запрос"},400)}
+  if(!body.enabled) await env.DB.prepare("UPDATE users SET invisible_until=NULL WHERE id=?").bind(user.id).run();
+  else {
+    const row=await env.DB.prepare("SELECT soyuz_plus_until,invisible_until FROM users WHERE id=?").bind(user.id).first();
+    const plus=!!(row?.soyuz_plus_until&&Date.parse(row.soyuz_plus_until)>Date.now());
+    const purchased=!!(row?.invisible_until&&Date.parse(row.invisible_until)>Date.now());
+    if(!plus&&!purchased)return json({error:"Для режима невидимки нужен СОЮЗ Плюс или опция за 50 Искр"},403);
+    await env.DB.prepare("UPDATE users SET invisible_until=? WHERE id=?").bind(plus?row.soyuz_plus_until:row.invisible_until,user.id).run();
+  }
+  return accountEntitlements(env,user);
+}
+async function purchaseSparkOption(request,env,user) {
+  let body;try{body=await request.json()}catch{return json({error:"Некорректный запрос"},400)}
+  if(body.product!=="invisible_7d")return json({error:"Неизвестная опция"},400);
+  const now=new Date().toISOString(),until=new Date(Date.now()+7*86400000).toISOString();
+  const result=await env.DB.prepare("UPDATE users SET sparks=sparks-50,invisible_until=? WHERE id=? AND sparks>=50 AND (invisible_until IS NULL OR invisible_until<=?)").bind(until,user.id,now).run();
+  if(!Number(result.meta?.changes||0)){
+    const current=await env.DB.prepare("SELECT sparks,invisible_until FROM users WHERE id=?").bind(user.id).first();
+    if(current?.invisible_until&&Date.parse(current.invisible_until)>Date.now())return json({error:"Режим невидимки уже активен"},409);
+    return json({error:"Недостаточно Искр: требуется 50"},402);
+  }
+  return accountEntitlements(env,user);
+}
+async function adminUpdateEntitlements(request,env,actor) {
+  let body;try{body=await request.json()}catch{return json({error:"Некорректный запрос"},400)}
+  const id=String(body.user_id||""),action=String(body.action||"");
+  const target=await env.DB.prepare("SELECT id,username,sparks,soyuz_plus_until FROM users WHERE id=?").bind(id).first();
+  if(!target)return json({error:"Пользователь не найден"},404);
+  if(action==="add_sparks"){
+    const amount=Math.floor(Number(body.amount)||0);
+    if(amount<1||amount>100000)return json({error:"Количество Искр должно быть от 1 до 100000"},400);
+    await env.DB.prepare("UPDATE users SET sparks=sparks+? WHERE id=?").bind(amount,id).run();
+  } else if(action==="grant_plus"){
+    const days=Math.min(3650,Math.max(1,Math.floor(Number(body.days)||30)));
+    const current=target.soyuz_plus_until&&Date.parse(target.soyuz_plus_until)>Date.now()?Date.parse(target.soyuz_plus_until):Date.now();
+    await env.DB.prepare("UPDATE users SET soyuz_plus_until=? WHERE id=?").bind(new Date(current+days*86400000).toISOString(),id).run();
+  } else if(action==="remove_plus") {
+    await env.DB.prepare("UPDATE users SET soyuz_plus_until=NULL,invisible_until=NULL WHERE id=?").bind(id).run();
+  } else return json({error:"Неизвестное действие"},400);
+  await writeAdminAudit(env,actor,"entitlement_"+action,target);
+  const updated=await env.DB.prepare("SELECT sparks,soyuz_plus_until,invisible_until FROM users WHERE id=?").bind(id).first();
+  return json({success:true,user_id:id,...entitlementPayload(updated)});
+}
+
 async function adminChatThreads(env,userId) {
   await ensureChatSchema(env);
   const rows=await env.DB.prepare(`SELECT t.id,t.kind,t.created_at,t.updated_at,
@@ -612,6 +667,23 @@ async function handleFetch(request, env) {
       id:x.id,kind:x.kind,title:x.title,content:JSON.parse(x.content_json || "{}"),
       created_at:x.created_at,updated_at:x.updated_at
     })) });
+  }
+
+  if (path === "/account/entitlements" && request.method === "GET") {
+    const user=await currentUser(request,env);if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return accountEntitlements(env,user);
+  }
+  if (path === "/account/invisible" && request.method === "POST") {
+    const user=await currentUser(request,env);if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return accountSetInvisible(request,env,user);
+  }
+  if (path === "/plus/purchase" && request.method === "POST") {
+    const user=await currentUser(request,env);if(!user)return json({error:"Необходим вход в аккаунт"},401);
+    return purchaseSparkOption(request,env,user);
+  }
+  if (path === "/admin/users/entitlements" && request.method === "POST") {
+    const auth=await adminOnly(request,env);if(auth.error)return auth.error;
+    return adminUpdateEntitlements(request,env,auth.user);
   }
 
   if (path === "/chat/users" && request.method === "GET") {
