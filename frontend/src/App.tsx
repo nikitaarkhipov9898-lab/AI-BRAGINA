@@ -14,6 +14,9 @@ declare global {
     showPage?: (page: string) => void;
     renderToday?: () => void;
     renderTasks?: () => void;
+    generateChef?: (regen?: boolean) => Promise<void>;
+    askQuickMechanic?: () => Promise<void>;
+    askMechanic?: () => Promise<void>;
   }
 }
 
@@ -256,6 +259,104 @@ function HistoryDrawer({ open, onOpenChange, token }: { open: boolean; onOpenCha
   );
 }
 
+
+function AgentWorkspace({ agent, onBack }: { agent: "chef" | "mechanic"; onBack: () => void }) {
+  const [mode, setMode] = useState(agent === "chef" ? "dish" : "quick");
+  const [prompt, setPrompt] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [year, setYear] = useState("");
+  const [engine, setEngine] = useState("");
+  const [mileage, setMileage] = useState("");
+  const [when, setWhen] = useState("Постоянно");
+  const [code, setCode] = useState("");
+  const [messages, setMessages] = useState<Array<{ role: "user" | "assistant"; text?: string; html?: string }>>([]);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const quickCommands = agent === "chef"
+    ? ["Быстрый ужин", "Из того, что есть", "Что приготовить на завтрак?"]
+    : ["Двигатель не заводится", "Горит Check Engine", "Стук при движении"];
+
+  async function send() {
+    const text = prompt.trim();
+    if (!text || busy) return;
+    setPrompt(""); setError(""); setBusy(true);
+    setMessages(prev => [...prev, { role: "user", text }]);
+    try {
+      if (agent === "chef") {
+        const specific = mode === "dish";
+        document.getElementById(specific ? "tab-specific" : "tab-pantry")?.click();
+        const field = document.getElementById(specific ? "chef-dish" : "chef-products") as HTMLInputElement | HTMLTextAreaElement | null;
+        if (!field) throw new Error("Не удалось открыть форму ИИ-Шефа.");
+        field.value = text;
+        field.dispatchEvent(new Event("input", { bubbles: true }));
+        await window.generateChef?.(false);
+        const html = document.getElementById("chef-output")?.innerHTML || "";
+        if (!html) throw new Error("ИИ-Шеф не вернул результат. Попробуй ещё раз.");
+        setMessages(prev => [...prev, { role: "assistant", html }]);
+      } else {
+        if (mode === "quick") {
+          const field = document.getElementById("quick-problem") as HTMLTextAreaElement | null;
+          document.getElementById("mechanic-mode-quick")?.click();
+          if (!field) throw new Error("Не удалось открыть быструю диагностику.");
+          field.value = text;
+          field.dispatchEvent(new Event("input", { bubbles: true }));
+          await window.askQuickMechanic?.();
+        } else {
+          document.getElementById("mechanic-mode-deep")?.click();
+          const values: Record<string, string> = {
+            "car-brand": brand, "car-model": model, "car-year": year,
+            "car-engine": engine, "car-mileage": mileage, "car-problem": text,
+            "car-when": when, "car-code": code,
+          };
+          for (const [id, value] of Object.entries(values)) {
+            const el = document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
+            if (el) { el.value = value; el.dispatchEvent(new Event("input", { bubbles: true })); }
+          }
+          await window.askMechanic?.();
+        }
+        const output = document.getElementById("mechanic-output")?.innerHTML || "";
+        const followup = document.getElementById("mechanic-followup")?.innerHTML || "";
+        if (!output) throw new Error("ИИ-Механик не вернул результат. Проверь данные и повтори запрос.");
+        setMessages(prev => [...prev, { role: "assistant", html: output + followup }]);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Не удалось выполнить запрос.");
+    } finally { setBusy(false); }
+  }
+
+  return (
+    <motion.div className="soyuz-screen soyuz-agent-workspace" key={agent} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+      <div className="soyuz-workspace-head"><button onClick={onBack}>← Все агенты</button><span className="soyuz-kicker">СОЮЗ // ДИАЛОГ С ИИ</span><h1>{agent === "chef" ? "ИИ-Шеф" : "ИИ-Механик"}</h1><p>{agent === "chef" ? "Рецепты и идеи для кухни" : "Предварительная диагностика автомобиля"}</p></div>
+      <div className="soyuz-mode-switch">
+        {(agent === "chef" ? [{ id: "dish", label: "Конкретное блюдо" }, { id: "pantry", label: "Из продуктов" }] : [{ id: "quick", label: "Быстрый разбор" }, { id: "deep", label: "Глубокая диагностика" }]).map(x => <button key={x.id} className={mode === x.id ? "active" : ""} onClick={() => setMode(x.id)}>{x.label}</button>)}
+      </div>
+      {agent === "mechanic" && mode === "deep" && <div className="soyuz-vehicle-grid">
+        <input value={brand} onChange={e => setBrand(e.target.value)} placeholder="Марка автомобиля" />
+        <input value={model} onChange={e => setModel(e.target.value)} placeholder="Модель" />
+        <input value={year} onChange={e => setYear(e.target.value)} placeholder="Год" />
+        <input value={engine} onChange={e => setEngine(e.target.value)} placeholder="Двигатель" />
+        <input value={mileage} onChange={e => setMileage(e.target.value)} placeholder="Пробег, км" />
+        <input value={code} onChange={e => setCode(e.target.value)} placeholder="Код ошибки (если есть)" />
+        <select value={when} onChange={e => setWhen(e.target.value)}><option>Постоянно</option><option>На холодном двигателе</option><option>После прогрева</option><option>При разгоне</option><option>На холостом ходу</option><option>При торможении</option><option>Периодически</option></select>
+      </div>}
+      <div className="soyuz-message-list">
+        {!messages.length && <div className="soyuz-chat-welcome"><div className="soyuz-emblem"><Orbit size={28} /></div><strong>{agent === "chef" ? "Что приготовим?" : "Расскажи, что происходит"}</strong><p>{agent === "chef" ? "Напиши название блюда или перечисли продукты — Шеф использует существующий сценарий генерации рецептов." : "Опиши симптомы. Для опасных неисправностей сначала позаботься о безопасности и не продолжай движение."}</p></div>}
+        {messages.map((m, i) => <motion.div key={i} className={`soyuz-message ${m.role}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+          {m.text && <p>{m.text}</p>}
+          {m.html && <div className="soyuz-agent-result" dangerouslySetInnerHTML={{ __html: m.html }} />}
+        </motion.div>)}
+        {busy && <div className="soyuz-thinking"><span /><span /><span /> ИИ готовит ответ…</div>}
+      </div>
+      {error && <div className="soyuz-error">{error}</div>}
+      <div className="soyuz-command-chips">{quickCommands.map(x => <button key={x} onClick={() => setPrompt(x)}>{x}</button>)}</div>
+      <div className="soyuz-chat-compose"><textarea value={prompt} onChange={e => setPrompt(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }} placeholder={agent === "chef" ? (mode === "dish" ? "Какое блюдо приготовить?" : "Перечисли продукты через запятую…") : "Опиши неисправность…"} rows={2} /><motion.button disabled={busy || !prompt.trim()} onClick={send} whileTap={{ scale: .92 }} aria-label="Отправить запрос"><ArrowRight size={19} /></motion.button></div>
+      <p className="soyuz-chat-footnote">Ответ формируется существующим серверным сценарием СОЮЗ. Системные инструкции и параметры модели не изменялись.</p>
+    </motion.div>
+  );
+}
+
 export default function App() {
   const [active, setActive] = useState(document.body.dataset.page || "home");
   const [user, setUser] = useState<User | null>(readUser());
@@ -285,8 +386,8 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
 
-  const isReactPage = active === "home" || active === "helpers";
-  const legacyHelper = ["chef", "mechanic", "invoice"].includes(active);
+  const isReactPage = active === "home" || active === "helpers" || active === "chef" || active === "mechanic";
+  const legacyHelper = active === "invoice";
   const showReactShell = authenticated && authChecked && isReactPage;
 
   return (
@@ -294,7 +395,7 @@ export default function App() {
       <AnimatePresence mode="wait">
         {!authChecked ? <motion.div key="loading" className="soyuz-boot"><div className="soyuz-emblem"><Orbit size={34} /></div><span>СОЮЗ // ЗАГРУЗКА</span></motion.div>
         : !authenticated ? <AuthScreen key="auth" onAuthenticated={u => { setUser(u); window.location.reload(); }} />
-        : showReactShell ? <motion.div key={active} className="soyuz-app"><AnimatePresence mode="wait">{active === "home" ? <HomeScreen user={user} /> : <AgentsScreen onOpenHistory={() => setHistoryOpen(true)} />}</AnimatePresence></motion.div>
+        : showReactShell ? <motion.div key={active} className="soyuz-app"><AnimatePresence mode="wait">{active === "home" ? <HomeScreen user={user} /> : active === "helpers" ? <AgentsScreen onOpenHistory={() => setHistoryOpen(true)} /> : <AgentWorkspace agent={active as "chef" | "mechanic"} onBack={() => openPage("helpers")} />}</AnimatePresence></motion.div>
         : legacyHelper ? <div className="soyuz-legacy-intro"><button onClick={() => openPage("helpers")}>← Все агенты</button><span className="soyuz-kicker">СОЮЗ // AI-АГЕНТ</span><h1>{active === "chef" ? "ИИ-Шеф" : active === "mechanic" ? "ИИ-Механик" : "Учёт и инвентаризация"}</h1><p>Рабочий сценарий помощника сохранён без изменения системных инструкций.</p></div>
         : <div className="soyuz-legacy-intro"><span className="soyuz-kicker">СОЮЗ // РАЗДЕЛ</span><h1>{active === "video" ? "Видео" : active === "community" ? "Чаты" : "Профиль"}</h1></div>}
       </AnimatePresence>
