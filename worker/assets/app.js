@@ -598,7 +598,9 @@ async function installSvoeApp() {
 }
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js', {scope: '/'})
+    const swUrl = new URL('./sw.js', location.href);
+    const swScope = new URL('./', location.href).pathname;
+    navigator.serviceWorker.register(swUrl, {scope: swScope})
       .catch(error => console.warn('Не удалось подключить офлайн-режим:', error));
   });
 }
