@@ -19,6 +19,7 @@ declare global {
     askMechanic?: () => Promise<void>;
     continueMechanic?: (id: string) => Promise<void>;
     activeCase?: () => { id: string } | null;
+    restoreConversation?: (row: any) => boolean;
   }
 }
 
