@@ -78,8 +78,8 @@ main section{animation:page-in .2s ease both}
 .video-ring{background:conic-gradient(#c57ad8,#e34d64,#c57ad8)}
 .chat-ring{background:conic-gradient(#6dbda3,#518cba,#6dbda3)}
 .story-item small{font-size:9px;color:var(--muted);font-weight:600;white-space:nowrap}
-.feed-composer .field{margin:11px 0 8px}
-.feed-composer .field input{height:42px;border-radius:12px}
+
+
 .today-feed-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px;margin:0 0 17px}
 .today-feed-card .mini-btn{margin-top:8px}
 .home-shortcuts{margin:0 0 15px}
