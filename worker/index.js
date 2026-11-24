@@ -107,7 +107,7 @@ async function currentUser(request, env) {
   if (!m) return null;
 
   const hash = await sha256(m[1]);
-  return env.DB.prepare(`
+  const user = await env.DB.prepare(`
     SELECT u.id, u.username, u.display_name, u.avatar_url, u.role,
            u.sparks, u.soyuz_plus_until, u.invisible_until, u.invisible_enabled, u.last_seen_at,
            s.id AS session_id
@@ -119,6 +119,13 @@ async function currentUser(request, env) {
       AND u.status = 'active'
     LIMIT 1
   `).bind(hash, new Date().toISOString()).first();
+  if (user) {
+    const now = new Date().toISOString();
+    const stale = new Date(Date.now() - 30000).toISOString();
+    await env.DB.prepare("UPDATE users SET last_seen_at=? WHERE id=? AND (last_seen_at IS NULL OR last_seen_at<?)")
+      .bind(now, user.id, stale).run();
+  }
+  return user;
 }
 
 async function register(request, env) {
@@ -368,7 +375,6 @@ async function chatCreateDirect(request, env, user) {
 }
 async function chatList(env,user) {
   await ensureChatSchema(env);
-  await env.DB.prepare("UPDATE users SET last_seen_at=? WHERE id=?").bind(new Date().toISOString(),user.id).run();
   const rows=await env.DB.prepare(`SELECT t.id,t.kind,t.created_at,t.updated_at,
     u.id AS peer_id,u.username AS peer_username,u.display_name AS peer_display_name,u.avatar_url AS peer_avatar,
     (SELECT body FROM chat_messages m WHERE m.thread_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS last_message,
@@ -861,7 +867,7 @@ async function handleFetch(request, env) {
     return new Response(responseText, {
       status: upstream.status,
       headers: {
-        ...corsHeaders(),
+        ...corsHeaders(request.headers.get("Origin") || ""),
         "Content-Type": upstream.headers.get("Content-Type") || "application/json",
         "Cache-Control": "no-store"
       }
