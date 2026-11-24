@@ -323,25 +323,44 @@ async function ensureConversationSchema(env) {
 }
 
 
-let chatSchemaReady = false;
+// Cache schema initialization per D1 binding and share one in-flight migration.
+// This prevents parallel first requests (/chat/list and /chat/unread) from racing
+// while creating tables, adding columns, and creating indexes.
+const chatSchemaPromises = new WeakMap();
 async function ensureChatSchema(env) {
-  if (chatSchemaReady) return;
-  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_threads (
-    id TEXT PRIMARY KEY, kind TEXT NOT NULL DEFAULT 'direct',
-    created_at TEXT NOT NULL, updated_at TEXT NOT NULL
-  )`).run();
-  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_members (
-    thread_id TEXT NOT NULL, user_id TEXT NOT NULL, joined_at TEXT NOT NULL,
-    last_read_at TEXT, typing_until TEXT, PRIMARY KEY(thread_id,user_id)
-  )`).run();
-  try { await env.DB.prepare("ALTER TABLE chat_members ADD COLUMN typing_until TEXT").run(); } catch (e) { /* column already exists */ }
-  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS chat_messages (
-    id TEXT PRIMARY KEY, thread_id TEXT NOT NULL, sender_id TEXT NOT NULL,
-    body TEXT NOT NULL, created_at TEXT NOT NULL
-  )`).run();
-  await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_chat_members_user ON chat_members(user_id,thread_id)").run();
-  await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_chat_messages_thread_time ON chat_messages(thread_id,created_at DESC)").run();
-  chatSchemaReady = true;
+  const db = env.DB;
+  if (!db || (typeof db !== "object" && typeof db !== "function")) {
+    throw new Error("D1 database binding is unavailable");
+  }
+  let pending = chatSchemaPromises.get(db);
+  if (!pending) {
+    pending = (async () => {
+      await db.prepare(`CREATE TABLE IF NOT EXISTS chat_threads (
+        id TEXT PRIMARY KEY, kind TEXT NOT NULL DEFAULT 'direct',
+        created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+      )`).run();
+      await db.prepare(`CREATE TABLE IF NOT EXISTS chat_members (
+        thread_id TEXT NOT NULL, user_id TEXT NOT NULL, joined_at TEXT NOT NULL,
+        last_read_at TEXT, typing_until TEXT, PRIMARY KEY(thread_id,user_id)
+      )`).run();
+      const memberCols = await db.prepare("PRAGMA table_info(chat_members)").all();
+      const memberNames = new Set((memberCols.results || []).map(col => col.name));
+      if (!memberNames.has("typing_until")) {
+        await db.prepare("ALTER TABLE chat_members ADD COLUMN typing_until TEXT").run();
+      }
+      await db.prepare(`CREATE TABLE IF NOT EXISTS chat_messages (
+        id TEXT PRIMARY KEY, thread_id TEXT NOT NULL, sender_id TEXT NOT NULL,
+        body TEXT NOT NULL, created_at TEXT NOT NULL
+      )`).run();
+      await db.prepare("CREATE INDEX IF NOT EXISTS idx_chat_members_user ON chat_members(user_id,thread_id)").run();
+      await db.prepare("CREATE INDEX IF NOT EXISTS idx_chat_messages_thread_time ON chat_messages(thread_id,created_at DESC)").run();
+    })();
+    chatSchemaPromises.set(db, pending);
+    pending.catch(() => {
+      if (chatSchemaPromises.get(db) === pending) chatSchemaPromises.delete(db);
+    });
+  }
+  return pending;
 }
 async function chatMember(env, threadId, userId) {
   return env.DB.prepare("SELECT 1 AS ok FROM chat_members WHERE thread_id=? AND user_id=?")
