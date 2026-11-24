@@ -435,3 +435,116 @@ html.motion-disabled *,html.motion-disabled *:before,html.motion-disabled *:afte
 .setting-row input[type=checkbox]:checked{background:#a52e27;border-color:#d76a5d}
 .specialist-tab.active{background:linear-gradient(135deg,#d4b779,#9e8150);border-color:#d7bb83;color:#291719}
 .community-compose button,.comment-compose button{background:linear-gradient(135deg,#d34a37,#982722);color:#fff}
+
+
+/* СОЮЗ — единая красно-бордовая советская палитра. Финальный слой поверх прежних экспериментальных тем. */
+:root{
+  color-scheme:dark;
+  --red:#c7352c;
+  --red2:#e05243;
+  --ink:#f0e8d7;
+  --muted:#c0ad9d;
+  --paper:#2b1b1d;
+  --line:rgba(211,177,119,.28);
+  --gold:#d0ad70;
+  --green:#a52e27;
+  --surface-0:#160f12;
+  --surface-1:#211417;
+  --surface-2:#2c191d;
+  --surface-3:#3a2024;
+  --stroke:rgba(207,174,113,.24);
+  --text-main:#f2eadb;
+  --text-muted:#c0ad9d;
+  --accent:#c7352c;
+  --accent-strong:#e05243;
+}
+html,body,#root{background:#160f12!important;color:#f2eadb}
+body{background:radial-gradient(ellipse at 50% -12%,#492126 0%,#241518 48%,#120d10 100%)!important}
+.union-app{
+  background:radial-gradient(ellipse at 50% -12%,#54242a 0%,#2b171b 43%,#160f12 100%)!important;
+  color:#f2eadb!important;
+}
+.union-header{background:#1b1013!important;border-bottom:2px solid #c7352c!important;box-shadow:0 8px 30px #0007}
+.header-center,.brand-sub{color:#c8b9a2!important}
+.live-dot{background:#d0ad70!important;box-shadow:0 0 0 4px #d0ad7022!important}
+.round-icon{background:#28171b!important;border-color:#745047!important;color:#f2eadb!important}
+.profile-avatar{background:linear-gradient(145deg,#d4b477,#8d542e)!important;color:#241519!important}
+.union-layout{color:#f2eadb}
+.side-rail,.brief-card,.brief-help,.paper-panel,.dash-card,.helper-card{
+  background:linear-gradient(145deg,#302024,#211619)!important;
+  color:#f2eadb!important;
+  border-color:rgba(207,174,113,.28)!important;
+  box-shadow:0 10px 28px #0004!important;
+}
+.rail-label,.rail-bottom small,.brief-stat span,.brief-card>small,.dash-card p,.helper-card p{color:#c0ad9d!important}
+.rail-link,.rail-link svg,.brief-help b,.dash-card h3,.helper-card h3{color:#f0e7d6!important}
+.rail-link:hover,.rail-link.selected{background:#51252a!important;color:#f5dfb9!important}
+.rail-link.selected svg,.text-link,.dash-arrow,.helper-card-bottom,.card-status.open{color:#e05243!important}
+.rail-rule,.rail-bottom,.brief-stat,.helper-card-top,.helper-card-bottom{border-color:rgba(207,174,113,.2)!important}
+.rail-stamp{color:#e05243!important;border-color:#c9a66c!important}
+.hero-banner,.detail-hero{
+  background:linear-gradient(118deg,#5a2026 0%,#35191e 58%,#211316 100%)!important;
+  color:#f5eddd!important;
+  border:1px solid rgba(211,177,119,.3)!important;
+  box-shadow:0 16px 38px #0005!important;
+}
+.hero-banner:after{background:linear-gradient(90deg,#542027 0%,#3b1b20 48%,#3b1b2000 100%)!important}
+.hero-grid{background-image:linear-gradient(#d0ad7030 1px,transparent 1px),linear-gradient(90deg,#d0ad7030 1px,transparent 1px)!important}
+.hero-content h1 em{color:#e4bd75!important}
+.hero-content p,.detail-copy p{color:#e0cfc0!important}
+.hero-button{background:linear-gradient(135deg,#e05243,#a92827)!important;color:#fff!important;box-shadow:3px 3px 0 #6f1c20!important}
+.hero-button:hover{background:#f06452!important}
+.hero-sun{background:#b93632!important;box-shadow:0 0 0 18px #c84b3722,0 0 0 38px #c84b3712!important}
+.hero-ring{border-color:#d0ad7088!important}
+.ticker{background:#281519!important;color:#e8d7b9!important;border:1px solid rgba(207,174,113,.22)!important}
+.section-head h2,.bottom-motto b{color:#f0e7d6!important}
+.section-head .eyebrow,.eyebrow{color:#df7866!important}
+.dash-icon{background:#482126!important;border-color:#b88d59!important;color:#f0c47a!important}
+.dash-card small,.helper-role{color:#e08a70!important}
+.dash-card p,.helper-card p{color:#c9b9ab!important}
+.card-index{color:#604044!important}
+.helper-illustration,.detail-mascot-panel{
+  background:radial-gradient(circle at 50% 35%,#71353a,#321b20 75%)!important;
+  border-color:rgba(207,174,113,.25)!important;
+}
+.helper-card.tomato .helper-illustration,.detail-mascot-panel.tomato,
+.helper-card.blue .helper-illustration,.detail-mascot-panel.blue,
+.helper-card.gold .helper-illustration,.detail-mascot-panel.gold,
+.helper-card.green .helper-illustration,.detail-mascot-panel.green,
+.helper-card.violet .helper-illustration,.detail-mascot-panel.violet,
+.helper-card.mint .helper-illustration,.detail-mascot-panel.mint{
+  background:radial-gradient(circle at 50% 35%,#71353a,#321b20 75%)!important;
+}
+.quote-card{background:linear-gradient(145deg,#4b2026,#291619)!important;border-color:#805047!important;color:#f3e6d1!important}
+.brief-help{background:#2d1b1e!important}
+.brief-help small,.brief-status{color:#d0b9a5!important}
+.brief-stat b{color:#e05243!important}
+.brief-progress span{background:#604044!important}
+.brief-progress span:nth-child(-n+2){background:#d04438!important}
+.detail-mascot-panel .mascot-caption{color:#e0cba8!important}
+.paper-panel,.sample-prompt,.task-input,.locked-detail,.community-compose{
+  background:#2b1b1e!important;color:#f2eadb!important;border-color:rgba(207,174,113,.24)!important
+}
+.mobile-status{background:#211316!important;color:#e4d3b9!important}
+.mobile-nav{
+  background:rgba(25,13,16,.97)!important;
+  border-top:2px solid #bd493d!important;
+  box-shadow:0 -10px 30px #0005!important;
+}
+.mobile-nav .active,.mobile-nav button.active{background:#432126!important;color:#e7c47f!important}
+.bottom-motto{border-color:rgba(207,174,113,.3)!important;color:#e17b68!important}
+.bottom-motto b{color:#f2eadb!important}
+.signal-list,.settings-list,.specialist-workspace,.specialist-panel,.messages-workspace{
+  background:linear-gradient(145deg,#2c191d,#1d1216)!important;
+  border-color:rgba(207,174,113,.24)!important;color:#f2eadb!important
+}
+.specialist-workspace-head h2,.specialist-panel h3,.signal-row b,.setting-row b{color:#f2eadb!important}
+.specialist-panel input,.specialist-panel textarea,.thread-compose input,.community-compose textarea{
+  background:#170f12!important;color:#f2eadb!important;border-color:#76504a!important
+}
+.specialist-tab.active{background:linear-gradient(135deg,#d4b779,#9e8150)!important;color:#241519!important}
+@media(max-width:760px){
+  .union-app{background:radial-gradient(ellipse at 50% -10%,#54242a 0%,#2b171b 48%,#160f12 100%)!important}
+  .hero-banner{background:linear-gradient(145deg,#552128,#2b171b 78%)!important}
+  .hero-banner:after{background:linear-gradient(90deg,#552128 0%,#35191e 54%,#35191eb8 100%)!important}
+}
