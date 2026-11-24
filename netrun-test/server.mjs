@@ -48,7 +48,7 @@ document.getElementById('check').addEventListener('click',check);
 check();
 </script></body></html>`;
 
-const server = createServer((req, res) => {
+const server = createServer(async (req, res) => {
   const path = new URL(req.url || "/", "http://localhost").pathname;
   if (req.method === "GET" && path === "/health") {
     res.writeHead(200, {
