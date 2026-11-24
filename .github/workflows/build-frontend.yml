@@ -30,11 +30,19 @@ jobs:
           node-version: 22
       - name: Build production assets
         run: npm run build
+      - name: Mirror Pages entrypoint to repository root
+        run: |
+          cp worker/assets/index.html index.html
+          cp worker/assets/app.js app.js
+          cp worker/assets/manifest.webmanifest manifest.webmanifest
+          cp worker/assets/sw.js sw.js
+          cp worker/assets/icon.svg icon.svg
+          touch .nojekyll
       - name: Commit compiled assets
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A worker/assets
+          git add -A worker/assets index.html app.js manifest.webmanifest sw.js icon.svg .nojekyll
           if ! git diff --cached --quiet; then
             git commit -m "Build React frontend assets"
             git push origin HEAD:main
