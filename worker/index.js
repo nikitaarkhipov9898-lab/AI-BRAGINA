@@ -109,7 +109,7 @@ async function currentUser(request, env) {
   const hash = await sha256(m[1]);
   return env.DB.prepare(`
     SELECT u.id, u.username, u.display_name, u.avatar_url, u.role,
-           u.sparks, u.soyuz_plus_until, u.invisible_until, u.last_seen_at,
+           u.sparks, u.soyuz_plus_until, u.invisible_until, u.invisible_enabled, u.last_seen_at,
            s.id AS session_id
     FROM user_sessions s
     JOIN users u ON u.id = s.user_id
@@ -233,6 +233,7 @@ async function ensureAuthSchema(env) {
       sparks INTEGER NOT NULL DEFAULT 0,
       soyuz_plus_until TEXT,
       invisible_until TEXT,
+      invisible_enabled INTEGER NOT NULL DEFAULT 0,
       last_seen_at TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
@@ -259,6 +260,7 @@ async function ensureAuthSchema(env) {
     ["sparks", "INTEGER NOT NULL DEFAULT 0"],
     ["soyuz_plus_until", "TEXT"],
     ["invisible_until", "TEXT"],
+    ["invisible_enabled", "INTEGER NOT NULL DEFAULT 0"],
     ["last_seen_at", "TEXT"],
     ["created_at", "TEXT"]
   ];
@@ -371,12 +373,14 @@ async function chatList(env,user) {
     u.id AS peer_id,u.username AS peer_username,u.display_name AS peer_display_name,u.avatar_url AS peer_avatar,
     (SELECT body FROM chat_messages m WHERE m.thread_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS last_message,
     (SELECT created_at FROM chat_messages m WHERE m.thread_id=t.id ORDER BY m.created_at DESC LIMIT 1) AS last_message_at,
-    (SELECT COUNT(*) FROM chat_messages m WHERE m.thread_id=t.id AND m.sender_id<>? AND m.created_at>COALESCE(me.last_read_at,'1970-01-01T00:00:00.000Z')) AS unread
+    (SELECT COUNT(*) FROM chat_messages m WHERE m.thread_id=t.id AND m.sender_id<>? AND m.created_at>COALESCE(me.last_read_at,'1970-01-01T00:00:00.000Z')) AS unread,
+    CASE WHEN u.invisible_enabled=1 AND ((u.soyuz_plus_until IS NOT NULL AND u.soyuz_plus_until>?) OR (u.invisible_until IS NOT NULL AND u.invisible_until>?)) THEN 1 ELSE 0 END AS peer_invisible,
+    CASE WHEN u.last_seen_at IS NOT NULL AND u.last_seen_at>? THEN 1 ELSE 0 END AS peer_online
     FROM chat_members me JOIN chat_threads t ON t.id=me.thread_id
     JOIN chat_members other ON other.thread_id=t.id AND other.user_id<>me.user_id
     JOIN users u ON u.id=other.user_id
     WHERE me.user_id=? ORDER BY COALESCE((SELECT m2.created_at FROM chat_messages m2 WHERE m2.thread_id=t.id ORDER BY m2.created_at DESC LIMIT 1),t.updated_at) DESC LIMIT 100`)
-    .bind(user.id,new Date().toISOString(),new Date(Date.now()-90000).toISOString(),user.id).all();
+    .bind(user.id,new Date().toISOString(),new Date().toISOString(),new Date(Date.now()-90000).toISOString(),user.id).all();
   return json({chats:rows.results||[]});
 }
 async function chatUnread(env,user) {
@@ -401,8 +405,8 @@ async function chatGetMessages(request,env,user) {
     rows=await env.DB.prepare("SELECT id,sender_id,body,created_at FROM chat_messages WHERE thread_id=? ORDER BY created_at DESC LIMIT ?").bind(threadId,limit).all();
   }
   const messages=after?(rows.results||[]):(rows.results||[]).reverse();
-  const peer=await env.DB.prepare(`SELECT u.id,u.username,u.display_name,u.avatar_url,u.invisible_until,u.last_seen_at,m.typing_until FROM chat_members m JOIN users u ON u.id=m.user_id WHERE m.thread_id=? AND m.user_id<>? LIMIT 1`).bind(threadId,user.id).first();
-  const peerInvisible=!!(peer?.invisible_until && Date.parse(peer.invisible_until)>Date.now());
+  const peer=await env.DB.prepare(`SELECT u.id,u.username,u.display_name,u.avatar_url,u.invisible_until,u.invisible_enabled,u.soyuz_plus_until,u.last_seen_at,m.typing_until FROM chat_members m JOIN users u ON u.id=m.user_id WHERE m.thread_id=? AND m.user_id<>? LIMIT 1`).bind(threadId,user.id).first();
+  const peerInvisible=!!(peer?.invisible_enabled && ((peer?.soyuz_plus_until&&Date.parse(peer.soyuz_plus_until)>Date.now())||(peer?.invisible_until&&Date.parse(peer.invisible_until)>Date.now())));
   const peerTyping=!peerInvisible && !!(peer?.typing_until && Date.parse(peer.typing_until)>Date.now());
   if(peer)peer.is_invisible=peerInvisible;
   return json({messages,peer,peer_typing:peerTyping,has_more:messages.length===limit});
@@ -430,7 +434,7 @@ async function chatSetTyping(request,env,user) {
   const threadId=String(b.thread_id||"");
   await ensureChatSchema(env);
   if(!threadId||!await chatMember(env,threadId,user.id))return json({error:"Нет доступа к этому диалогу"},403);
-  if(user.invisible_until && Date.parse(user.invisible_until)>Date.now())return json({success:true,invisible:true});
+  if(user.invisible_enabled && ((user.soyuz_plus_until&&Date.parse(user.soyuz_plus_until)>Date.now())||(user.invisible_until&&Date.parse(user.invisible_until)>Date.now())))return json({success:true,invisible:true});
   const until=b.typing?new Date(Date.now()+7000).toISOString():null;
   await env.DB.prepare("UPDATE chat_members SET typing_until=? WHERE thread_id=? AND user_id=?").bind(until,threadId,user.id).run();
   return json({success:true});
