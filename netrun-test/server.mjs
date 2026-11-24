@@ -1,51 +1,26 @@
 import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
+import { extname, resolve, sep } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const PORT = Number(process.env.PORT || 3000);
 const WORKER_ORIGIN = "https://chef-api.bosstayson24.workers.dev";
+const ASSET_DIR = resolve(fileURLToPath(new URL("../worker/assets/", import.meta.url)));
 const MAX_PROXY_BODY = 10 * 1024 * 1024;
 
-const page = `<!doctype html>
-<html lang="ru">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#101827">
-  <title>СОЮЗ — проверка соединения</title>
-  <style>
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:#101827;color:#f4f7fb;font:16px system-ui,sans-serif;display:grid;place-items:center;padding:24px}
-    main{width:min(100%,440px);background:#1b293b;border:1px solid #34465e;border-radius:20px;padding:26px}
-    h1{margin:0 0 8px;font-size:28px}p{color:#bdc9d8;line-height:1.5}
-    button{width:100%;border:0;border-radius:12px;padding:14px;background:#4b83e6;color:white;font-weight:700;font-size:16px;margin-top:12px}
-    #result{margin-top:18px;padding:14px;border-radius:12px;background:#111d2c;overflow-wrap:anywhere;white-space:pre-wrap}
-    .muted{font-size:13px;color:#9cacc0}
-  </style>
-</head>
-<body><main>
-  <h1>СОЮЗ</h1>
-  <p>Тестовая площадка. Проверяем доступность Netrun и Cloudflare API.</p>
-  <div id="result">Проверяем соединение…</div>
-  <button id="check">Проверить ещё раз</button>
-  <p class="muted">Тестовая площадка. Настоящие пользовательские данные здесь не отображаются.</p>
-</main>
-<script>
-async function check(){
- const el=document.getElementById('result');
- el.textContent='Проверяем Netrun…';
- try{
-  const a=await fetch('/health',{cache:'no-store'});
-  const ad=await a.json();
-  el.textContent='Netrun: '+JSON.stringify(ad)+'\\nПроверяем Cloudflare через прокси…';
-  const b=await fetch('/proxy/health',{cache:'no-store'});
-  const bd=await b.json();
-  el.textContent+='\\n\\nПрокси: HTTP '+b.status+'\\n'+JSON.stringify(bd);
-  const c=await fetch('/cloudflare-health',{cache:'no-store'});
-  const cd=await c.json();
-  el.textContent+='\\n\\nПрямой серверный тест: '+JSON.stringify(cd);
- }catch(e){el.textContent='Ошибка проверки: '+String(e)}
-}
-document.getElementById('check').addEventListener('click',check);
-check();
-</script></body></html>`;
+const MIME = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".webmanifest": "application/manifest+json",
+  ".json": "application/json; charset=utf-8",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".ico": "image/x-icon"
+};
 
 function sendJson(res, status, data) {
   res.writeHead(status, {
@@ -107,19 +82,58 @@ async function proxyRequest(req, res, path) {
   console.log("PROXY", method, path, upstream.status, Date.now() - started + "ms");
 }
 
+async function serveAsset(req, res, pathname) {
+  let decoded;
+  try { decoded = decodeURIComponent(pathname); }
+  catch { return sendJson(res, 400, { error: "Bad path" }); }
+
+  const relative = decoded === "/" ? "index.html" : decoded.replace(/^\/+/, "");
+  const filePath = resolve(ASSET_DIR, relative);
+  if (filePath !== ASSET_DIR && !filePath.startsWith(ASSET_DIR + sep)) {
+    return sendJson(res, 403, { error: "Forbidden" });
+  }
+
+  try {
+    let data = await readFile(filePath);
+    if (relative === "index.html") {
+      let html = data.toString("utf8");
+      const oldApi = 'ql=location.hostname.endsWith(".workers.dev")?location.origin:"https://chef-api.bosstayson24.workers.dev",Q_=';
+      const newApi = 'ql=location.hostname.endsWith(".workers.dev")?location.origin:location.hostname.endsWith(".netrun.io")?location.origin+"/proxy":"https://chef-api.bosstayson24.workers.dev",Q_=';
+      if (!html.includes(oldApi)) {
+        console.error("FRONTEND_API_BASE_NOT_FOUND");
+        return sendJson(res, 500, { error: "Frontend API routing patch could not be applied" });
+      }
+      html = html.replace(oldApi, newApi);
+      data = Buffer.from(html);
+    }
+    res.writeHead(200, {
+      "content-type": MIME[extname(relative).toLowerCase()] || "application/octet-stream",
+      "content-length": String(data.length),
+      "cache-control": relative === "index.html" ? "no-store" : "public, max-age=300",
+      "x-content-type-options": "nosniff"
+    });
+    res.end(req.method === "HEAD" ? undefined : data);
+  } catch (error) {
+    if (error?.code === "ENOENT") return sendJson(res, 404, { error: "Asset not found" });
+    console.error("ASSET_ERROR", relative, String(error?.message || error));
+    return sendJson(res, 500, { error: "Could not serve application files" });
+  }
+}
+
 const server = createServer(async (req, res) => {
   const requestUrl = new URL(req.url || "/", "http://localhost");
   const path = requestUrl.pathname;
+  const method = req.method || "GET";
 
-  if (req.method === "GET" && path === "/health") {
+  if (method === "GET" && path === "/health") {
     return sendJson(res, 200, {
       status: "ok",
-      service: "soyuz-netrun-connectivity-test",
+      service: "soyuz-netrun-app",
       timestamp: new Date().toISOString()
     });
   }
 
-  if (req.method === "GET" && path === "/cloudflare-health") {
+  if (method === "GET" && path === "/cloudflare-health") {
     const started = Date.now();
     try {
       const upstream = await fetch(WORKER_ORIGIN + "/health", {
@@ -143,21 +157,12 @@ const server = createServer(async (req, res) => {
     }
   }
 
-  if (req.method === "GET" && (path === "/" || path === "/index.html")) {
-    res.writeHead(200, {
-      "content-type": "text/html; charset=utf-8",
-      "cache-control": "no-store",
-      "x-content-type-options": "nosniff"
-    });
-    return res.end(page);
-  }
-
-  if (path.startsWith("/proxy/") || path === "/proxy") {
+  if (path === "/proxy" || path.startsWith("/proxy/")) {
     const upstreamPath = path === "/proxy" ? "/" : path.slice("/proxy".length);
     try {
       return await proxyRequest(req, res, upstreamPath);
     } catch (error) {
-      console.error("PROXY_ERROR", methodSafe(req), path, String(error?.message || error));
+      console.error("PROXY_ERROR", method.slice(0, 12), path, String(error?.message || error));
       return sendJson(res, 502, {
         error: "Не удалось связаться с API СОЮЗ",
         detail: String(error?.message || error)
@@ -165,13 +170,13 @@ const server = createServer(async (req, res) => {
     }
   }
 
+  if (method === "GET" || method === "HEAD") {
+    return serveAsset(req, res, path);
+  }
+
   return sendJson(res, 404, { error: "Not found" });
 });
 
-function methodSafe(req) {
-  return String(req.method || "GET").slice(0, 12);
-}
-
 server.listen(PORT, "0.0.0.0", () => {
-  console.log("Soyuz Netrun connectivity test listening on " + PORT);
+  console.log("Soyuz Netrun app listening on " + PORT);
 });
