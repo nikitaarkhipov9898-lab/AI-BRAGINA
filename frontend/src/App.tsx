@@ -151,12 +151,14 @@ function HomeScreen({ user }: { user: User | null }) {
     if (page === "chef") {
       openPage("chef");
       window.setTimeout(() => {
+        document.getElementById("tab-specific")?.click();
         const input = document.getElementById("chef-dish") as HTMLInputElement | null;
-        if (input) input.value = query;
+        if (input) { input.value = query; input.dispatchEvent(new Event("input", { bubbles: true })); }
       }, 80);
     } else if (page === "mechanic") {
       openPage("mechanic");
       window.setTimeout(() => {
+        document.getElementById("mechanic-mode-quick")?.click();
         const input = document.getElementById("quick-problem") as HTMLTextAreaElement | null;
         if (input) { input.value = query; input.dispatchEvent(new Event("input", { bubbles: true })); }
       }, 80);
