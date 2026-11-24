@@ -1,0 +1,11 @@
+{
+  "name": "soyuz-platform",
+  "private": true,
+  "version": "2.6.0",
+  "scripts": {
+    "build": "npm --prefix worker install --no-audit --no-fund && npm --prefix worker run build"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
