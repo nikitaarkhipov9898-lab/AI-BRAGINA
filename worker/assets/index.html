@@ -28,6 +28,7 @@
 <header class="topbar"><div class="brand"><div class="brandmark"><img src="/icon.svg" alt="СОЮЗ"></div><div><h1>СОЮЗ</h1><small>ЛЮДИ · ИДЕИ · ДЕЙСТВИЯ</small></div></div><button class="icon-btn" onclick="showPage('settings')" aria-label="Настройки">⚙</button></header>
 <main>
 <section id="page-home" class="page-home">
+ <div class="home-intro"><div><span class="eyebrow">ТВОЁ ПРОСТРАНСТВО</span><h2>Добро пожаловать</h2><p>Всё важное — в одном месте.</p></div><button class="icon-btn" onclick="showPage('profile')" aria-label="Профиль">◉</button></div>
  <div class="stories-strip" aria-label="Быстрый доступ">
   <button class="story-item story-create" onclick="showPage('helpers')"><span class="story-ring"><span class="story-core">＋</span></span><small>AI-Агенты</small></button>
   <button class="story-item" onclick="showPage('chef')"><span class="story-ring chef-ring"><span class="story-core">🍳</span></span><small>Шеф</small></button>
@@ -35,24 +36,21 @@
   <button class="story-item" onclick="showPage('video')"><span class="story-ring video-ring"><span class="story-core">▶</span></span><small>Видео</small></button>
   <button class="story-item" onclick="showPage('community')"><span class="story-ring chat-ring"><span class="story-core">✉</span></span><small>Чаты</small></button>
  </div>
- <div class="feed-composer panel command-panel">
-  <div class="composer-top"><span class="composer-avatar">С</span><div><strong>Что будем делать?</strong><small>Задай вопрос или выбери помощника</small></div></div>
-  <div class="field"><input id="home-command-input" placeholder="Например: придумай ужин или проверь авто..." onkeydown="if(event.key==='Enter')dispatchHomeCommand()"></div>
-  <div class="composer-actions"><button class="composer-chip" onclick="showPage('helpers')">✦ AI-Агенты</button><button class="composer-chip" onclick="showPage('tasks')">＋ Задача</button><button class="composer-send" onclick="dispatchHomeCommand()" aria-label="Продолжить">→</button></div>
- </div>
- <div class="feed-heading"><div><span class="eyebrow">ТВОЁ ПРОСТРАНСТВО</span><h2>Главная</h2></div><button class="mini-btn" onclick="showPage('settings')" aria-label="Настройки">⚙</button></div>
- <div class="feed-feature">
-  <div class="feed-feature-copy"><span class="feed-label">ПОД ТВОИ ЗАДАЧИ</span><h3>Нужный помощник — в один шаг</h3><p>Рецепты, техника, документы и повседневные вопросы. Выбирай инструмент и продолжай диалог.</p><button class="feed-feature-action" onclick="showPage('helpers')">Открыть AI-Агентов <span>→</span></button></div>
-  <div class="feed-feature-art" aria-hidden="true"><span>✳</span><i>✦</i></div>
- </div>
- <div class="feed-section-head"><div><h2>Сегодня</h2><p>Твои планы и напоминания</p></div><button class="text-action" onclick="showPage('tasks')">Все задачи →</button></div>
+ <section class="home-command">
+  <div class="home-command-head"><span class="command-mark">✦</span><div><strong>Что нужно сделать?</strong><small>Опиши задачу — подберём помощника</small></div></div>
+  <div class="home-command-input"><input id="home-command-input" placeholder="Спроси о чём угодно…" onkeydown="if(event.key==='Enter')dispatchHomeCommand()"><button onclick="dispatchHomeCommand()" aria-label="Отправить запрос">↑</button></div>
+  <div class="home-command-links"><button onclick="showPage('helpers')">✧ Все AI-агенты</button><button onclick="showPage('tasks')">＋ Новая задача</button></div>
+ </section>
+ <div class="home-section-title"><div><span class="eyebrow">ТВОЙ ДЕНЬ</span><h2>Сегодня</h2></div><button class="text-action" onclick="showPage('tasks')">Все задачи <span>→</span></button></div>
  <div class="today-feed-card" id="home-today"><p class="muted">Здесь будут твои задачи и напоминания.</p></div>
- <div class="feed-section-head"><div><h2>Быстрый доступ</h2><p>Продолжи с того места, где остановился</p></div></div>
- <div class="grid home-shortcuts">
-  <button class="tool shortcut-helper" onclick="showPage('helpers')"><span class="tool-icon">✦</span><strong>AI-Агенты</strong><small>Специализированные помощники</small></button>
-  <button class="tool shortcut-community" onclick="showPage('community')"><span class="tool-icon">✉</span><strong>Чаты</strong><small>Личные сообщения и диалоги</small></button>
-  <button class="tool shortcut-tasks" onclick="showPage('tasks')"><span class="tool-icon">✓</span><strong>Задачи</strong><small>Планы и личные дела</small></button>
+ <div class="home-section-title"><div><span class="eyebrow">БЫСТРЫЙ СТАРТ</span><h2>Чем займёмся?</h2></div></div>
+ <div class="home-action-grid">
+  <button class="home-action-card home-action-ai" onclick="showPage('helpers')"><span class="home-action-icon">✦</span><span><strong>AI-Агенты</strong><small>Помощь в делах и работе</small></span><i>↗</i></button>
+  <button class="home-action-card" onclick="showPage('community')"><span class="home-action-icon">✉</span><span><strong>Сообщения</strong><small>Личные диалоги</small></span><i>↗</i></button>
+  <button class="home-action-card" onclick="showPage('video')"><span class="home-action-icon">▣</span><span><strong>Видео</strong><small>Смотри и открывай новое</small></span><i>↗</i></button>
+  <button class="home-action-card" onclick="showPage('tasks')"><span class="home-action-icon">✓</span><span><strong>Мои задачи</strong><small>Планы и напоминания</small></span><i>↗</i></button>
  </div>
+ <div class="home-feature-card"><div><span class="eyebrow">УМНЫЕ ИНСТРУМЕНТЫ</span><h3>Меньше рутины.<br>Больше результата.</h3><p>Выбирай специализированного помощника и решай задачу в диалоге.</p><button onclick="showPage('helpers')">Найти помощника <span>→</span></button></div><div class="feature-orbit" aria-hidden="true">✳</div></div>
  <div class="notice" id="general-warning">ИИ-помощники могут ошибаться. Важную информацию проверяй перед применением.</div>
 </section>
 <section id="page-helpers" class="hidden page-helpers">
@@ -71,17 +69,17 @@
  </div><div class="notice">Пометка «В планах» означает, что инструмент ещё не работает.</div>
 </section>
 <section id="page-community" class="hidden page-community">
- <button class="back" onclick="showPage('home')">← Главная</button><h2 class="page-title">Чаты</h2><p class="page-sub">Личные диалоги и сообщения.</p>
- <div class="chat-shell">
-  <div id="chat-sidebar" class="chat-sidebar">
-   <div class="chat-search"><input id="chat-user-search" maxlength="40" placeholder="Найти человека по логину" oninput="searchChatUsers()"><div id="chat-search-results"></div></div>
-   <div class="section-head"><h2>Мои чаты</h2><button class="mini-btn" onclick="loadChatList()">Обновить</button></div>
+ <div class="chat-page-heading"><div><span class="eyebrow">СОЕДИНЯЙСЯ</span><h2 class="page-title">Сообщения</h2><p class="page-sub">Личные диалоги и общение без лишнего.</p></div><span class="chat-heading-icon">✉</span></div>
+ <div class="chat-workspace">
+  <aside id="chat-sidebar" class="chat-sidebar">
+   <div class="chat-search-wrap"><label for="chat-user-search">Найти человека</label><div class="chat-search"><span>⌕</span><input id="chat-user-search" maxlength="40" placeholder="Имя или логин…" oninput="searchChatUsers()"></div><div id="chat-search-results"></div></div>
+   <div class="chat-list-heading"><div><strong>Ваши диалоги</strong><small>Личные сообщения</small></div><button class="mini-btn" onclick="loadChatList()" aria-label="Обновить чаты">↻</button></div>
    <div id="chat-list"><p class="muted">Загрузка диалогов…</p></div>
-  </div>
+  </aside>
   <div id="chat-room" class="chat-room hidden">
-   <div class="chat-room-head"><button class="mini-btn" onclick="closeChatRoom()">← Чаты</button><div><strong id="chat-peer-name">Диалог</strong><small id="chat-peer-login"></small></div></div>
+   <div class="chat-room-head"><button class="mini-btn" onclick="closeChatRoom()">←</button><div class="chat-peer-avatar">✦</div><div class="chat-peer-meta"><strong id="chat-peer-name">Диалог</strong><small id="chat-peer-login"></small></div></div>
    <div id="chat-messages" class="chat-messages"><p class="muted">Выбери диалог.</p></div>
-   <form class="chat-compose" onsubmit="sendChatMessage(event)"><textarea id="chat-message-input" maxlength="4000" rows="2" placeholder="Написать сообщение…" oninput="chatTypingChanged()" onblur="stopChatTyping()" required></textarea><button class="btn" type="submit">Отправить</button></form>
+   <form class="chat-compose" onsubmit="sendChatMessage(event)"><textarea id="chat-message-input" maxlength="4000" rows="2" placeholder="Написать сообщение…" oninput="chatTypingChanged()" onblur="stopChatTyping()" required></textarea><button class="btn" type="submit" aria-label="Отправить сообщение">↑</button></form>
   </div>
  </div>
 </section>
