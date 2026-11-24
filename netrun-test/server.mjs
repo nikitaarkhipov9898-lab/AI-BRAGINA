@@ -28,14 +28,20 @@ const page = `<!doctype html>
 <script>
 async function check(){
  const el=document.getElementById('result');
- el.textContent='Проверяем API…';
+ el.textContent='Проверяем Netrun и прежний сервер СОЮЗ…';
  const started=Date.now();
  try{
   const r=await fetch('/health',{cache:'no-store'});
   const data=await r.json();
-  el.textContent='API отвечает: '+JSON.stringify(data)+' · '+(Date.now()-started)+' мс';
+  let output='Netrun: отвечает · '+(Date.now()-started)+' мс\\n'+JSON.stringify(data);
+  el.textContent=output+'\\n\\nПроверяем Cloudflare с сервера Netrun…';
+  const cf=await fetch('/cloudflare-health',{cache:'no-store'});
+  const cfData=await cf.json();
+  output+='\\n\\nCloudflare через Netrun: '+(cfData.reachable?'ДОСТУПЕН':'НЕДОСТУПЕН')+
+    ' · '+cfData.elapsed_ms+' мс\\n'+JSON.stringify(cfData);
+  el.textContent=output;
  }catch(e){
-  el.textContent='Ошибка связи с API: '+String(e);
+  el.textContent='Ошибка проверки: '+String(e);
  }
 }
 document.getElementById('check').addEventListener('click',check);
