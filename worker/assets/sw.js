@@ -1,6 +1,6 @@
-const CACHE_NAME = "soyuz-shell-v2026-react-final";
-const APP_URL = "/app";
-const SHELL = [APP_URL, "/manifest.webmanifest", "/icon.svg"];
+const CACHE_NAME = "soyuz-shell-v2026-v270";
+const APP_URL = new URL("./", self.location.href).pathname;
+const SHELL = [APP_URL, APP_URL + "manifest.webmanifest", APP_URL + "icon.svg"];
 
 self.addEventListener("install", event => {
   event.waitUntil(
