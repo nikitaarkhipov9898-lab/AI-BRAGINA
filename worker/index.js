@@ -566,6 +566,7 @@ async function handleFetch(request, env) {
   const path = url.pathname;
 
   if (
+    path === "/" ||
     path.startsWith("/auth/") ||
     path.startsWith("/conversations") ||
     path.startsWith("/chat/") ||
