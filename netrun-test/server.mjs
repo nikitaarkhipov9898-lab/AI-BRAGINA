@@ -109,7 +109,7 @@ async function serveAsset(req, res, pathname) {
     }
     const contentType = MIME[extname(relative).toLowerCase()] || "application/octet-stream";
     const compressible = /^(text\/|application\/(javascript|json|manifest\+json))/.test(contentType);
-    const acceptsGzip = /(?:^|,)\\s*gzip\\s*(?:,|$)/i.test(req.headers["accept-encoding"] || "");
+    const acceptsGzip = /(?:^|,)\s*gzip\s*(?:,|$)/i.test(req.headers["accept-encoding"] || "");
     if (compressible && acceptsGzip && data.length > 1024) {
       data = gzipSync(data, { level: 6 });
     }
