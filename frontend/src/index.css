@@ -53,7 +53,7 @@
 .soyuz-dock__icon,.soyuz-dock__label { position: relative; z-index: 1; }
 .soyuz-dock__label { font-size: 9px; line-height: 1; font-weight: 600; letter-spacing: -.015em; }
 body { padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important; }
-body > #react-mount + .bottom { display: none !important; }
+.bottom { display: none !important; }
 @media (min-width: 760px) {
   .soyuz-dock { left: 50%; right: auto; width: min(560px, calc(100vw - 32px)); transform: translateX(-50%); }
 }
