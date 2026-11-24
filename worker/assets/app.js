@@ -229,7 +229,7 @@ async function loadAutoVideoFeed(reset=false){
   if(!videoItems.length){
    const cached=readVideoCache();
    if(cached.length){videoItems=cached;renderAutoVideoCards();if(status)status.textContent='Показана последняя сохранённая подборка. Для обновления ленты нужно подключение к источнику видео.';}
-   else{box.innerHTML='<div class="video-empty"><div class="video-empty-icon">!</div><strong>Не удалось загрузить ленту</strong><p>'+String(error.message||'Проверь подключение к интернету.')+'</p><p>СВОЁ не требует аккаунта на видеоплощадках. Попробуй ещё раз немного позже.</p><button class="mini-btn" onclick="loadAutoVideoFeed(true)">Повторить</button></div>';if(status)status.textContent='';}
+   else{box.innerHTML='<div class="video-empty"><div class="video-empty-icon">!</div><strong>Не удалось загрузить ленту</strong><p>'+String(error.message||'Проверь подключение к интернету.')+'</p><p>СОЮЗ не требует аккаунта на видеоплощадках. Попробуй ещё раз немного позже.</p><button class="mini-btn" onclick="loadAutoVideoFeed(true)">Повторить</button></div>';if(status)status.textContent='';}
   }else if(status)status.textContent='Не удалось обновить подборку. Уже загруженные ролики остались на экране.';
  }finally{videoLoading=false;if(videoQueuedTopic){const queued=videoQueuedTopic;videoQueuedTopic='';if(queued!==activeVideoTopic){activeVideoTopic=queued;videoTopicPage=1;videoItems=[];videoHasMore=false;document.querySelectorAll('#video-discovery-tabs button').forEach(x=>x.classList.toggle('active',x.dataset.topic===queued));loadAutoVideoFeed(true);}}}
 }
