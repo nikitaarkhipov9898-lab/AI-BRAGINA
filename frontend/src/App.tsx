@@ -26,7 +26,9 @@ declare global {
 
 const WORKER_URL = location.hostname.endsWith(".workers.dev")
   ? location.origin
-  : "https://chef-api.bosstayson24.workers.dev";
+  : location.hostname.endsWith(".netrun.io")
+    ? location.origin + "/proxy"
+    : "https://chef-api.bosstayson24.workers.dev";
 
 const navItems = [
   { id: "home", label: "Главная", Icon: Home },
