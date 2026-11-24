@@ -460,7 +460,7 @@ function entitlementPayload(user) {
   const now=Date.now(), plusUntil=user.soyuz_plus_until||null, invisibleUntil=user.invisible_until||null;
   const plusActive=!!(plusUntil&&Date.parse(plusUntil)>now);
   const paidInvisible=!!(invisibleUntil&&Date.parse(invisibleUntil)>now);
-  return {sparks:Number(user.sparks||0),plus_active:plusActive,plus_until:plusUntil,invisible_active:!!user.invisible_enabled&&(plusActive||paidInvisible),invisible_until:invisibleUntil};
+  return {sparks:Number(user.sparks||0),plus_active:plusActive,plus_until:plusUntil,invisible_entitled:plusActive||paidInvisible,invisible_active:!!user.invisible_enabled&&(plusActive||paidInvisible),invisible_until:invisibleUntil};
 }
 async function accountEntitlements(env,user) {
   const row=await env.DB.prepare("SELECT sparks,soyuz_plus_until,invisible_until,invisible_enabled FROM users WHERE id=?").bind(user.id).first();
@@ -482,12 +482,10 @@ async function purchaseSparkOption(request,env,user) {
   let body;try{body=await request.json()}catch{return json({error:"Некорректный запрос"},400)}
   if(body.product!=="invisible_7d")return json({error:"Неизвестная опция"},400);
   const now=new Date().toISOString(),until=new Date(Date.now()+7*86400000).toISOString();
-  const result=await env.DB.prepare("UPDATE users SET sparks=sparks-50,invisible_until=?,invisible_enabled=1 WHERE id=? AND sparks>=50 AND (invisible_until IS NULL OR invisible_until<=?)").bind(until,user.id,now).run();
-  if(!Number(result.meta?.changes||0)){
-    const current=await env.DB.prepare("SELECT sparks,invisible_until FROM users WHERE id=?").bind(user.id).first();
-    if(current?.invisible_until&&Date.parse(current.invisible_until)>Date.now())return json({error:"Режим невидимки уже активен"},409);
-    return json({error:"Недостаточно Искр: требуется 50"},402);
-  }
+  const current=await env.DB.prepare("SELECT sparks,invisible_until,soyuz_plus_until FROM users WHERE id=?").bind(user.id).first();
+  if((current?.soyuz_plus_until&&Date.parse(current.soyuz_plus_until)>Date.now())||(current?.invisible_until&&Date.parse(current.invisible_until)>Date.now()))return json({error:"У вас уже есть доступ к невидимке"},409);
+  const result=await env.DB.prepare("UPDATE users SET sparks=sparks-50,invisible_until=?,invisible_enabled=1 WHERE id=? AND sparks>=50 AND (invisible_until IS NULL OR invisible_until<=?) AND (soyuz_plus_until IS NULL OR soyuz_plus_until<=?)").bind(until,user.id,now,now).run();
+  if(!Number(result.meta?.changes||0))return json({error:"Недостаточно Искр: требуется 50"},402);
   return accountEntitlements(env,user);
 }
 async function adminUpdateEntitlements(request,env,actor) {
