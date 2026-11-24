@@ -109,6 +109,7 @@ async function currentUser(request, env) {
   const hash = await sha256(m[1]);
   return env.DB.prepare(`
     SELECT u.id, u.username, u.display_name, u.avatar_url, u.role,
+           u.sparks, u.soyuz_plus_until, u.invisible_until, u.last_seen_at,
            s.id AS session_id
     FROM user_sessions s
     JOIN users u ON u.id = s.user_id
@@ -229,6 +230,10 @@ async function ensureAuthSchema(env) {
       role TEXT NOT NULL DEFAULT 'user',
       avatar_url TEXT,
       status TEXT NOT NULL DEFAULT 'active',
+      sparks INTEGER NOT NULL DEFAULT 0,
+      soyuz_plus_until TEXT,
+      invisible_until TEXT,
+      last_seen_at TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
   `).run();
@@ -251,6 +256,10 @@ async function ensureAuthSchema(env) {
     ["role", "TEXT NOT NULL DEFAULT 'user'"],
     ["avatar_url", "TEXT"],
     ["status", "TEXT NOT NULL DEFAULT 'active'"],
+    ["sparks", "INTEGER NOT NULL DEFAULT 0"],
+    ["soyuz_plus_until", "TEXT"],
+    ["invisible_until", "TEXT"],
+    ["last_seen_at", "TEXT"],
     ["created_at", "TEXT"]
   ];
   for (const [name, type] of userAdds) {
