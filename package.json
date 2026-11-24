@@ -1,9 +1,8 @@
 {
-  "name": "soyuz-platform",
+  "name": "soyuz-platform-netrun-test",
   "private": true,
-  "version": "2.6.0",
+  "version": "1.0.0",
   "scripts": {
-    "build": "npm --prefix worker install --no-audit --no-fund && npm --prefix worker run build",
     "start": "node netrun-test/server.mjs"
   },
   "engines": {
