@@ -36,6 +36,8 @@ jobs:
           cp worker/assets/icon.svg pages-artifact/icon.svg
           cp worker/assets/manifest.webmanifest pages-artifact/manifest.webmanifest
           cp worker/assets/sw.js pages-artifact/sw.js
+          cp worker/assets/app.js pages-artifact/app.js
+          cp worker/assets/styles.css pages-artifact/styles.css
       - uses: actions/configure-pages@v5
         with:
           enablement: true
