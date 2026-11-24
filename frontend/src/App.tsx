@@ -17,6 +17,8 @@ declare global {
     generateChef?: (regen?: boolean) => Promise<void>;
     askQuickMechanic?: () => Promise<void>;
     askMechanic?: () => Promise<void>;
+    continueMechanic?: (id: string) => Promise<void>;
+    activeCase?: () => { id: string } | null;
   }
 }
 
@@ -273,6 +275,9 @@ function AgentWorkspace({ agent, onBack }: { agent: "chef" | "mechanic"; onBack:
   const [messages, setMessages] = useState<Array<{ role: "user" | "assistant"; text?: string; html?: string }>>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [notes, setNotes] = useState<Record<number, string>>({});
 
   const quickCommands = agent === "chef"
     ? ["Быстрый ужин", "Из того, что есть", "Что приготовить на завтрак?"]
@@ -296,7 +301,20 @@ function AgentWorkspace({ agent, onBack }: { agent: "chef" | "mechanic"; onBack:
         if (!html) throw new Error("ИИ-Шеф не вернул результат. Попробуй ещё раз.");
         setMessages(prev => [...prev, { role: "assistant", html }]);
       } else {
-        if (mode === "quick") {
+        const existingCase = window.activeCase?.();
+        const isFollowup = mode === "deep" && messages.some(m => m.role === "assistant") && !!existingCase?.id;
+        if (isFollowup) {
+          const hiddenFollowup = document.getElementById("mechanic-followup");
+          hiddenFollowup?.querySelectorAll(".question-card").forEach((card, i) => {
+            const select = card.querySelector(".question-answer") as HTMLSelectElement | null;
+            const extra = card.querySelector(".question-extra") as HTMLTextAreaElement | null;
+            if (select) select.value = answers[i] || "";
+            if (extra) extra.value = notes[i] || "";
+          });
+          const info = document.getElementById("mechanic-new-info") as HTMLTextAreaElement | null;
+          if (info) info.value = text;
+          await window.continueMechanic?.(existingCase.id);
+        } else if (mode === "quick") {
           const field = document.getElementById("quick-problem") as HTMLTextAreaElement | null;
           document.getElementById("mechanic-mode-quick")?.click();
           if (!field) throw new Error("Не удалось открыть быструю диагностику.");
@@ -317,9 +335,11 @@ function AgentWorkspace({ agent, onBack }: { agent: "chef" | "mechanic"; onBack:
           await window.askMechanic?.();
         }
         const output = document.getElementById("mechanic-output")?.innerHTML || "";
-        const followup = document.getElementById("mechanic-followup")?.innerHTML || "";
         if (!output) throw new Error("ИИ-Механик не вернул результат. Проверь данные и повтори запрос.");
-        setMessages(prev => [...prev, { role: "assistant", html: output + followup }]);
+        const nextQuestions = Array.from(document.querySelectorAll("#mechanic-followup .question-card strong")).map(el => el.textContent || "");
+        setQuestions(nextQuestions);
+        setAnswers({}); setNotes({});
+        setMessages(prev => [...prev, { role: "assistant", html: output }]);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Не удалось выполнить запрос.");
@@ -350,6 +370,7 @@ function AgentWorkspace({ agent, onBack }: { agent: "chef" | "mechanic"; onBack:
         {busy && <div className="soyuz-thinking"><span /><span /><span /> ИИ готовит ответ…</div>}
       </div>
       {error && <div className="soyuz-error">{error}</div>}
+      {agent === "mechanic" && questions.length > 0 && <div className="soyuz-followup-questions"><strong>Уточняющие вопросы</strong>{questions.map((q, i) => <div key={i}><label>{q}</label><select value={answers[i] || ""} onChange={e => setAnswers(prev => ({ ...prev, [i]: e.target.value }))}><option value="">Выбери ответ</option><option>Да</option><option>Нет</option><option>Не знаю / не проверял</option><option>Не относится к моей ситуации</option></select><textarea value={notes[i] || ""} onChange={e => setNotes(prev => ({ ...prev, [i]: e.target.value }))} placeholder="Дополнение (необязательно)" rows={2} /></div>)}</div>}
       <div className="soyuz-command-chips">{quickCommands.map(x => <button key={x} onClick={() => setPrompt(x)}>{x}</button>)}</div>
       <div className="soyuz-chat-compose"><textarea value={prompt} onChange={e => setPrompt(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }} placeholder={agent === "chef" ? (mode === "dish" ? "Какое блюдо приготовить?" : "Перечисли продукты через запятую…") : "Опиши неисправность…"} rows={2} /><motion.button disabled={busy || !prompt.trim()} onClick={send} whileTap={{ scale: .92 }} aria-label="Отправить запрос"><ArrowRight size={19} /></motion.button></div>
       <p className="soyuz-chat-footnote">Ответ формируется существующим серверным сценарием СОЮЗ. Системные инструкции и параметры модели не изменялись.</p>
@@ -402,7 +423,7 @@ export default function App() {
       {authenticated && authChecked && (
         <nav className="soyuz-dock" aria-label="Основная навигация">
           {navItems.map(({ id, label, Icon }) => <button key={id} type="button" className={`soyuz-dock__item ${(id === active || (id === "helpers" && (legacyHelper || active === "chef" || active === "mechanic"))) ? "is-active" : ""}`} onClick={() => openPage(id)} aria-current={id === active ? "page" : undefined}>
-            {(id === active || (id === "helpers" && legacyHelper)) && <motion.span className="soyuz-dock__indicator" layoutId="soyuz-active-tab" transition={{ type: "spring", stiffness: 520, damping: 38 }} />}
+            {(id === active || (id === "helpers" && (legacyHelper || active === "chef" || active === "mechanic"))) && <motion.span className="soyuz-dock__indicator" layoutId="soyuz-active-tab" transition={{ type: "spring", stiffness: 520, damping: 38 }} />}
             <motion.span className="soyuz-dock__icon" whileTap={{ scale: .86 }}><Icon size={19} strokeWidth={id === active ? 2.2 : 1.7} /></motion.span><span className="soyuz-dock__label">{label}</span>
           </button>)}
         </nav>
