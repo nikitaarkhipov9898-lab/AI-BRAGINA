@@ -275,3 +275,49 @@ body > .app > main > #page-chef,body > .app > main > #page-mechanic {display:non
 .soyuz-admin-user>span{display:flex;flex-direction:column;gap:4px}.soyuz-admin-user strong{font-size:11px}.soyuz-admin-user small,.soyuz-audit-row{font-size:9px;color:#aaa}
 .soyuz-admin-user button{border:1px solid #e6394640;border-radius:10px;background:#e6394615;color:#f2a1a6;padding:7px;font-size:9px}
 .soyuz-audit-row{padding:8px 0;border-bottom:1px solid #ffffff0c}
+
+/* СОЮЗ 2.7.0 — mobile finish */
+.soyuz-app{min-height:100dvh;padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+.soyuz-screen{min-height:calc(100dvh - 126px);padding-bottom:calc(26px + env(safe-area-inset-bottom))}
+.soyuz-topbar{gap:8px}
+.soyuz-top-actions{display:flex;align-items:center;gap:7px}
+.soyuz-sparks{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:0 9px;border:1px solid #e0c09755;border-radius:12px;background:linear-gradient(135deg,#3b2c20aa,#171316);color:#f3d7a8;font-size:9px;font-weight:750;box-shadow:0 0 18px #e0c09712}
+.soyuz-sparks svg{filter:drop-shadow(0 0 5px #e0c097aa);animation:soyuz-spark-glow 2.4s ease-in-out infinite}
+@keyframes soyuz-spark-glow{0%,100%{filter:drop-shadow(0 0 3px #e0c09755)}50%{filter:drop-shadow(0 0 9px #ffdc8c)}}
+.soyuz-presence{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 9px;border:1px solid #ffffff20;border-radius:12px;background:#ffffff0a;color:#ddd;font-size:8px;font-weight:800;letter-spacing:.07em;backdrop-filter:blur(16px)}
+.soyuz-presence i{width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 10px #10b981;animation:soyuz-online-pulse 1.8s infinite}
+.soyuz-presence.hidden-status{border-color:#e6394655;color:#ff9ba1}
+.soyuz-presence.hidden-status i{background:#e63946;box-shadow:0 0 10px #e63946;animation:none}
+@keyframes soyuz-online-pulse{0%,100%{opacity:1;box-shadow:0 0 5px #10b981}50%{opacity:.45;box-shadow:0 0 13px #10b981}}
+.soyuz-agent-grid{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.soyuz-agent-card{display:grid;grid-template-columns:48px minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;gap:3px 12px;min-height:76px;width:100%;padding:12px;border:1px solid #ffffff12;border-radius:16px;background:linear-gradient(110deg,#19171d,#111115);text-align:left;box-shadow:inset 0 1px #ffffff08}
+.soyuz-agent-card__top{grid-column:1;grid-row:1/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.soyuz-agent-card__icon{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:#e6394612;border:1px solid #e6394660;color:#ff8189}
+.soyuz-agent-card__icon.gold{background:#e0c09712;border-color:#e0c09755;color:#e0c097}
+.soyuz-agent-card__icon.neutral{background:#ffffff08;border-color:#ffffff20;color:#d2c7bb}
+.soyuz-status{font-size:7px;color:#999;white-space:nowrap}
+.soyuz-status.live{color:#10b981}
+.soyuz-agent-card>strong{grid-column:2;grid-row:1;font-size:12px;align-self:end}
+.soyuz-agent-card>p{grid-column:2;grid-row:2;margin:0;color:#99939d;font-size:9px;line-height:1.35;align-self:start}
+.soyuz-agent-card__action{grid-column:3;grid-row:1/3;display:flex;align-items:center;gap:4px;color:#e0c097;font-size:9px;white-space:nowrap}
+.soyuz-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 0}
+.soyuz-dialog-head>button{padding:8px 0 12px;border:0;background:none;color:#e0c097;font-size:11px}
+.soyuz-dialog-head .soyuz-kicker{white-space:nowrap}
+.soyuz-dialog-head+.soyuz-workspace-head{padding-top:0}
+.soyuz-plus-card{display:flex;align-items:center;gap:12px;width:100%;margin:13px 0 8px;padding:14px;border:1px solid #e0c09755;border-radius:17px;background:linear-gradient(115deg,#3a2926,#1b171b 68%,#211a17);color:#f6e4c5;text-align:left;box-shadow:0 10px 30px #0004,inset 0 1px #ffffff10}
+.soyuz-plus-card>span:nth-child(2){display:flex;flex:1;flex-direction:column;gap:5px}
+.soyuz-plus-card strong{font-size:12px;letter-spacing:.04em}.soyuz-plus-card small{font-size:9px;color:#c1ad9a}
+.soyuz-plus-mark{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#e0c0971c;color:#f0d4a7}
+.soyuz-recipes-link{margin:7px 0 10px;padding:0 3px}
+.soyuz-profile-version{padding:18px 0 5px;text-align:center;color:#77717a;font-size:9px;letter-spacing:.16em}
+.soyuz-plus-balance{display:flex;align-items:center;gap:8px;margin:0 0 13px;padding:12px;border:1px solid #e0c09735;border-radius:13px;background:#e0c0970c;color:#d9c09c;font-size:11px}
+.soyuz-plus-balance strong{margin-left:auto;color:#ffe2ae}
+.soyuz-plus-hero{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:19px;border:1px solid #e0c0974a;border-radius:18px;background:linear-gradient(145deg,#302323,#181519)}
+.soyuz-plus-hero>svg{color:#e0c097}.soyuz-plus-hero strong{font-size:15px;color:#f4dfbd}.soyuz-plus-hero p{margin:0;color:#c5b5a8;font-size:11px;line-height:1.6}.soyuz-plus-hero small,.soyuz-plus-hero span{color:#a99a8c;font-size:10px;line-height:1.5}
+.soyuz-plus-option{display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid #e0c0973b;border-radius:16px;background:#ffffff08}
+.soyuz-plus-option>div{display:flex;flex-direction:column;gap:5px}.soyuz-plus-option strong{font-size:12px}.soyuz-plus-option small{font-size:10px;color:#aaa;line-height:1.5}.soyuz-plus-option>b{color:#e0c097;font-size:16px}
+.soyuz-plus-option .soyuz-primary{width:100%}
+.soyuz-admin-user{flex-wrap:wrap}
+.soyuz-admin-user>button{font-size:8px}
+.soyuz-profile-version+.soyuz-error{margin-top:10px}
+@media(max-width:390px){.soyuz-top-actions{gap:4px}.soyuz-sparks,.soyuz-presence{padding:0 6px;font-size:7px}.soyuz-agent-card{grid-template-columns:42px minmax(0,1fr) auto;gap:3px 8px;padding:10px}.soyuz-agent-card__icon{width:38px;height:38px}.soyuz-agent-card__action{font-size:8px}}
