@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Home, Sparkles, Clapperboard, MessageCircle, CheckSquare, UserRound,
@@ -18,7 +18,16 @@ const tabs = [
 ];
 
 export default function App() {
-  const [active, setActive] = useState("home");
+  const [active, setActive] = useState(document.body.dataset.page || "home");
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const page = document.body.dataset.page;
+      if (page) setActive(page === "chef" || page === "mechanic" || page === "invoice" ? "helpers" : page);
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["data-page"] });
+    return () => observer.disconnect();
+  }, []);
 
   const navigate = (id: string) => {
     setActive(id);
