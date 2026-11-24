@@ -328,3 +328,6 @@ body > .app > main > #page-chef,body > .app > main > #page-mechanic {display:non
 .soyuz-sparks{position:relative;overflow:visible}
 .soyuz-sparks:active:after{content:"";position:absolute;inset:-8px;border-radius:18px;pointer-events:none;background:radial-gradient(circle at 12% 20%,#ffe5a8 0 1px,transparent 2px),radial-gradient(circle at 85% 12%,#e63946 0 1px,transparent 2px),radial-gradient(circle at 82% 85%,#ffe5a8 0 1px,transparent 2px),radial-gradient(circle at 18% 86%,#e63946 0 1px,transparent 2px);animation:soyuz-spark-burst .45s ease-out forwards}
 @keyframes soyuz-spark-burst{0%{opacity:1;transform:scale(.65)}100%{opacity:0;transform:scale(1.45)}}
+
+/* Legacy DOM remains as a hidden compatibility bridge for existing AI helper handlers. */
+body>.app,body>nav.bottom,body>.footer-note{display:none!important}
